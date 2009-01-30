@@ -1,0 +1,726 @@
+/* 
+**  (C) by Remo Dentato (rdentato@gmail.com)
+** 
+** This sofwtare is distributed under the terms of the BSD license:
+**   http://creativecommons.org/licenses/BSD/
+**   http://opensource.org/licenses/bsd-license.php 
+*/
+
+
+#include "abcp_priv.h"
+#include "abcp.h"
+#include <assert.h>
+
+static chs_t tmpbuf=NULL;
+
+abcScanner *abc_newscanner(char *text,char how)
+{
+  abcScanner *scn=NULL;
+  FILE *f = NULL;
+  
+  if ((how == 'F') && !(f = fopen(text,"r"))) return NULL;
+
+  if ((scn = malloc(sizeof(abcScanner)))) {
+    scn->tok = T_NONE;
+    scn->state = S_LIMBO;
+    scn->nextstate = S_NONE;
+    scn->lnumber = 0;
+    scn->ln_logical = 0;
+    scn->abc = NULL;
+    scn->file = NULL;
+    scn->line = NULL;
+    scn->cur = NULL;
+
+    switch(how) {
+      case 'F' : scn->file = f; break; 
+      case 'S' : scn->abc = text; break;
+      default : free(scn); return (NULL);
+    }    
+    scn->pos = scn->abc;
+  }
+  tmpbuf = chsFree(tmpbuf);
+  return scn;
+}
+
+abcScanner *abcFreeScanner(abcScanner *scn)
+{
+  if (scn) {
+    if (scn->file) fclose(scn->file);
+    free(scn);
+  }
+  return NULL;
+}
+
+
+static void nextline(abcScanner *scn)
+{
+  char *t;
+  int l = 0;;  
+    
+  if (scn->file != NULL) {
+    l = chsLen(scn->line);
+    scn->line = chsReadln(scn->line,scn->file,'a');
+    l = chsLen(scn->line) - l;
+  }
+  else {
+    t = scn->pos;
+    l = 1;
+    while (l && *t) {
+      switch pmx(t) {
+        case "&n" : l = 0;
+        case "&l" : break;
+        default : assert(0);
+      }
+    }
+    l = t - scn->pos;
+    if (l > 0) {
+      scn->line = chsAddStrL(scn->line,scn->pos,l);
+      scn->pos = t;
+    } 
+  }
+  if (l > 0) scn->lnumber++;
+}
+
+int chk_tocontinue(char *s)
+{
+  if (*s == '\b') s++;
+  while (*s && isspace(*s)) s++;
+  if (*s == '%' || *s == '#') return 1;
+  if (!isalpha(*s) || *s=='w' || *s=='s') return 0;
+  return (s[1] == ':');
+}
+
+/* Handling line continuation is rather messy in ABC. Here are the rules
+** that have been implemented.
+**
+**   - Backslash and % in quoted strings are preserved
+**   - Escaped backslash and % are preserved
+**   - If a line ends with "\ %..." it's transformed in "[r:...]\"
+**   - If line starts with a field (X: or %%) or a comment is to be continued
+**   - In state LIMBO any lines is to be continued 
+**   - In any other state the \ at the end is reported as T_CONTINUE token
+**
+*/
+
+static void getnewline(abcScanner *scn)
+{
+  char *t,*q;
+  int   len;
+  int   k;
+  chs_t tmp = NULL;
+  int   tocontinue = -1;
+  
+  scn->line = chsCpy(scn->line,"\b");
+  scn->ln_logical = scn->lnumber+1;
+  
+  for (;;) {
+    len = chsLen(scn->line);
+    nextline(scn);
+    k = chsLen(scn->line);
+    if (len == k) break;
+    
+    if (tocontinue < 0)
+      tocontinue = chk_tocontinue(scn->line);
+    
+    if (chsChrAt(scn->line,-1) != '\n')
+      scn->line = chsAddChr(scn->line,'\n');
+
+    q = scn->line + len;
+    t = NULL;
+    while (*q && !t) {
+      switch pmx(q) {
+         case "&e\\&q"        : break;  /* skip quoted strings */
+         case "&K%"           : tocontinue = 1; /* comments are always continued */
+                                break;
+         case "\\&K&n"        : 
+         case "\\&K%&K(&L)&n" :       /* got a ending remark */
+                                len = pmx(Len,1);
+                                if (len>0) {
+                                  tmp = chsCpy(tmp,"[r:");
+                                  tmp = chsAddStrL(tmp, pmx(Start,1),len);
+                                  tmp = chsAddStr(tmp, "]");
+                                }
+                                else {
+                                  tmp = chsCpy(tmp,"");         
+                                } 
+                                scn->line = chsDel(scn->line,-pmx(Len,0),-1);
+                                scn->line = chsAddStr(scn->line, tmp);
+                                scn->line = chsAddStr(scn->line, "\f");
+                                t = scn->line;
+                                break;
+         case "\\<.>"         :
+         case "<!\\\">"       : break;
+      }
+    }
+    if (t == NULL)              break; /* didn't continue at all */
+    if (scn->state == S_LIMBO)  continue;
+    if (!tocontinue)            break;
+  } 
+  
+  if (chsLen(scn->line) < 2) 
+    scn->line = chsCpy(scn->line,"");
+  else if (chsChrAt(scn->line,-1) != '\n')
+    scn->line = chsAddChr(scn->line,'\n');
+    
+  scn->cur = scn->line;
+  _dbgmsg("line: <<%s>>\n",scn->line);
+  if (tmp) chsFree(tmp);  
+}
+
+
+/* **************** */
+
+int abc_tmp_i;
+
+#define settoken(s,t) do { \
+  for ((s)->tok = (t), abc_tmp_i = 0; abc_tmp_i <= abc_MAXTOKSTR; abc_tmp_i++) {\
+    (s)->tok_str[abc_tmp_i][0] = pmx(Start,abc_tmp_i);\
+    (s)->tok_str[abc_tmp_i][1] = pmx(End,abc_tmp_i);\
+  } } while(utlZero)
+
+
+static abcToken abc_lyrics(abcScanner *scn)
+{
+  skip_token:
+  switch pmx(scn->cur) {
+  
+    case "\b(<*= \t\f>)&n" :
+                    settoken(scn,T_EMPTYLINE);
+                    scn->nextstate = S_LIMBO;
+                    break;
+                        
+    case "\b&K%%&K(<+S>)&K(&L)&n" : 
+                    settoken(scn,T_EXTFIELD);
+                    break;
+
+    case "\b(&Kw:&K)" :
+                    settoken(scn,T_IGNORE);
+                    break; 
+
+    case "\b&K(<a>):&K(&L)&n" :
+                    settoken(scn,T_FIELD);
+                    break;
+
+    case "\b&K#(<+S>)(&L)&n" :
+                    settoken(scn,T_PRAGMA);
+                    break;
+
+    case "\b" :     goto skip_token;
+                    
+    case "(<+=`>)" :  settoken(scn,T_IGNORE);
+                    break;
+    
+    case "(&k)"  :    settoken(scn,T_WHITESPACE);
+                    break; 
+                    
+    case "\f&N" :   settoken(scn,T_CONTINUE);
+                    break;
+                    
+    case "&n" :     settoken(scn,T_ENDLINE);
+                    scn->nextstate = S_TUNE;
+                    break;
+          
+    case "&((<+=&&>)" :
+                    settoken(scn,T_OVLSTART);
+                    break;
+    
+    case "(<+=&&>)&)" :
+                    settoken(scn,T_OVLEND);
+                    break;
+    
+    case "(<+=&&>)" :
+                    settoken(scn,T_OVLRESET);
+                    break;
+    
+    case "%(&K)(&L)&n"  :    
+                    settoken(scn,T_COMMENT);
+                    break; 
+                    
+    case "[(<a>):&K&e\\(<+#]>)]" :
+                    if (*pmx(Start,1) == 'r') 
+                      settoken(scn,T_COMMENT);
+                    else
+                      settoken(scn,T_INFIELD);
+                    break;
+                    
+    case "()()(|)" :settoken(scn,T_BAR);
+                    break; 
+                    
+                    
+    case "(<+d>)<=.):>"  :    
+                    settoken(scn,T_VERSE);
+                    break; 
+      
+    case "(*)" : 
+    case "<?=&->&e\\(<*# \f\b\t\r\n*_&->)(<*=_>)" :
+                    settoken(scn,T_SYLLABLE);
+                    break; 
+    
+    case "<.>" :    settoken(scn,T_UNKNOWN);
+                    break;
+  }
+    
+  return scn->tok;
+}
+
+static abcToken abc_symbols(abcScanner *scn)
+{
+  skip_token:
+  switch pmx(scn->cur) {
+  
+    case "\b(<*= \t\f>)&n" :
+                    settoken(scn,T_EMPTYLINE);
+                    scn->nextstate = S_LIMBO;
+                    break;
+                        
+    case "\b&K%%&K(<+S>)&K(&L)&n" : 
+                    settoken(scn,T_EXTFIELD);
+                    break;
+
+    case "\b(&Ks:&K)" :
+                    settoken(scn,T_IGNORE);
+                    break; 
+
+    case "\b&K(<a>):&K(&L)&n" :
+                    settoken(scn,T_FIELD);
+                    break;
+
+    case "\b&K#(<+S>)(&L)&n" :
+                    settoken(scn,T_PRAGMA);
+                    break;
+
+    case "\b" :     goto skip_token;
+                    
+    case "(<+=`>)" :  settoken(scn,T_IGNORE);
+                    break;
+    
+    case "(&k)"  :    settoken(scn,T_WHITESPACE);
+                    break; 
+                    
+    case "\f&N" :   settoken(scn,T_CONTINUE);
+                    break;
+                    
+    case "&n" :     settoken(scn,T_ENDLINE);
+                    scn->nextstate = S_TUNE;
+                    break;
+          
+    case "%(&K)(&L)&n"  :    
+                    settoken(scn,T_COMMENT);
+                    break; 
+                    
+    case "&((<+=&&>)" :
+                    settoken(scn,T_OVLSTART);
+                    break;
+    
+    case "(<+=&&>)&)" :
+                    settoken(scn,T_OVLEND);
+                    break;
+    
+    case "(<+=&&>)" :
+                    settoken(scn,T_OVLRESET);
+                    break;
+    
+    case "[(<a>):&K&e\\(<+#]>)]" :
+                    if (*pmx(Start,1) == 'r') 
+                      settoken(scn,T_COMMENT);
+                    else
+                      settoken(scn,T_INFIELD);
+                    break;
+                    
+    case "()()(|)" :settoken(scn,T_BAR);
+                    break; 
+                    
+    case "\"&K(<=A-G><?=b&#>)<?=:>(<*d>)&K(<*!()\"/>)<?=/>&K(<?=A-G><?=b&#>)&K<?=(>&K(<?=A-G><?=b&#>)(<*d>)&K(<*!()\"/>)<?=/>&K(<?=A-G><?=b&#>)&K<?=)>&K\"" :
+                    settoken(scn,T_GCHORD);
+                    break;
+    
+    case "&e\\\"(<?=&<&>@^_>)(<+#\">)\"" :
+                    settoken(scn,T_ANNOTATION);
+                    break;
+                    
+    case "<=.H-Wh-w~>" :
+                    settoken(scn,T_USERSYMBOL);
+                    break;
+     
+    case "*()" : 
+    case "+(<+!=+ \f\t\n\r|[:]>)+":
+    case "!(<+!=! \f\t\n\r|[:]>)!":
+                    settoken(scn,T_DECORATION);
+                    break;
+    
+    case "<.>" :    settoken(scn,T_UNKNOWN);
+                    break;
+  }
+    
+  return scn->tok;
+}
+
+static abcToken abc_tune(abcScanner *scn)
+{
+  skip_token:
+  switch pmx(scn->cur) {
+    case "\b&w:&K" :
+                    scn->nextstate = S_LYRICS; 
+                    settoken(scn,T_LYRICS);
+                    break;
+                    
+    case "\b&s:&K" :
+                    scn->nextstate = S_SYMBOLS;         
+                    settoken(scn,T_SYMBOLS);
+                    break;
+                    
+    case "\b&K%%&K(<+S>)&K(&L)&n" :
+                    settoken(scn,T_EXTFIELD);
+                    break;
+
+    case "\b&K(<a>):&K(&L)&n" :
+                    settoken(scn,T_FIELD);
+                    break;
+
+    case "\b(<*= \t\f>)&n" :
+                    settoken(scn,T_EMPTYLINE);
+                    scn->nextstate = S_LIMBO;
+                    break;
+                    
+    case "\b&K#(<+S>)(&L)&n" :
+                    settoken(scn,T_PRAGMA);
+                    break;
+
+    case "\b" :     goto skip_token;
+                    
+    case "&n" :     settoken(scn,T_ENDLINE);
+                    break;
+    
+    case "(<+=`>)" :  settoken(scn,T_IGNORE);
+                    break;
+    
+    case "(&k)" :     settoken(scn,T_WHITESPACE);
+                    break;
+    
+    case "%(&K)(&L)&n" : 
+                    settoken(scn,T_COMMENT);
+                    break;
+    
+    case "&((<+=^_=>)(<*d>)(<*=/>)(<*d>)&)(<=A-Ga-g>)(<*=,'>)(<*d>)(<*=/>)(<*d>)" :  
+    case "(<*=^_=>)(<*d>)(<*=/>)(<*d>)(<=A-Ga-g>)(<*=,'>)(<*d>)(<*=/>)(<*d>)" :  
+                    settoken(scn,T_NOTE);
+                    break;
+    
+    case "(<=Zzx>)(<*d>)(<*=/>)(<*d>)" :  
+                    settoken(scn,T_REST);
+                    break;
+    
+    case "(y)(<*d>)<?=.>(<*d>)" :  
+                    settoken(scn,T_SPACER);
+                    break;
+                    
+    case "+(<+!=+ \f\t\n\r|[:]>)+":
+    case "!(<+!=! \f\t\n\r|[:]>)!":
+                    settoken(scn,T_DECORATION);
+                    break;
+    
+    case "!" :      settoken(scn,T_BREAKLINE);
+                    break; 
+    
+    case "[(<a>):&K&e\\(<+#]>)]" :
+                    if (*pmx(Start,1) == 'r') 
+                      settoken(scn,T_COMMENT);
+                    else
+                      settoken(scn,T_INFIELD);
+                    break;
+                    
+    case "<?=[>(<+=,0-9&->)" :
+    case "[&K(&q)" :
+                    settoken(scn,T_ENDING);
+                    break;
+                    
+    case ".&G<!=-()|[]>" :
+    case "<=H-Wh-w~>" :
+                    settoken(scn,T_USERSYMBOL);
+                    break;
+    
+    case "(<*=:>)(<?=.>)(<+=|[><+=|]>)(<*=:>)" :
+    case "(<*=:>)(<?=.>)(<*=|><*=[><+=|]>)(<*=:>)" :
+    case "(<*=:>)(<?=.>)(<*=|>)(<*=:>)" :
+                    settoken(scn,T_BAR);
+                    break;
+    
+    case "[" :      settoken(scn,T_CHORD);
+                    scn->nextstate = S_CHORD;
+                    break;
+    
+    case "<+=&>>" : settoken(scn,T_BROKENRIGHT);
+                    break;
+    
+    case "<+=&<>" : settoken(scn,T_BROKENLEFT);
+                    break;
+    
+    case "(<?=.>)-(<?=',>)" :
+                    settoken(scn,T_TIE);
+                    break;
+    
+    case "&((<+d>)&K:&K(<+d>)&K:&K(<+d>)&K" :
+    case "&((<+d>)&K:&K(<+d>)&K" :
+    case "&((<+d>)&K" :
+                    settoken(scn,T_TUPLET);
+                    break; 
+    
+    case "&((<+=&&>)" :
+                    settoken(scn,T_OVLSTART);
+                    break;
+    
+    case "(<+=&&>)&)" :
+                    settoken(scn,T_OVLEND);
+                    break;
+    
+    case "(<+=&&>)" :
+                    settoken(scn,T_OVLRESET);
+                    break;
+    
+    case "(<?=.>)&((<?=',>)" :
+                    settoken(scn,T_SLURSTART);
+                    break;
+    
+    case "(<?=.>)&)" :
+                    settoken(scn,T_SLUREND);
+                    break;
+    
+    case "{(<?=/>)": settoken(scn,T_GRACE);
+                    scn->nextstate = S_GRACE;
+                    break;
+    
+    case "\f&N" :
+                    settoken(scn,T_CONTINUE);
+                    break;
+                    
+    case "\"&K(<=A-G><?=b&#>)<?=:>(<*d>)&K(<*!()\"/>)<?=/>&K(<?=A-G><?=b&#>)&K<?=(>&K(<?=A-G><?=b&#>)(<*d>)&K(<*!()\"/>)<?=/>&K(<?=A-G><?=b&#>)&K<?=)>&K\"" :
+                    settoken(scn,T_GCHORD);
+                    break;
+    
+    case "&e\\\"(<?=&<&>@^_>)(<+#\">)\"" :
+                    settoken(scn,T_ANNOTATION);
+                    break;
+    
+    case "<.>" :    settoken(scn,T_UNKNOWN);
+                    break;
+  }
+  
+
+  return scn->tok;
+}
+
+static abcToken abc_limbo(abcScanner *scn)
+{
+
+  skip_token:
+  switch pmx(scn->cur) {
+    case "\b<* \t\f>&n" :
+                    settoken(scn,T_EMPTYLINE);
+                    break;
+    
+    case "\b&K(<a>):&K(&L)&n" :
+                    settoken(scn,T_FIELD);
+                    scn->nextstate = S_HEADER;
+                    break;
+                    
+    case "\b&K%%&K(<+!s>)&K(&L)&n" :
+                    settoken(scn,T_EXTFIELD);
+                    scn->nextstate = S_HEADER;
+                    break;
+                    
+    case "\b&K#(<+S>)(&L)&n" :
+                    settoken(scn,T_PRAGMA);
+                    break;
+                    
+    case "\b" :     goto skip_token;
+                    
+    case "&K[(<a>):&K&e\\(<+#]>)]&K" :
+                    if (*pmx(Start,1) == 'r')
+                      settoken(scn,T_COMMENT);
+                    else
+                      settoken(scn,T_INFIELD);
+                    break;
+                    
+    case "&K%(&K)(&L)&n" : 
+                    settoken(scn,T_COMMENT);
+                    break;
+    
+    case "&K(&l)&n" :
+                    settoken(scn,T_TEXT);
+                    break;
+  }
+  
+  return scn->tok;
+}
+
+static abcToken abc_header(abcScanner *scn)
+{
+  scn->tok = T_NONE;
+  
+  skip_token:
+  switch pmx(scn->cur) {
+    case "\b<*= \t\f>&n" :
+                    settoken(scn,T_EMPTYLINE);
+                    scn->nextstate = S_LIMBO;
+                    break;
+    
+    case "\b&K(<a>):&K(&L)&n" :
+                    settoken(scn,T_FIELD);
+                    break;
+
+    case "\b&K%%&K(<+!s>)&K&e\\(&L)&n" :
+                    settoken(scn,T_EXTFIELD);
+                    break;
+                    
+    case "\b&K#(<+S>)(&L)&n" :
+                    settoken(scn,T_PRAGMA);
+                    break;
+                    
+    case "\b&K" :   goto skip_token;
+                                        
+    case "&K%(&L)&n" : 
+                    settoken(scn,T_COMMENT);
+                    break;
+    
+    case "&K[(<a>):&K&e\\(<+#]>)]&S" :
+                    settoken(scn,T_INFIELD);
+                    break;                    
+  }
+  
+  if (scn->tok == T_NONE) {
+   scn->nextstate = S_TUNE;
+   return abc_tune(scn);
+  }
+  
+  return scn->tok;
+}
+
+static abcToken abc_grace(abcScanner *scn)
+{
+  switch pmx(scn->cur) {
+    case "(<+=`>)" :  settoken(scn,T_IGNORE);
+                    break;
+    
+    case "(&k)" :     settoken(scn,T_WHITESPACE);
+                    break;
+                    
+    case "}" :      settoken(scn,T_GRACEEND);
+                    scn->nextstate = S_TUNE;
+                    break;
+
+    case "&((<+=^_=>)(<*d>)(<*=/>)(<*d>)&)(<=A-Ga-g>)(<*=,'>)(<*d>)(<*=/>)(<*d>)" :  
+    case "(<*=^_=>)(<*d>)(<*=/>)(<*d>)(<=A-Ga-g>)(<*=,'>)(<*d>)(<*=/>)(<*d>)" :  
+                    settoken(scn,T_NOTE);
+                    break;
+
+    case "&)" :      settoken(scn,T_SLUREND);
+                    break;
+
+    case "&(<?=',>" :settoken(scn,T_SLURSTART);
+                    break;
+
+    case "<=.H-Wh-w~>" :
+                    settoken(scn,T_USERSYMBOL);
+                    break;
+    
+    case "+(<+!=+ \t\n\r|[:]>)+":
+    case "!(<+!=! \t\n\r|[:]>)!":
+                    settoken(scn,T_DECORATION);
+                    break;
+
+    case "[" :      settoken(scn,T_CHORD);
+                    scn->nextstate = S_GRACE | S_CHORD;
+                    break;
+                    
+    case "\f&N" :
+                    settoken(scn,T_CONTINUE);
+                    break;
+                    
+    case "&n" :     settoken(scn,T_ENDLINE);
+                    break;
+
+    case "<.>" :    settoken(scn,T_UNKNOWN);
+                    break;
+              
+  }
+  
+  return scn->tok;
+}
+
+static abcToken abc_chord(abcScanner *scn)
+{
+  switch pmx(scn->cur) {
+    case "(<+=`>)": settoken(scn,T_IGNORE);
+                    break;
+    
+    case "(&k)" :   settoken(scn,T_WHITESPACE);
+                    break;
+                    
+    case "](<*d>)(<*=/>)(<*d>)" :
+                    settoken(scn,T_CHORDEND);
+                    scn->nextstate = S_TUNE | (scn->state & ~S_CHORD); 
+                    _dbgmsg("state: %04X next: %04X\n",scn->state,scn->nextstate);
+                    break;
+
+    case "&((<+=^_=>)&)(<*d>)(<*=/>)(<*d>)(<=A-Ga-g>)()(<*d>)(<*=/>)(<*d>)" :  
+    case "(<*=^_=>)(<*d>)(<*=/>)(<*d>)(<=A-Ga-g>)()(<*d>)(<*=/>)(<*d>)" :  
+                    settoken(scn,T_NOTE);
+                    break;
+
+    case "<=.H-Wh-w~>" :
+                    settoken(scn,T_USERSYMBOL);
+                    break;
+                    
+    case "+(<+!=+ \t\n\r|[:]>)+":
+    case "!(<+!=! \t\n\r|[:]>)!":
+                    settoken(scn,T_DECORATION);
+                    break;
+
+    case "\f&N" :
+                    settoken(scn,T_CONTINUE);
+                    break;
+                    
+    case "&n" :     settoken(scn,T_ENDLINE);
+                    break;
+
+    case "<.>" :    settoken(scn,T_UNKNOWN);
+                    break;
+              
+  }
+  
+  return scn->tok;
+}
+
+
+abcToken abcNextToken(abcScanner *scn)
+{
+  if (scn->nextstate != S_NONE) {
+    scn->state = scn->nextstate;
+    scn->nextstate = S_NONE;
+  }
+
+  if (!scn->cur || !*scn->cur) 
+    getnewline(scn);
+
+  if (!scn->cur || !*scn->cur) {
+    scn->nextstate = S_EOF;
+    return T_EOF;
+  }
+  
+  switch (scn->state) {
+    case S_LIMBO       : return abc_limbo(scn);
+    case S_HEADER      : return abc_header(scn);
+    case S_TUNE        : return abc_tune(scn);
+    case S_GRACE       : return abc_grace(scn);
+    
+    case S_GRACE | S_CHORD :
+    case S_CHORD       : return abc_chord(scn);
+    case S_LYRICS      : return abc_lyrics(scn);
+    case S_SYMBOLS     : return abc_symbols(scn);
+    
+    case S_EOF         : return T_EOF;
+  }  
+  
+  return T_EOF;
+}
+

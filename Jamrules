@@ -1,0 +1,80 @@
+# 
+#  (C) by Remo Dentato (rdentato@gmail.com)
+# 
+# This sofwtare is distributed under the terms of the BSD license:
+#   http://creativecommons.org/licenses/BSD/
+#   http://opensource.org/licenses/bsd-license.php
+#
+ 
+
+CAT = cat ;
+
+if $(NT) { 
+  CAT = type ;
+}
+
+rule TopInclude {
+  if $(TOPINCL:E=N) = N {
+    SubInclude $(TOP) $(<) ;
+  }
+}
+
+rule SubIncludeTop {
+  TOPINCL = Y ; 
+  SubInclude $(TOP) $(<) ;
+  TOPINCL = N ; 
+}
+
+LUTLDIR = [ FDirName $(TOP) tools libutl ] ;
+LUTLLIB = [ FDirName $(LUTLDIR) libutl$(SUFLIB) ] ;
+SRCDIR = [ FDirName $(TOP) src ] ;
+
+HDRS = $(SRCDIR)  $(LUTLDIR) ;
+
+PMX2C = [ FDirName $(LUTLDIR) pmx2c$(SUFEXE) ] ;
+
+rule UserObject {
+  switch $(>) {
+    case *.h   : echo "" ;
+    
+    case *.pmx : Cc $(<) : $(<:S=.c) ;
+                 Pmx $(<:S=.c) : $(>) ;                
+
+    case *     : ECHO "unknown suffix on" $(>) ;
+  }
+}
+
+rule Pmx
+{
+  Depends $(<) : $(>) ;
+  MakeLocate $(<:S=.c) : $(LOCATE_SOURCE) ;
+  Clean clean : $(<:S=.c) ;
+}
+
+actions Pmx
+{   
+  $(PMX2C) $(>) $(<:S=.c)
+}
+
+actions PmxRm
+{   
+  $(RM) $(<)
+}
+
+
+
+# Setting for "Visual C"
+OPTIM = /O2 ;
+OPTIM = /Yd ;
+CCFLAGS = /W2 ;
+LINKLIBS = libutl$(SUFLIB) ;
+LINKFLAGS = /LIBPATH:$(LUTLDIR) ;
+
+if $(CC) = gcc  { 
+  OPTIM =  -DDEBUG -g ;
+  #OPTIM =  -O2 ;
+  CCFLAGS = -Wall  ;
+  LINKFLAGS = -L$(LUTLDIR) ;
+  LINKLIBS = -lutl ;
+}
+

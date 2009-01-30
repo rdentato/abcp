@@ -1,0 +1,18 @@
+% Commenting a comment
+% and so on \
+  and on
+
+X:1
+K: C \ % key
+   clef = bass "s\"d" % bass 
+A C b | \
+A: xx \
+   xc 
+D EF
+% asdas \
+  asdsa \
+  asdsda
+cc \ % saod 
+Dd sd % sdas\
+        asdsad
+A

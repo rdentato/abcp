@@ -1,0 +1,15 @@
+# 
+#  (C) by Remo Dentato (rdentato@gmail.com)
+# 
+# This sofwtare is distributed under the terms of the BSD license:
+#   http://creativecommons.org/licenses/BSD/
+#
+ 
+SubDir $(TOP) src ;
+
+Library libabcp :  abcp.pmx  ;    
+
+LinkLibraries abcp_test1 : libabcp$(SUFLIB) ;
+Main abcp_test1 : abcp_test1.c  ;
+
+
