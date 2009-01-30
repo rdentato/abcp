@@ -1,0 +1,13 @@
+%%deco alcoda 3 dacs 20 0 0 Al Coda
+%%header "		$T\n		Page $P"
+%%footer "	$F"
+
+X:1
+T:abcm2ps version 3 features
+M:2/4 3/4
+K:C
+a>B [CG] |[1 C C | [ "ultima volta" GC ::|: |[|]]
+
+X:2
+A {[cde]}B
+ 

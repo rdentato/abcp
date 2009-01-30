@@ -1,0 +1,20 @@
+digraph G {
+	node [shape = ellipse]; LIMBO [style= filled];
+	node [shape = ellipse];
+	HEADER -> LIMBO;
+	HEADER -> TUNE ;
+	LIMBO -> HEADER  ;
+	TUNE -> LYRICS ;
+	TUNE -> SYMBOLS ;
+	TUNE -> CHORD;
+	TUNE -> GRACE;
+	TUNE -> LIMBO ;
+	LYRICS -> TUNE ;
+	LYRICS -> LIMBO ;
+	CHORD -> TUNE ;
+	CHORD -> GRACE  ;
+	GRACE -> TUNE ;
+	GRACE -> CHORD  ;
+	SYMBOLS -> TUNE ;
+	SYMBOLS -> LIMBO ;
+}

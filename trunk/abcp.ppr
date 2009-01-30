@@ -1,0 +1,91 @@
+[Config]
+Compilator.FileName=C:\Programmi\PSPad editor\Script\mingw_jam.bat
+Compilator.PSPar=%ProjectDir% %Input%
+Compilator.DefaultDir=%Dir%
+Compilator.SaveAll=0
+Compilator.Capture=1
+Compilator.ParsLog=%F:%L:*
+Compilator.HideOutput=1
+Compilator.LogType=0
+DefaultDir=D:\0_Proj\abcp
+DefaultCPIndex=0
+LogtoEnd=1
+DontOpen=0
+AbsolutePath=0
+FileFormat=0
+ProjectFilesOnly=0
+[Project tree]
+abcp
+	+Folder5
+		Jamfile
+		Jamrules
+	+src
+		src\abcp.h
+		src\abcp.pmx
+		src\Jamfile
+		src\abcp_test1.c
+		src\a3.txt
+[Open project files]
+0=Jamfile
+1=Jamrules
+2=src\abcp.h
+3=src\abcp.pmx
+4=src\Jamfile
+5=src\abcp_test1.c
+6=src\a3.txt
+7=..\abcm2ps-5.9.3\features.txt
+8=src\abcp.yc
+9=tools\libutl\libutl.h
+10=src\abcp_priv.h
+11=..\c-libutl\src\chs.c
+12=doc\tech\states.gv
+13=src\a2.txt
+14=src\a1.txt
+[Selected Project Files]
+Main=
+Selected=src\abcp.pmx
+[Jamfile]
+TopLine=1
+Caret=1,1
+[Jamrules]
+TopLine=30
+Caret=1,65
+[src\abcp.h]
+TopLine=126
+Caret=1,143
+[src\abcp.pmx]
+TopLine=479
+Caret=1,507
+[src\Jamfile]
+TopLine=1
+Caret=1,16
+[src\abcp_test1.c]
+TopLine=1
+Caret=1,10
+[src\a3.txt]
+TopLine=1
+Caret=22,3
+[..\abcm2ps-5.9.3\features.txt]
+TopLine=267
+Caret=29,302
+[src\abcp.yc]
+TopLine=1
+Caret=1,30
+[tools\libutl\libutl.h]
+TopLine=434
+Caret=44,451
+[src\abcp_priv.h]
+TopLine=1
+Caret=1,16
+[..\c-libutl\src\chs.c]
+TopLine=237
+Caret=16,261
+[doc\tech\states.gv]
+TopLine=1
+Caret=15,10
+[src\a2.txt]
+TopLine=1
+Caret=1,8
+[src\a1.txt]
+TopLine=1
+Caret=1,1
