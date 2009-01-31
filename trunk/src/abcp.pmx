@@ -724,3 +724,25 @@ abcToken abcNextToken(abcScanner *scn)
   return T_EOF;
 }
 
+char *abcTokenStart(abcScanner *scn, int strnum)
+{
+  if (strnum < 0 || abc_MAXTOKSTR <= strnum) return NULL;
+  return scn->tok_str[strnum][0];
+}
+
+char *abcTokenEnd(abcScanner *scn, int strnum)
+{
+  if (strnum < 0 || abc_MAXTOKSTR <= strnum) return NULL;
+  return scn->tok_str[strnum][1];
+}
+
+int abcTokenLen(abcScanner *scn, int strnum)
+{
+  int len = 0;
+  if (0 <= strnum && strnum < abc_MAXTOKSTR) {
+    len = scn->tok_str[strnum][1] - scn->tok_str[strnum][0];
+    if (len < 0) len = 0;
+  }
+  return len;
+}
+
