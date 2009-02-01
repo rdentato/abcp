@@ -1,20 +1,48 @@
 digraph G {
+  mode = hier
+  
 	node [shape = ellipse]; LIMBO [style= filled];
 	node [shape = ellipse];
+	LIMBO -> HEADER  ;
 	HEADER -> LIMBO;
 	HEADER -> TUNE ;
-	LIMBO -> HEADER  ;
 	TUNE -> LYRICS ;
 	TUNE -> SYMBOLS ;
-	TUNE -> CHORD;
+	TUNE -> CHORD [style=dashed ];
 	TUNE -> GRACE;
 	TUNE -> LIMBO ;
 	LYRICS -> TUNE ;
 	LYRICS -> LIMBO ;
-	CHORD -> TUNE ;
-	CHORD -> GRACE  ;
+#	CHORD -> TUNE [style=dashed] ;
+#	CHORD -> GRACE [style=dashed] ;
+CHORD -> HISTORY [style=invis] ;
+CHORD -> TEXT [style=invis] ;
 	GRACE -> TUNE ;
-	GRACE -> CHORD  ;
+	GRACE -> CHORD  [style=dashed ] ;
 	SYMBOLS -> TUNE ;
 	SYMBOLS -> LIMBO ;
+	HEADER -> TEXT [style=dashed ];
+	LIMBO -> TEXT  [style=dashed];
+	TUNE -> TEXT [style=dashed];
+	LYRICS -> TEXT [style=dashed];
+	SYMBOLS -> TEXT [style=dashed];
+#	TEXT -> HEADER [style=dashed];
+#	TEXT -> LIMBO [style=dashed] ;
+#	TEXT -> TUNE [style=dashed];
+#	TEXT -> LYRICS [style=dashed];
+#	TEXT -> SYMBOLS [style=dashed];
+
+	HEADER -> HISTORY  [style=dashed];
+	LIMBO -> HISTORY  [style=dashed] ;
+	TUNE -> HISTORY [style=dashed] ;
+	LYRICS -> HISTORY  [style=dashed];
+	SYMBOLS -> HISTORY [style=dashed ] ;
+#	HISTORY -> HEADER [style=dashed];
+#	HISTORY -> LIMBO [style=dashed] ;
+#	HISTORY -> TUNE [style=dashed];
+#	HISTORY -> LYRICS [style=dashed];
+#	HISTORY -> SYMBOLS [style=dashed];
+	
+	overlap=false
+  sep = 1.5
 }

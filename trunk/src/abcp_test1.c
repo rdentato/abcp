@@ -5,7 +5,7 @@
 **   http://creativecommons.org/licenses/BSD/
 */
 
-#define UTL_UNITTEST
+#define UTL_UNITTEST 
 #include "libutl.h"
 
 #include "abcp.h"
