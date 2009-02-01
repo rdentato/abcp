@@ -27,9 +27,11 @@
 #define S_HEADER              0x0003
 #define S_LYRICS              0x0004
 #define S_SYMBOLS             0x0005
-#define S_TUNE                0x0010
-#define S_GRACE               0x0011  /* in grace */
-#define S_CHORD               0x0012  /* in a chord */
+#define S_TEXT                0x0006
+#define S_HISTORY             0x0007
+#define S_TUNE                0x0008
+#define S_GRACE               0x0009
+#define S_CHORD               0x000A
 
 
 /* -- BEGIN TOKENS  */
@@ -74,7 +76,12 @@
 #define T_SYMBOLS             0x1025
 #define T_SYLLABLE            0x1026 
 #define T_LYRICS              0x1027
-#define T_VERSE               0x1028 
+#define T_VERSE               0x1028
+#define T_BEGINTEXT           0x102A
+#define T_ENDTEXT             0x102B
+#define T_BEGINHISTORY        0x102C
+#define T_ENDHISTORY          0x102D
+ 
                                    
 #if 0                              
                                      
@@ -108,9 +115,6 @@
 #define T_DOVLEND             0x004A 
 #define T_DOVLSTART           0x004B 
 
-#define T_BEGINTEXT           0x0050
-#define T_ENDTEXT             0x0051   
-
 #define T_MIDI                0x0052
 #define T_DEFINE              0x0053
 #define T_SETDRUM             0x0054
@@ -134,6 +138,7 @@ typedef struct {
   char  *cur;
   unsigned short state;
   unsigned short nextstate;
+  unsigned short prevstate;
   unsigned short lnumber;
   unsigned short ln_logical;
   unsigned short flags;

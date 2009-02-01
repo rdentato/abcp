@@ -7,7 +7,7 @@
  
 SubDir $(TOP) src ;
 
-Library libabcp :  abcp.pmx  ;    
+Library libabcp :  abcpscan.pmx  ;    
 
 LinkLibraries abcp_test1 : libabcp$(SUFLIB) ;
 Main abcp_test1 : abcp_test1.c  ;
