@@ -9,7 +9,7 @@ X:1
 T:abcm2ps version 3 features
 M:2/4 3/4
 K:C
-a>B [CG] |[1 C C | [ "ultima volta" GC ::|: |[|]]
+a>^B [C_G] |[1 C C | [ "ultima volta" GC ::|: |[|]]
 
 X:2
 %% begintext Hello there
@@ -17,5 +17,5 @@ X:2
              happiness 
              more or less
 %% endtext
-A {[cde]}B
+A {[c^de]} B
  
