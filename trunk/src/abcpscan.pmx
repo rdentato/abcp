@@ -477,7 +477,7 @@ static abcToken abc_tune(abcScanner *scn)
                       settoken(scn,T_INFIELD);
                     break;
                     
-    case "<?=[>(<+=,0-9&->)" :
+    case "<?=[>(<d><*=,0-9&->)" :
     case "[&K(&e\\&b\"\")" :
                     settoken(scn,T_ENDING);
                     break;
@@ -674,7 +674,7 @@ static abcToken abc_grace(abcScanner *scn)
     case "(<+=`>)" :  settoken(scn,T_IGNORE);
                     break;
     
-    case "(&k)" :     settoken(scn,T_WHITESPACE);
+    case "(&k)" :   settoken(scn,T_WHITESPACE);
                     break;
                     
     case "}" :      settoken(scn,T_GRACEEND);
@@ -749,6 +749,13 @@ static abcToken abc_chord(abcScanner *scn)
                     settoken(scn,T_DECORATION);
                     break;
 
+    case "(<?=.>)&((<?=',>)" :
+                    settoken(scn,T_SLURSTART);
+                    break;
+    
+    case "&)" :
+                    settoken(scn,T_SLUREND);
+                    break;
     case "\f&N" :
                     settoken(scn,T_CONTINUE);
                     break;

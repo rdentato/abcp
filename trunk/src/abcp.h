@@ -9,6 +9,9 @@
 #ifndef ABCP_H
 #define ABCP_H
 
+#include <stdio.h>
+#include <assert.h>
+
 /*  
 ** xxxx xxxx xxxx xxxx
 ** \__/
@@ -127,5 +130,33 @@ int abcTokenLen(abcScanner *scn, int strnum);
 #define abcCurState(s) ((s)->state)
 #define abcNextState(s) ((s)->nextstate)
 #define abcLineNumber(s) ((s)->ln_logical)
+
+/********/
+
+typedef unsigned short abcFraction;
+
+#define abcNumerator(x)   (((x) & 0xFF00) >> 8)
+#define abcDenominator(x)  ((x) & 0x00FF)
+abcFraction abc_getfraction(abcScanner *scn,int ndx);
+
+/****** */
+
+/* abcpnote.c */
+
+#define abcNoteFlats(scn)     (abcNoteAccidentals(scn) & 0x000F)
+#define abcNoteSharps(scn)   ((abcNoteAccidentals(scn) & 0x00F0) >> 4)
+#define abcNoteNaturals(scn) ((abcNoteAccidentals(scn) & 0x0F00) >> 8)
+#define abcNoteCourtesyAccidentals(scn) (abcNoteAccidentals(scn) & 0x1000)
+
+unsigned short abcNoteAccidentals(abcScanner *scn);
+
+abcFraction abcNoteDuration(abcScanner *scn);
+abcFraction abcNoteMicrotone(abcScanner *scn);
+unsigned short abcNoteOctave(abcScanner *scn);
+unsigned char abcNotePitch(abcScanner *scn);
+unsigned short abcNoteCents(abcScanner *scn);
+
+unsigned short abcNoteMidi(abcScanner *scn);
+
 
 #endif
