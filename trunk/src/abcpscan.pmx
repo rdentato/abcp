@@ -173,10 +173,9 @@ static void getnewline(abcScanner *scn)
 
 /* **************** */
 
-
 #define settoken(s,t) do { \
     int k;\
-    for ((s)->tok = (t), k = 0; k <= abc_MAXTOKSTR; k++) {\
+    for ((s)->tok = (t), k = 0; k <= abc_PMXCAPT; k++) {\
       (s)->tok_str[k][0] = pmx(Start,k);\
       (s)->tok_str[k][1] = pmx(End,k);\
     } \
@@ -206,7 +205,7 @@ static abcToken abc_lyrics(abcScanner *scn)
                     stategoto(scn,S_LIMBO);
                     break;
                         
-    case "\b&K%%&Kbegintext" :
+    case "\b&K%%&Kbegintext&K(&L)&n" :
                     settoken(scn,T_BEGINTEXT);
                     stategosub(scn,S_TEXT);
                     break;
@@ -829,6 +828,10 @@ static abcToken abc_text(abcScanner *scn)
 
 abcToken abcNextToken(abcScanner *scn)
 {
+  void *memset (void *s, int c, size_t n);
+  
+  memset(scn->tok_str,0, sizeof scn->tok);
+  
   if (scn->nextstate != S_NONE) {
     scn->state = scn->nextstate;
     scn->nextstate = S_NONE;

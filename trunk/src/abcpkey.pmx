@@ -1,0 +1,138 @@
+/* 
+**  (C) by Remo Dentato (rdentato@gmail.com)
+** 
+** This software is distributed under the terms of the BSD license:
+**   http://creativecommons.org/licenses/BSD/
+**   http://opensource.org/licenses/bsd-license.php 
+*/
+
+/*
+  1 (K or V)
+  2  NULL if already parsed, the line, otherwise
+  3 mode 
+  4 explict
+X 5 clef 
+X 6 transpose 
+X 7 octave
+X 8 Tablature 
+  9 Tonic /VoiceID
+X10 Voicename
+X11 Voiceshortname
+X12 Stafflines 
+X13 Middle 
+X14 Stems
+X15 gstems
+X16 space
+X17 staves
+X18 brace
+X bracket
+
+*/
+#include "abcp_priv.h"
+#include "abcp.h"
+
+static void abc_clef(abcScanner *scn, char *start, char *end)
+{
+
+  while (start < end) {
+    switch pmx(start) {
+
+      case "&k" :
+        break;
+       
+      case "clef&K=&K(<+a>)(*<d>)":
+        break;
+        
+      case "t<?|ranspose>&K=&K(&d)" :
+        break;
+        
+      case "o<?|ctave>&K=&K(&d)" :   
+        break;
+        
+      case "tab&K=&K(<+=A-Ga-g,'>)" :
+        break;
+        
+      case "n<?=a>m<?=e>&K=&K(&e\\%q)" :    
+        break;
+        
+      case "s<?|ub|hort>n<?=a>m<?=e>&K=&K(&e\\%q)" :    
+        break;
+        
+      case "stem&K=&K(<|up|u|down|d>)" :    
+        break;
+        
+      case "gstem&K=&K(<|up|u|down|d>)" :    
+        break;
+        
+      case "s<|tafflines>&K=&K(&d)" :    
+        break;
+        
+      case "m<|iddle>&K=&K(<=A-Ga-g>)" :    
+        break;
+        
+      case "sp<?=a>c<?=e>&K=&K(&d)" :    
+        break;
+        
+      case "st<?=a>v<?|es>&K=&K(&d)" :
+        break;
+        
+      case "br<?=a>c<?|es>&K=&K(&d)" :
+        break;
+        
+      case "br<?|ac>k<?|et><?=s>&K=&K(&d)" :
+        break;
+        
+      case "gch<?|ords>&K=&K(&d)" :
+        break;
+        
+      case "<=+&-><d><?d>" :  
+        break;
+        
+      case "(<+a>)<?=->(<*d>)(<?|tab>)" :  
+        break;
+        
+    }
+  }
+}
+
+#define setstring(s,b,f,t) ((s)->tok_str[b][0]=f,(s)->tok_str[b][1]=t)
+
+static void abc_key(abcScanner *scn)
+{
+  char *p, *q;
+  
+  if ((abcToken(scn) != T_FIELD && abcToken(scn) != T_INFIELD)
+       || (*abcTokenStart(scn,1) != 'K'))
+    return;
+  
+  p = abcTokenStart(scn,2);
+  q = abcTokenEnd(scn,2);
+  
+  if (p == NULL || p >= q) return;
+   
+  scn->tok_str[2][0] = NULL; scn->tok_str[2][1] = NULL;
+  
+  switch pmx(p) {
+    case "([A-Ga-g]<?=&#b>)&K" :
+    case "(<|none|hp|Hp|>)&K" :
+      setstring(scn,9,pmx(Start,1),pmx(End,1));
+      break;
+  }
+
+  switch pmx(p) {
+    case "&i(m<?|aj|in>)<?|or>" :
+    case "&i(mix)<?|olydian>"   :
+    case "&i(dor)<?|ian>"       :
+    case "&i(phr)<?|ygian>"     :
+    case "&i(lyd)<?|ian>"       :
+    case "&i(loc)<?|rian>"      :
+    case "&i(ion)<?ian>"        :
+    case "&i(aeo)<?|lian>"      :
+
+      setstring(scn,3,pmx(Start,1),pmx(End,1));
+      break;
+  }
+  
+  abc_clef(scn,p,q);
+}
+
