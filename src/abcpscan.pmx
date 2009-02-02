@@ -173,13 +173,18 @@ static void getnewline(abcScanner *scn)
 
 /* **************** */
 
-int abc_tmp_i;
 
 #define settoken(s,t) do { \
-  for ((s)->tok = (t), abc_tmp_i = 0; abc_tmp_i <= abc_MAXTOKSTR; abc_tmp_i++) {\
-    (s)->tok_str[abc_tmp_i][0] = pmx(Start,abc_tmp_i);\
-    (s)->tok_str[abc_tmp_i][1] = pmx(End,abc_tmp_i);\
-  } } while(utlZero)
+    int k;\
+    for ((s)->tok = (t), k = 0; k <= abc_MAXTOKSTR; k++) {\
+      (s)->tok_str[k][0] = pmx(Start,k);\
+      (s)->tok_str[k][1] = pmx(End,k);\
+    } \
+    if ((s)->tok_str[0][0][0] == '\b')\
+      (s)->tok_str[0][0]++;   \
+    if ((s)->tok_str[0][0] > (s)->tok_str[0][1])\
+      (s)->tok_str[0][1] = (s)->tok_str[0][0] ;  \
+  } while(utlZero)
 
 
 #define stategoto(scn,st)  (((scn)->prevstate = S_NONE), \
@@ -223,7 +228,7 @@ static abcToken abc_lyrics(abcScanner *scn)
                     settoken(scn,T_FIELD);
                     break;
 
-    case "\b&K#(<+S>)(&L)&n" :
+    case "\b&K#(<+S>)&K(&L)&n" :
                     settoken(scn,T_PRAGMA);
                     break;
 
@@ -269,12 +274,12 @@ static abcToken abc_lyrics(abcScanner *scn)
                     break; 
                     
                     
-    case "(<+d>)<=.):>"  :    
+    case "(<+d>)(<=.):>)"  :    
                     settoken(scn,T_VERSE);
                     break; 
       
-    case "(*)" : 
-    case "<?=&->&e\\(<*# \f\b\t\r\n*_&->)(<*=_>)" :
+    case "*" : 
+    case "&e\\(<?=&->)(<*# \f\b\t\r\n*_&->)(<*=_>)" :
                     settoken(scn,T_SYLLABLE);
                     break; 
     
@@ -317,7 +322,7 @@ static abcToken abc_symbols(abcScanner *scn)
                     settoken(scn,T_FIELD);
                     break;
 
-    case "\b&K#(<+S>)(&L)&n" :
+    case "\b&K#(<+S>)&K(&L)&n" :
                     settoken(scn,T_PRAGMA);
                     break;
 
@@ -425,7 +430,7 @@ static abcToken abc_tune(abcScanner *scn)
                     stategoto(scn,S_LIMBO); 
                     break;
                     
-    case "\b&K#(<+S>)(&L)&n" :
+    case "\b&K#(<+S>)&K(&L)&n" :
                     settoken(scn,T_PRAGMA);
                     break;
 
@@ -453,7 +458,7 @@ static abcToken abc_tune(abcScanner *scn)
                     settoken(scn,T_REST);
                     break;
     
-    case "(y)(%F)" :  
+    case "y(%F)" :  
                     settoken(scn,T_SPACER);
                     break;
                     
@@ -502,9 +507,7 @@ static abcToken abc_tune(abcScanner *scn)
                     settoken(scn,T_TIE);
                     break;
     
-    case "&((<+d>)&K:&K(<+d>)&K:&K(<+d>)&K" :
-    case "&((<+d>)&K:&K(<+d>)&K" :
-    case "&((<+d>)&K" :
+    case "&((<+d>)<?=:>(<*d>)<?=:>(<*d>)&K" :
                     settoken(scn,T_TUPLET);
                     break; 
     
@@ -524,7 +527,7 @@ static abcToken abc_tune(abcScanner *scn)
                     settoken(scn,T_SLURSTART);
                     break;
     
-    case "(<?=.>)&)" :
+    case "&)" :
                     settoken(scn,T_SLUREND);
                     break;
     
@@ -582,7 +585,7 @@ static abcToken abc_limbo(abcScanner *scn)
                     stategoto(scn,S_HEADER);
                     break;
                     
-    case "\b&K#(<+S>)(&L)&n" :
+    case "\b&K#(<+S>)&K(&L)&n" :
                     settoken(scn,T_PRAGMA);
                     break;
                     
@@ -601,6 +604,9 @@ static abcToken abc_limbo(abcScanner *scn)
     
     case "()&K(&l)&n" :
                     settoken(scn,T_TEXT);
+                    break;
+
+    case "(&K)&n" : settoken(scn,T_WHITESPACE);
                     break;
   }
   
@@ -636,7 +642,7 @@ static abcToken abc_header(abcScanner *scn)
                     settoken(scn,T_EXTFIELD);
                     break;
                     
-    case "\b&K#(<+S>)(&L)&n" :
+    case "\b&K#(<+S>)&K(&L)&n" :
                     settoken(scn,T_PRAGMA);
                     break;
                     

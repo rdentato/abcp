@@ -82,46 +82,7 @@
 #define T_BEGINHISTORY        0x102C
 #define T_ENDHISTORY          0x102D
  
-                                   
-#if 0                              
-                                     
-#define T_INVREST             0x1012 
-#define T_REPEAT              0x101D 
-#define T_MULTIREST           0x1013 
-#define T_DUPMESURE           0x0038 
-                                     
-#define T_TIE_DOT             0x0037 
-#define T_SYM_BLANK           0x003A 
-#define T_SYM_BAR             0x003B 
-#define T_SYM_VERSE           0x003C 
-#define T_SYM_CONTINUE        0x003D 
-#define T_SYM_GCHORD          0x003E 
-#define T_SYM_DECORATION      0x003F 
-#define T_SYM_ANNOTATION      0x0040 
-#define T_ACCIACATURA         0x001E 
-#define T_STRING              0x0022 
-#define T_STRINGUNF           0x0023 
-#define T_STARTLINE           0x0026 
-#define T_FIELDB              0x0027 
-#define T_INCLUDE             0x0029 
-#define T_INCLUDE_EOF         0x002A 
-                                     
-#define T_DOTLEFT2            0x0042 
-#define T_DOTRIGHT2           0x0043 
-#define T_LAST                0x0044 
-                                     
- 
-#define T_DOVERLAY            0x0049 
-#define T_DOVLEND             0x004A 
-#define T_DOVLSTART           0x004B 
 
-#define T_MIDI                0x0052
-#define T_DEFINE              0x0053
-#define T_SETDRUM             0x0054
-                       
-#define T_INTERNALERR         0xF000
-#endif
-   
 /* -- END TOKENS  */
 
 
