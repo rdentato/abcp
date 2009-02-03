@@ -98,7 +98,7 @@
 
 typedef  unsigned short abcToken; 
 
-#define abc_MAXTOKSTR   22
+#define abc_MAXTOKSTR   10
 #define abc_PMXCAPT     10
 
 typedef struct {
@@ -154,6 +154,7 @@ abcFraction abc_getfraction(abcScanner *scn,int ndx);
 #define abcNoteFlats(scn)     (abcNoteAccidentals(scn) & 0x000F)
 #define abcNoteSharps(scn)   ((abcNoteAccidentals(scn) & 0x00F0) >> 4)
 #define abcNoteNaturals(scn) ((abcNoteAccidentals(scn) & 0x0F00) >> 8)
+
 #define abcNoteCourtesyAccidentals(scn) (abcNoteAccidentals(scn) & 0x1000)
 
 unsigned short abcNoteAccidentals(abcScanner *scn);
@@ -200,11 +201,12 @@ char *abcKVStringStart(abcScanner *scn,int str, char kv);
 int abcKVStringLen(abcScanner *scn,int str, char kv);
 short abcKVParm(abcScanner *scn,int p,char kv);
 short abcKVTranspose(abcScanner *scn, char kv);
+char *abcKVExp(abcScanner *scn,char kv);
 
 #define abcKeyTonicStart(s)        abcKVStringStart(s,ABC_Tonic,'K')        
 #define abcKeyTonicLen(s)          abcKVStringLen(s,ABC_Tonic,'K')                                          
 #define abcKeyClefStart(s)         abcKVStringStart(s,ABC_Clef,'K')           
-#define abcKeyClefLen(s)           abcKVStringLen(s,ABC_Tonic,'K')
+#define abcKeyClefLen(s)           abcKVStringLen(s,ABC_Clef,'K')
                                    
 #define abcKeyMode(s)              abcKVParm(s,ABC_Mode,'K')
 #define abcKeyStafflines(s)        abcKVParm(s,ABC_Stafflines,'K')
@@ -224,6 +226,7 @@ short abcKVTranspose(abcScanner *scn, char kv);
 #define abcKeyVolume(s)            abcKVParm(s,ABC_Volume,'K')            
 #define abcKeyLongbar(s)           abcKVParm(s,ABC_Longbar,'K')           
 #define abcKeyGchord(s)            abcKVParm(s,ABC_Gchord,'K')
+#define abcKeyAccidentals(s)       abcKVExp(s,'K')
             
 #define abcKeyTranspose(s)         abcKVTranspose(s,'K')
 
@@ -234,7 +237,7 @@ short abcKVTranspose(abcScanner *scn, char kv);
 #define abcVoiceShortNameStart(s)    abcKVStringStart(s,ABC_ShortName,'V')           
 #define abcVoiceShortNameLen(s)      abcKVStringLen(s,ABC_ShortName,'V')                                   
 #define abcVoiceClefStart(s)         abcKVStringStart(s,ABC_Clef,'V')           
-#define abcVoiceClefLen(s)           abcKVStringLen(s,ABC_Tonic,'V')
+#define abcVoiceClefLen(s)           abcKVStringLen(s,ABC_Clef,'V')
 #define abcVoiceMode(s)              abcKVParm(s,ABC_Mode,'V')
 #define abcVoiceStafflines(s)        abcKVParm(s,ABC_Stafflines,'V')
 #define abcVoiceMiddle(s)            abcKVParm(s,ABC_Middle,'V')
@@ -253,6 +256,7 @@ short abcKVTranspose(abcScanner *scn, char kv);
 #define abcVoiceVolume(s)            abcKVParm(s,ABC_Volume,'V')            
 #define abcVoiceLongbar(s)           abcKVParm(s,ABC_Longbar,'V')           
 #define abcVoiceGchord(s)            abcKVParm(s,ABC_Gchord,'V')
+#define abcVoiceAccidentals(s)       abcKVExp(s,'V')
             
 #define abcVoiceTranspose(s)         abcKVTranspose(s,'V')
              

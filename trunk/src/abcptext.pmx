@@ -1,0 +1,63 @@
+/*
+**  (C) by Remo Dentato (rdentato@gmail.com)
+**
+** This software is distributed under the terms of the BSD license:
+**   http://creativecommons.org/licenses/BSD/
+**   http://opensource.org/licenses/bsd-license.php
+*/
+
+
+char *abcAnnotationTextStart(abcScanner *scn)
+{
+  if (abcToken(scn) != T_ANNOTATION) return utlEmptyString;
+}
+
+int abcAnnotationTextLen(abcScanner *scn)
+{
+  if (abcToken(scn) != T_ANNOTATION) return 0;
+}
+
+int abcAnnotationPosX(abcScanner *scn)
+{
+  if (abcToken(scn) != T_ANNOTATION) return 0;
+}
+
+int abcAnnotationPosY(abcScanner *scn)
+{
+  if (abcToken(scn) != T_ANNOTATION) return 0;
+}
+
+char abcAnnotationPosType(abcScanner *scn)
+{
+  if (abcToken(scn) != T_ANNOTATION) return '\0';
+}
+
+/******/
+
+char *abcCommentStart(abcScanner *scn)
+{
+}
+
+int abcCommentLen(abcScanner *scn)
+{
+}
+
+/*****/
+
+char *abcTextStart(abcScanner *scn)
+{
+}
+
+int abcTextLen(abcScanner *scn)
+{
+}
+
+/*****/
+
+char *abcTextStart(abcScanner *scn)
+{
+}
+
+int abcTextLen(abcScanner *scn)
+{
+}

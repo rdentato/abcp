@@ -45,6 +45,7 @@ int main(int argc, char *argv[])
                  printf("KEY:");
                  printf(" %.*s", abcKeyTonicLen(scn), abcKeyTonicStart(scn));
                  printf(" %c", abcKeyMode(scn));
+                 printf(" |%s|", abcKeyAccidentals(scn));
                  printf(" t=%d", abcKeyTranspose(scn));
                  printf("\n");
                  break;
