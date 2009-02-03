@@ -38,6 +38,23 @@ int main(int argc, char *argv[])
              printf("\n");
              break;
              
+        case T_INFIELD:
+        case T_FIELD:
+             switch (*abcTokenStart(scn,1)) {
+               case 'K' : 
+                 printf("KEY:");
+                 printf(" %.*s", abcKeyTonicLen(scn), abcKeyTonicStart(scn));
+                 printf(" %c", abcKeyMode(scn));
+                 printf(" t=%d", abcKeyTranspose(scn));
+                 printf("\n");
+                 break;
+                 
+              default:
+                 printf("%.*s", abcTokenLen(scn,0),abcTokenStart(scn,0));
+                 if (tok == T_INFIELD) printf("\n");
+             }
+             break; 
+        
         default:
              printf("%.*s\n", abcTokenLen(scn,0),abcTokenStart(scn,0));
       }

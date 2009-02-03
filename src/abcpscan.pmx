@@ -8,10 +8,7 @@
 
 
 #include "abcp_priv.h"
-#include "abcp.h"
 #include <assert.h>
-
-static chs_t tmpbuf=NULL;
 
 abcScanner *abc_newscanner(char *text,char how)
 {
@@ -31,6 +28,7 @@ abcScanner *abc_newscanner(char *text,char how)
     scn->file = NULL;
     scn->line = NULL;
     scn->cur = NULL;
+    scn->tmpbuf = NULL;
 
     switch(how) {
       case 'F' : scn->file = f; break; 
@@ -40,7 +38,6 @@ abcScanner *abc_newscanner(char *text,char how)
         
     scn->pos = scn->abc;
   }
-  tmpbuf = chsFree(tmpbuf);
   return scn;
 }
 
@@ -49,6 +46,8 @@ abcScanner *abcFreeScanner(abcScanner *scn)
 {
   if (scn) {
     if (scn->file) fclose(scn->file);
+    if (scn->line) chsFree(scn->line);
+    if (scn->tmpbuf) chsFree(scn->tmpbuf);
     free(scn);
   }
   return NULL;
@@ -84,7 +83,7 @@ static void nextline(abcScanner *scn)
   if (l > 0) scn->lnumber++;
 }
 
-int chk_tocontinue(char *s)
+static int chk_tocontinue(char *s)
 {
   if (*s == '\b') s++;
   while (*s && isspace(*s)) s++;
@@ -457,8 +456,10 @@ static abcToken abc_tune(abcScanner *scn)
                     settoken(scn,T_REST);
                     break;
     
-    case "y(%F)" :  
-                    settoken(scn,T_SPACER);
+    case "y(%F)" :  settoken(scn,T_SPACER);
+                    break;
+
+    case "<+=/>" :  settoken(scn,T_MEASUREREPEAT);
                     break;
                     
     case "+(<+!=+ \f\t\n\r|[:]>)+":
@@ -831,6 +832,7 @@ abcToken abcNextToken(abcScanner *scn)
   void *memset (void *s, int c, size_t n);
   
   memset(scn->tok_str,0, sizeof scn->tok);
+  abcClrFlag(scn,ABC_F_ONETIMERS);
   
   if (scn->nextstate != S_NONE) {
     scn->state = scn->nextstate;
@@ -861,20 +863,24 @@ abcToken abcNextToken(abcScanner *scn)
 
 char *abcTokenStart(abcScanner *scn, int strnum)
 {
-  if (strnum < 0 || abc_MAXTOKSTR <= strnum) return NULL;
+  if (strnum < 0 || abc_MAXTOKSTR <= strnum || scn->tok_str[strnum][0] == NULL ||
+      (scn->tok_str[strnum][0] >= scn->tok_str[strnum][1]))
+    return utlEmptyString;
   return scn->tok_str[strnum][0];
 }
 
 char *abcTokenEnd(abcScanner *scn, int strnum)
 {
-  if (strnum < 0 || abc_MAXTOKSTR <= strnum) return NULL;
+  if (strnum < 0 || abc_MAXTOKSTR <= strnum || scn->tok_str[strnum][0] == NULL ||
+      (scn->tok_str[strnum][0] >= scn->tok_str[strnum][1]))
+    return utlEmptyString;
   return scn->tok_str[strnum][1];
 }
 
 int abcTokenLen(abcScanner *scn, int strnum)
 {
   int len = 0;
-  if (0 <= strnum && strnum < abc_MAXTOKSTR) {
+  if (0 <= strnum && strnum < abc_MAXTOKSTR && scn->tok_str[strnum][0]) {
     len = scn->tok_str[strnum][1] - scn->tok_str[strnum][0];
     if (len < 0) len = 0;
   }

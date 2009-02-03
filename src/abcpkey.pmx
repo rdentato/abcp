@@ -6,18 +6,23 @@
 **   http://opensource.org/licenses/bsd-license.php 
 */
 
+#include "abcp_priv.h"
+
 /*
   1 (K or V)
-  2  NULL if already parsed, the line, otherwise
+  2 the field line
+  
   3 mode 
-  4 explict
 X 5 clef 
-X 6 transpose 
-X 7 octave
 X 8 Tablature 
   9 Tonic /VoiceID
 X10 Voicename
 X11 Voiceshortname
+
+  4 explict
+
+X 6 transpose 
+X 7 octave
 X12 Stafflines 
 X13 Middle 
 X14 Stems
@@ -25,114 +30,307 @@ X15 gstems
 X16 space
 X17 staves
 X18 brace
-X bracket
+X19 bracket
+
+program x y
+merge  		  causes the voice to be drawn on the same staff as the preceding one.
+tune n		  shift the pitch by n/256 semitones (positive or negative).
+mute		    turn this voice off when playing (useful when you are working on an 
+pan n		    Set the stereo position of this voice.  n is in the range from -128
+volume n	  Set the volume for this voice in the range n=0 to 128.
+bracketon	  Bracket this voice with the following one(s).
+bracketoff	Close the bracket.
+longbaron  	Extend all bar lines from this voice down through the following ones.
+longbaroff	No extended bar lines from this voice on.
 
 */
-#include "abcp_priv.h"
-#include "abcp.h"
+
+#define MAXPARMS 20
+static short parms[MAXPARMS];
+          
+static char exp[8];
+
+#define MAXTABSTRINGS 20 
+static short tablature[MAXTABSTRINGS];
+           
+#define setstring(s,b,f,t) ((s)->tok_str[b][0]=f,(s)->tok_str[b][1]=t)
+
+
+static void settablature(char *start, char *end)
+{
+  int k;
+  for (k = 0; k<MAXTABSTRINGS; k++) {
+    tablature[k] = 0;
+  }
+}
 
 static void abc_clef(abcScanner *scn, char *start, char *end)
 {
-
+  _dbgmsg("XXXX\n");
   while (start < end) {
     switch pmx(start) {
 
       case "&k" :
+      case "%e\\&B[]" :
         break;
        
-      case "clef&K=&K(<+a>)(*<d>)":
+      case "clef&K=&K(<+=A-Za-z&-><*d><?|tab>)":
+        setstring(scn,ABC_Clef,pmx(Start,1),pmx(End,1));
         break;
         
-      case "t<?|ranspose>&K=&K(&d)" :
+      case "tab&K=&K(<+=^_A-Ga-g,'>)" :
+        settablature(pmx(Start,1),pmx(End,1));
         break;
         
-      case "o<?|ctave>&K=&K(&d)" :   
+      case "n<?=a>m<?=e>&K=&K&e\\(%q)" :    
+        setstring(scn,ABC_Name,pmx(Start,1)+1,pmx(End,1)-1);
         break;
         
-      case "tab&K=&K(<+=A-Ga-g,'>)" :
-        break;
-        
-      case "n<?=a>m<?=e>&K=&K(&e\\%q)" :    
+      case "n<?=a>m<?=e>&K=&K(<+S>)" :    
+        setstring(scn,ABC_Name,pmx(Start,1),pmx(End,1));
         break;
         
       case "s<?|ub|hort>n<?=a>m<?=e>&K=&K(&e\\%q)" :    
+        setstring(scn,ABC_ShortName,pmx(Start,1)+1,pmx(End,1)-1);
         break;
         
-      case "stem&K=&K(<|up|u|down|d>)" :    
+      case "s<?|ub|hort>n<?=a>m<?=e>&K=&K(&e\\%q)" :    
+        setstring(scn,ABC_ShortName,pmx(Start,1),pmx(End,1));
         break;
         
-      case "gstem&K=&K(<|up|u|down|d>)" :    
+      case "stem&K=&K&i(<|up|u|down|d>)" :    
+        parms[ABC_Stems] = tolower(*pmx(Start,1));
         break;
         
-      case "s<|tafflines>&K=&K(&d)" :    
-        break;
-        
-      case "m<|iddle>&K=&K(<=A-Ga-g>)" :    
+      case "gstem&K=&K&i(<|up|u|down|d>)" :    
+        parms[ABC_Gstems] = tolower(*pmx(Start,1));
         break;
         
       case "sp<?=a>c<?=e>&K=&K(&d)" :    
+        parms[ABC_Space] = atoi(pmx(Start,1));
         break;
         
       case "st<?=a>v<?|es>&K=&K(&d)" :
+        parms[ABC_Staves] = atoi(pmx(Start,1));
         break;
         
       case "br<?=a>c<?|es>&K=&K(&d)" :
+        parms[ABC_Brace] = atoi(pmx(Start,1));
+        break;
+        
+         
+      case "br<?|ac>k<?|et>o(<|n|ff)" :
+        parms[ABC_Bracket] = *pmx(Start,1) == 'n' ?256 : -1;
         break;
         
       case "br<?|ac>k<?|et><?=s>&K=&K(&d)" :
+        parms[ABC_Bracket] = atoi(pmx(Start,1));
+        break;
+
+      case "program&K(&d)&K(&D)" :
+        if (abcTokenLen(scn,1) == 0) {
+          parms[ABC_Program] = atoi(pmx(Start,1));
+        } else {
+          parms[ABC_ProgramChannel] = atoi(pmx(Start,1));
+          parms[ABC_Program] = atoi(pmx(Start,2));
+        }
+        break;
+       
+       case "merge" :
+         parms[ABC_Merge] = 'y';
+         break;
+         
+       case "mute" :
+         parms[ABC_Mute] = 'y';
+         break;
+         
+       case "tune&K(&d)" :
+         parms[ABC_Tune] = atoi(pmx(Start,1));
+         break;
+         
+       case "pan&K(&d)" :
+         parms[ABC_Pan] = atoi(pmx(Start,1));
+         break;
+         
+       case "volume&K(&d)" :
+         parms[ABC_Volume] = atoi(pmx(Start,1));
+         break;
+
+       case "longbaro(<|n|ff>)" :
+         parms[ABC_Longbar] = *pmx(Start,1) == 'n'? 'y' : 'n';
+         break;
+        
+      case "gch<?|ords>&K=&K(<=w>)<*S>" :
+        switch (*pmx(Start,1)) {
+          case '0': case 'n' : case 'N' :
+            parms[ABC_Gchord] = 'n'; break;
+          case '1': case 'y' : case 'Y' :
+            parms[ABC_Gchord] = 'y'; break;
+        }
+        break;
+      
+      case "t<?|ranspose>&K=&K(&d)" :
+        parms[ABC_Transpose] = atoi(pmx(Start,1));
         break;
         
-      case "gch<?|ords>&K=&K(&d)" :
+      case "o<?|ctave>&K=&K(&d)" :   
+        parms[ABC_Octave] = atoi(pmx(Start,1));
+        break;
+        
+      case "s<|tafflines>&K=&K(&d)" :    
+        parms[ABC_Stafflines] = atoi(pmx(Start,1));
+        break;
+        
+      case "m<|iddle>&K=&K(<=A-Ga-g>)" :    
+        parms[ABC_Middle] = *pmx(Start,1);
         break;
         
       case "<=+&-><d><?d>" :  
+        parms[ABC_Transpose] = atoi(pmx(Start,0));
         break;
         
-      case "(<+a>)<?=->(<*d>)(<?|tab>)" :  
+      case "(<|up|down|u|d>)" :
+        parms[ABC_Stems] = tolower(*pmx(Start,1));
+        break;
+        
+      case "(<+=A-Za-z&-><*d><?|tab>)" :
+        setstring(scn,ABC_Clef,pmx(Start,1),pmx(End,1));
+        break;
+        
+      case "<.>" :
         break;
         
     }
   }
 }
 
-#define setstring(s,b,f,t) ((s)->tok_str[b][0]=f,(s)->tok_str[b][1]=t)
+#define returnifnot(s,c) if ((abcToken(s) != T_FIELD && \
+                              abcToken(scn) != T_INFIELD) || \
+                             (*abcTokenStart(scn,1) != c)) \
+                           return
 
 static void abc_key(abcScanner *scn)
 {
   char *p, *q;
+  int k;
   
-  if ((abcToken(scn) != T_FIELD && abcToken(scn) != T_INFIELD)
-       || (*abcTokenStart(scn,1) != 'K'))
-    return;
+  returnifnot(scn,'K');
   
   p = abcTokenStart(scn,2);
   q = abcTokenEnd(scn,2);
   
-  if (p == NULL || p >= q) return;
+  if (p == NULL || p >= q || abcTestFlag(scn,ABC_F_CLEFSCANNED)) return;
    
-  scn->tok_str[2][0] = NULL; scn->tok_str[2][1] = NULL;
+  abcSetFlag(scn,ABC_F_CLEFSCANNED);
+  for (k = 0; k<MAXTABSTRINGS; k++) tablature[k] = 0;
+  for (k = 0; k<8; k++) exp[k] = ' ';
+  exp[7] = '\0'; 
+  for (k = 0; k<MAXPARMS; k++) parms[k] = 0;
   
   switch pmx(p) {
-    case "([A-Ga-g]<?=&#b>)&K" :
+    case "(<=A-Ga-g><?=&#b>)&K" :
     case "(<|none|hp|Hp|>)&K" :
-      setstring(scn,9,pmx(Start,1),pmx(End,1));
+      setstring(scn,ABC_Tonic,pmx(Start,1),pmx(End,1));
       break;
   }
 
   switch pmx(p) {
-    case "&i(m<?|aj|in>)<?|or>" :
-    case "&i(mix)<?|olydian>"   :
-    case "&i(dor)<?|ian>"       :
-    case "&i(phr)<?|ygian>"     :
-    case "&i(lyd)<?|ian>"       :
-    case "&i(loc)<?|rian>"      :
-    case "&i(ion)<?ian>"        :
-    case "&i(aeo)<?|lian>"      :
+    case "&imix<?|olydian>&K"  : parms[ABC_Mode] = 'X';   break;
+    case "&imaj<?|or>&K"       : parms[ABC_Mode] = 'M';   break;
+    case "&imin<?|or>&K"       : parms[ABC_Mode] = 'N';   break;
+    case "&idor<?|ian>&K"      : parms[ABC_Mode] = 'D';   break;
+    case "&iphr<?|ygian>&K"    : parms[ABC_Mode] = 'P';   break;
+    case "&ilyd<?|ian>&K"      : parms[ABC_Mode] = 'Y';   break;
+    case "&iloc<?|rian>&K"     : parms[ABC_Mode] = 'O';   break;
+    case "&iion<?ian>&K"       : parms[ABC_Mode] = 'I';   break;
+    case "&iaeo<?|lian>&K"     : parms[ABC_Mode] = 'A';   break;
+    case "M&K"                 : parms[ABC_Mode] = 'M';   break;
+    case "m&K"                 : parms[ABC_Mode] = 'N';   break;
+  }
+  
+  switch pmx(p) {
+    case "&iexp&K" :  break;
+  }
+  
+  k = 1;
+  while (k) {
+    switch pmx(p) {
+      case "(<+=^_=>)(<=A-Ga-g>)&K" :
+        k = tolower(*pmx(Start,2))-'a';
+        switch (*pmx(Start,1)) {
+          case '=' : exp[k] = 'n';  break;
+          case '_' : exp[k] = (pmx(Len,1) > 1) ? 'F' : 'f';  break;
+          case '^' : exp[k] = (pmx(Len,1) > 1) ? 'S' : 's';  break;
+        }
+        k = 1;
+        break;
+        
+      default: k = 0;
+    }
+  }
+  
+  abc_clef(scn,p,q);
+}
 
-      setstring(scn,3,pmx(Start,1),pmx(End,1));
+#if 0
+/*
+static void abc_voice(abcScanner *scn)
+{
+  char *p, *q;
+  
+  returnifnot(scn,'V');
+  
+  p = abcTokenStart(scn,2);
+  q = abcTokenEnd(scn,2);
+  
+  if (p == NULL || p >= q || abcTestFlag(scn,ABC_F_CLEFSCANNED)) return;
+   
+  abcSetFlag(scn,ABC_F_CLEFSCANNED);
+  
+  switch pmx(p) {
+    case "(<+S>)&K" :
+      setstring(scn,ABC_K_VoiceId,pmx(Start,1),pmx(End,1));
+      break;
+  }
+  
+  switch pmx(p) {
+    case "(&q)&K" :
+      setstring(scn,ABC_K_Name,pmx(Start,1)+1,pmx(End,1)-1);
       break;
   }
   
   abc_clef(scn,p,q);
 }
+*/
+#endif 
+
+char *abcKVStringStart(abcScanner *scn,int str, char kv)
+{
+  returnifnot(scn,kv) utlEmptyString;
+  if (!abcTestFlag(scn,ABC_F_CLEFSCANNED)) abc_key(scn);
+  return abcTokenStart(scn,str);
+}
+
+int abcKVStringLen(abcScanner *scn,int str,char kv)
+{
+  returnifnot(scn,kv) 0;
+  if (!abcTestFlag(scn,ABC_F_CLEFSCANNED)) abc_key(scn);
+  return abcTokenLen(scn,str);
+}
+
+short abcKVParm(abcScanner *scn,int p,char kv)
+{
+  returnifnot(scn,kv) 0;
+  if (!abcTestFlag(scn,ABC_F_CLEFSCANNED)) abc_key(scn);
+  return parms[p];
+}
+
+short abcKVTranspose(abcScanner *scn,char kv)
+{
+  returnifnot(scn,kv) 0;
+  if (!abcTestFlag(scn,ABC_F_CLEFSCANNED)) abc_key(scn);
+  return parms[ABC_Transpose]+parms[ABC_Octave]*12;
+}
+
+           
 
