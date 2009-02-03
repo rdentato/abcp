@@ -12,4 +12,6 @@ Library libabcp :  abcpscan.pmx abcpnote.c abcpkey.pmx abcpcommon.c ;
 LinkLibraries abcp_test1 : libabcp$(SUFLIB) ;
 Main abcp_test1 : abcp_test1.c  ;
 
+LinkLibraries abcpdump : libabcp$(SUFLIB) ;
+Main abcpdump : abcpdump.c  ;
 

@@ -1,0 +1,2 @@
+V:2 snm="xxx" name="pp"
+A/ ^b2/3 (=)C ^3/4d  

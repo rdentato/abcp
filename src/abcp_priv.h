@@ -10,7 +10,7 @@
 #define ABCP_PRIV_H
 
 #include "libutl.h"
-#include <ctype.h>
 #include "abcp.h"
+#include <ctype.h>
 
 #endif
