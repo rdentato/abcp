@@ -289,7 +289,7 @@ static abcToken abc_lyrics(abcScanner *scn)
 }
 
 static abcToken abc_symbols(abcScanner *scn)
-{
+{ 
   skip_token:
   switch pmx(scn->cur) {
 
