@@ -22,10 +22,13 @@ debug: FORCE
 profile: FORCE
 	cd src ; make profile
 
-clean:
+clean: FORCE
 	cd src ; make clean
+	
+allclean: clean	
+	$(RM) $(UTL)$(S)*
 
 tools: FORCE
-	$(CP) ../c-libutl/dist/* tools/libutl 
+	$(CP) ..$(S)c-libutl$(S)dist$(S)* $(UTL)
  
 FORCE: 

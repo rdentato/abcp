@@ -6,28 +6,16 @@
 #   http://opensource.org/licenses/bsd-license.php
 #
 
-TOP=../
+TOP=../../
 
 include $(TOP)config.mk
 
-LIBSRC = abcpscan.pmx abcpnote.c abcpkey.pmx abcpcommon.c
-LIBHDR = abcp.h  abcp_priv.h 
-LIBOBJ = abcpscan$(_OBJ) abcpnote$(_OBJ) abcpkey$(_OBJ) abcpcommon$(_OBJ)
-
-$(LIBNAME) : $(DIST)$(S)abcp.h $(LIBOBJ) 
-	$(AR) $@ $(LIBOBJ)
-	$(CP) $@ $(DIST)
-
-$(DIST)$(S)abcp.h: abcp.h
-	$(CP) abcp.h $(DIST)
-
-$(LIBSRC) : abcp.h
+abcdump$(_EXE): abcdump$(_OBJ)
+	$(LN)$@ abcdump$(_OBJ) -labcp 
 
 clean:
-	$(RM) $(DIST)$(S)abcp.h
-	$(RM) $(LIBNAME)
-	$(RM) $(DIST)$(S)$(LIBNAME)
-	$(RM) $(LIBOBJ)
+	$(RM) abcdump$(_EXE)
+	$(RM) abcdump$(_OBJ)
 	$(RM) gmon.out
 
 include $(TOP)targets.mk

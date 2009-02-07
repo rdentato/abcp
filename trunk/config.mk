@@ -6,6 +6,7 @@
 #   http://opensource.org/licenses/bsd-license.php
 #
 
+###############
 
 SYS=LINUX
 
@@ -15,7 +16,7 @@ endif
 
 #SYS=MINGW
 
-################
+###############
 
 _LIB=.a
 _OBJ=.o
@@ -39,6 +40,8 @@ DIST=$(TOP)dist
 LIBNAME=libabcp$(_LIB)
 CHKLIB=$(DIST)$(S)$(LIBNAME)$(_LIB)
 UTL=$(TOP)tools$(S)libutl
+LIBUTL=$(UTL)/libutl$(_LIB)
+
 PMX2C=$(UTL)$(S)pmx2c
 
 CFLAGS=-I. -I$(DIST) -I$(UTL) -Wall $(CCOPTS)

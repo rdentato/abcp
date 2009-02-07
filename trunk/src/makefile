@@ -15,7 +15,7 @@ LIBHDR = abcp.h  abcp_priv.h
 LIBOBJ = abcpscan$(_OBJ) abcpnote$(_OBJ) abcpkey$(_OBJ) abcpcommon$(_OBJ)
 
 $(LIBNAME) : $(DIST)$(S)abcp.h $(LIBOBJ) 
-	$(AR) $@ $(LIBOBJ)
+	$(AR) $@ $(LIBOBJ) $(UTL)/*$(_OBJ)
 	$(CP) $@ $(DIST)
 
 $(DIST)$(S)abcp.h: abcp.h
