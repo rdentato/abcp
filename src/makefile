@@ -10,9 +10,11 @@ TOP=../
 
 include $(TOP)config.mk
 
-LIBSRC = abcpscan.pmx abcpnote.c abcpkey.pmx abcpcommon.c
+LIBSRC = abcpscan.pmx abcpnote.c abcpkey.pmx abcpcommon.c \
+         abcptext.pmx
 LIBHDR = abcp.h  abcp_priv.h 
-LIBOBJ = abcpscan$(_OBJ) abcpnote$(_OBJ) abcpkey$(_OBJ) abcpcommon$(_OBJ)
+LIBOBJ = abcpscan$(_OBJ) abcpnote$(_OBJ) abcpkey$(_OBJ) abcpcommon$(_OBJ) \
+         abcptext$(_OBJ)
 
 $(LIBNAME) : $(DIST)$(S)abcp.h $(LIBOBJ) 
 	$(AR) $@ $(LIBOBJ) $(UTL)/*$(_OBJ)

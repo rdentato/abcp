@@ -1,5 +1,5 @@
 [Config]
-Compilator.FileName=C:\Programmi\PSPad editor\Script\mingw_jam.bat
+Compilator.FileName=D:\0_Proj\abcp\mk.bat
 Compilator.PSPar=%ProjectDir% %Input%
 Compilator.DefaultDir=%Dir%
 Compilator.SaveAll=0
@@ -16,17 +16,25 @@ FileFormat=0
 ProjectFilesOnly=0
 [Project tree]
 abcp
-	+Folder5
-		Jamfile
-		Jamrules
-	+src
-		src\abcp.h
-		src\abcpscan.pmx
-		src\Jamfile
-		src\abcp_test1.c
-		src\abcpnote.c
-		src\abcpcommon.c
-		src\abcp_priv.h
+	+abcp
+		+examples
+			+abcdump
+				examples\abcdump\makefile
+				examples\abcdump\abcdump.c
+		+src
+			src\abcptext.pmx
+			src\abcpscan.pmx
+			src\abcpnote.c
+			src\abcpkey.pmx
+			src\abcpdump.c
+			src\abcpcommon.c
+			src\abcp_priv.h
+			src\abcp.h
+			src\makefile
+		targets.mk
+		mk.bat
+		makefile
+		config.mk
 [Open project files]
 0=src\abcpscan.pmx
 1=src\abcpkey.pmx
@@ -37,17 +45,18 @@ abcp
 6=src\a5.txt
 7=src\a6.txt
 8=src\abcptext.pmx
+9=examples\abcdump\makefile
 [Selected Project Files]
 Main=
-Selected=src\abcptext.pmx
+Selected=src\abcpscan.pmx
 [src\abcpscan.pmx]
 TopLine=289
-Caret=41,291
+Caret=3,292
 [src\abcpkey.pmx]
 TopLine=1
 Caret=1,1
 [src\abcpdump.c]
-TopLine=44
+TopLine=80
 Caret=1,114
 [src\abcp.h]
 TopLine=94
@@ -66,4 +75,7 @@ TopLine=1
 Caret=1,3
 [src\abcptext.pmx]
 TopLine=29
-Caret=2,38
+Caret=2,42
+[examples\abcdump\makefile]
+TopLine=1
+Caret=27,13
