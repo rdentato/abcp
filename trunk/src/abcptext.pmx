@@ -42,7 +42,7 @@ int abcCommentLen(abcScanner *scn)
 {
 }
 
-/*****/
+/*****/ 
 
 char *abcTextStart(abcScanner *scn)
 {

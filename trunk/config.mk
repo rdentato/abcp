@@ -5,12 +5,11 @@
 #   http://creativecommons.org/licenses/BSD/
 #   http://opensource.org/licenses/bsd-license.php
 #
-
 ###############
 
 SYS=LINUX
 
-ifeq ($(OSTYPE),msys)
+ifneq "$(COMSPEC)" ""
  SYS=MINGW
 endif
 

@@ -10,7 +10,7 @@ TOP=../../
 
 include $(TOP)config.mk
 
-abcdump$(_EXE): abcdump$(_OBJ)
+abcdump$(_EXE): $(CHKLIB) abcdump$(_OBJ)
 	$(LN)$@ abcdump$(_OBJ) -labcp 
 
 clean:
