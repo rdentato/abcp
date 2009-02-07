@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <assert.h>
+#include <math.h>
 
 /*  
 ** xxxx xxxx xxxx xxxx
@@ -260,5 +261,15 @@ char *abcKVExp(abcScanner *scn,char kv);
             
 #define abcVoiceTranspose(s)         abcKVTranspose(s,'V')
              
+/* abcptext.c */
+
+char *abcAnnotationTextStart(abcScanner *scn);
+int abcAnnotationTextLen(abcScanner *scn);
+float abcAnnotationPosX(abcScanner *scn);
+float abcAnnotationPosY(abcScanner *scn);
+char abcAnnotationPos(abcScanner *scn);
+char *abcCommentStart(abcScanner *scn);
+int abcCommentLen(abcScanner *scn);
+int abcCommentInline(abcScanner *scn);
 
 #endif

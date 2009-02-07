@@ -11,54 +11,68 @@
 char *abcAnnotationTextStart(abcScanner *scn)
 {
   if (abcToken(scn) != T_ANNOTATION) return utlEmptyString;
+  if (abcTokenLen(scn,4) == 0) return utlEmptyString;
+  return abcTokenStart(scn,4);
 }
 
 int abcAnnotationTextLen(abcScanner *scn)
 {
   if (abcToken(scn) != T_ANNOTATION) return 0;
+  return abcTokenLen(scn,4);
 }
 
-int abcAnnotationPosX(abcScanner *scn)
+float abcAnnotationPosX(abcScanner *scn)
 {
-  if (abcToken(scn) != T_ANNOTATION) return 0;
+  if (abcToken(scn) != T_ANNOTATION) return 0.0;
+  if (abcTokenLen(scn,2) == 0) return 0.0;
+  return atof(abcTokenStart(scn,2));
 }
 
-int abcAnnotationPosY(abcScanner *scn)
+float abcAnnotationPosY(abcScanner *scn)
 {
-  if (abcToken(scn) != T_ANNOTATION) return 0;
+  if (abcToken(scn) != T_ANNOTATION) return 0.0;
+  if (abcTokenLen(scn,3) == 0) return 0.0;
+  return atof(abcTokenStart(scn,3));
 }
 
-char abcAnnotationPosType(abcScanner *scn)
+char abcAnnotationPos(abcScanner *scn)
 {
-  if (abcToken(scn) != T_ANNOTATION) return '\0';
+  if (abcToken(scn) != T_ANNOTATION) return '?';
+  if (abcTokenLen(scn,1) == 0) return '?';
+  return (*abcTokenStart(scn,1));
 }
 
 /******/
 
 char *abcCommentStart(abcScanner *scn)
 {
+  if (abcToken(scn) != T_COMMENT) return utlEmptyString;
+  if (abcTokenLen(scn,2) == 0) return utlEmptyString;
+  return abcTokenStart(scn,2);
 }
 
 int abcCommentLen(abcScanner *scn)
 {
+  if (abcToken(scn) != T_COMMENT) return 0;
+  return abcTokenLen(scn,2);
 }
-
+ 
+int abcCommentInline(abcScanner *scn)
+{
+  if (abcToken(scn) != T_COMMENT) return 0;
+  return (*abcTokenStart(scn,1) == 'r');
+}
+ 
 /*****/ 
 
 char *abcTextStart(abcScanner *scn)
 {
+  if (abcToken(scn) != T_TEXT) return utlEmptyString;
+  if (abcTokenLen(scn,4) == 0) return utlEmptyString;
 }
 
 int abcTextLen(abcScanner *scn)
 {
+  if (abcToken(scn) != T_TEXT) return 0;
 }
 
-/*****/
-
-char *abcTextStart(abcScanner *scn)
-{
-}
-
-int abcTextLen(abcScanner *scn)
-{
-}

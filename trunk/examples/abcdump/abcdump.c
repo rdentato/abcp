@@ -22,6 +22,25 @@ int main(int argc, char *argv[])
     while ((tok = abcNextToken(scn)) != T_EOF) {
       printf("%04d %04X %04X ",abcLineNumber(scn), abcCurState(scn), abcToken(scn));
       switch (tok) {
+        case T_ANNOTATION:
+             printf("ANNOTATION: ");
+             printf("pos: %c ",abcAnnotationPos(scn));
+             printf("x: %f y: %f ",abcAnnotationPosX(scn), abcAnnotationPosY(scn));
+             printf("\n");
+             printf("               text: %.*s",abcAnnotationTextLen(scn),
+                                                  abcAnnotationTextStart(scn));
+             printf("\n");
+             break;
+
+        case T_COMMENT:
+             printf("COMMENT: ");
+             printf("Inline: %c ",abcCommentInline(scn)? 'Y' : 'N');
+             printf("\n");
+             printf("               text: %.*s",abcCommentLen(scn),
+                                                  abcCommentStart(scn));
+             printf("\n");
+             break;
+             
         case T_NOTE:
              printf("NOTE: ");
              printf("%c", abcNotePitch(scn));

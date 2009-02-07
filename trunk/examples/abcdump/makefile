@@ -11,7 +11,7 @@ TOP=../../
 include $(TOP)config.mk
 
 abcdump$(_EXE): $(CHKLIB) abcdump$(_OBJ)
-	$(LN)$@ abcdump$(_OBJ) -labcp 
+	$(LN)$@ abcdump$(_OBJ) -labcp $(MLIB)
 
 clean:
 	$(RM) abcdump$(_EXE)
