@@ -24,7 +24,6 @@ $(DIST)$(S)abcp.h: abcp.h
 $(LIBSRC) : abcp.h
 
 clean:
-	$(RM) abcp.h
 	$(RM) $(DIST)$(S)abcp.h
 	$(RM) $(LIBNAME)
 	$(RM) $(DIST)$(S)$(LIBNAME)
