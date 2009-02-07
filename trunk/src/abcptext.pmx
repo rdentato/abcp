@@ -6,6 +6,7 @@
 **   http://opensource.org/licenses/bsd-license.php
 */
 
+#include "abcp_priv.h"
 
 char *abcAnnotationTextStart(abcScanner *scn)
 {
