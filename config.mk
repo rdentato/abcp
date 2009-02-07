@@ -17,19 +17,21 @@ endif
 
 ###############
 
-_LIB=.a
-_OBJ=.o
-_EXE=
-
-ifeq ($(SYS),MINGW)
-_EXE=.exe
-endif
-
 AR=ar -ru
 CAT=cat
 RM=rm -f
 CP=cp -f
 LN=gcc $(LNFLAGS) -o
+
+_LIB=.a
+_OBJ=.o
+_EXE=
+MLIB=-lm
+
+ifeq ($(SYS),MINGW)
+_EXE=.exe
+MLIB=
+endif
 
 ##################
 
@@ -48,12 +50,12 @@ LNFLAGS=-L. -L$(DIST) -L$(UTL) $(LNOPTS)
 
 .SUFFIXES: .c .h .o .pmx
 
-.c.o:
-	$(CC) $(CFLAGS) -c -o $*.o $*.c
-	
 .pmx.o:
 	$(PMX2C) $*.pmx $*.c
-	$(CC) $(CFLAGS) -c -o $*.o $*.c
+	-$(CC) $(CFLAGS) -c -o $*.o $*.c
 	$(RM) $*.c
+	
+.c.o:
+	$(CC) $(CFLAGS) -c -o $*.o $*.c
 	
 ###########

@@ -369,7 +369,7 @@ static abcToken abc_symbols(abcScanner *scn)
                     settoken(scn,T_GCHORD);
                     break;
 
-    case "&e\\\"(@)(%F)<?=,>(%F)(<+#\">)\"" :
+    case "&e\\\"(@)(&F)<?=,>(&F)(<+#\">)\"" :
     case "&e\\\"(<?=&<&>^_>)()()(<+#\">)\"" :
                     settoken(scn,T_ANNOTATION);
                     break;
@@ -456,7 +456,7 @@ static abcToken abc_tune(abcScanner *scn)
                     settoken(scn,T_REST);
                     break;
 
-    case "y(%F)" :  settoken(scn,T_SPACER);
+    case "y(&F)" :  settoken(scn,T_SPACER);
                     break;
 
     case "<+=/>" :  settoken(scn,T_MEASUREREPEAT);
@@ -543,7 +543,7 @@ static abcToken abc_tune(abcScanner *scn)
                     settoken(scn,T_GCHORD);
                     break;
 
-    case "&e\\\"(@)(%F)<?=,>(%F)(<+#\">)\"" :
+    case "&e\\\"(@)(&F)<?=,>(&F)(<+#\">)\"" :
     case "&e\\\"(<?=&<&>^_>)()()(<+#\">)\"" :
                     settoken(scn,T_ANNOTATION);
                     break;
