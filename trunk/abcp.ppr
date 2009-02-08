@@ -51,15 +51,15 @@ abcp
 9=test\bytoken\comment.txt
 [Selected Project Files]
 Main=
-Selected=examples\abcdump\abcdump.c
+Selected=src\abcpkey.pmx
 [src\abcpscan.pmx]
-TopLine=134
-Caret=45,266
+TopLine=65
+Caret=18,90
 [src\abcpkey.pmx]
-TopLine=1
-Caret=1,10
+TopLine=263
+Caret=17,293
 [src\abcp.h]
-TopLine=230
+TopLine=228
 Caret=39,273
 [src\abcpcommon.c]
 TopLine=1
@@ -68,8 +68,8 @@ Caret=5,23
 TopLine=50
 Caret=29,67
 [src\abcptext.pmx]
-TopLine=32
-Caret=10,51
+TopLine=1
+Caret=1,1
 [examples\abcdump\makefile]
 TopLine=1
 Caret=1,22
