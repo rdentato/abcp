@@ -38,7 +38,7 @@ static void abc_clef(abcScanner *scn, char *start, char *end)
       case "&e\\&B[]" :
         break;
 
-      case "clef&K=&K(<+=A-Za-z&-><*d><?|tab>)":
+      case "clef&K=&K(<+=A-Za-z&-><*d><?$tab>)":
         setstring(scn,ABC_Clef,pmx(Start,1),pmx(End,1));
         break;
 
@@ -50,15 +50,15 @@ static void abc_clef(abcScanner *scn, char *start, char *end)
         setstring(scn,ABC_Name,pmx(Start,1)+1,pmx(End,1)-1);
         break;
 
-      case "s<?|ub|hort>n<?=a>m<?=e>&K=&K&e\\(&q)" :
+      case "s<?$ub$hort>n<?=a>m<?=e>&K=&K&e\\(&q)" :
         setstring(scn,ABC_ShortName,pmx(Start,1)+1,pmx(End,1)-1);
         break;
 
-      case "stem&K=&K&i(<|up|u|down|d>)" :
+      case "stem&K=&K&i(<$up$u$down$d>)" :
         parms[ABC_Stems] = tolower(*pmx(Start,1));
         break;
 
-      case "gstem&K=&K&i(<|up|u|down|d>)" :
+      case "gstem&K=&K&i(<$up$u$down$d>)" :
         parms[ABC_Gstems] = tolower(*pmx(Start,1));
         break;
 
@@ -66,19 +66,19 @@ static void abc_clef(abcScanner *scn, char *start, char *end)
         parms[ABC_Space] = atoi(pmx(Start,1));
         break;
 
-      case "st<?=a>v<?|es>&K=&K(&d)" :
+      case "st<?=a>v<?$es>&K=&K(&d)" :
         parms[ABC_Staves] = atoi(pmx(Start,1));
         break;
 
-      case "br<?=a>c<?|es>&K=&K(&d)" :
+      case "br<?=a>c<?$es>&K=&K(&d)" :
         parms[ABC_Brace] = atoi(pmx(Start,1));
         break;
 
-      case "br<?|ac>k<?|et>o(<|n|ff)" :
+      case "br<?$ac>k<?$et>o(<$n$ff)" :
         parms[ABC_Bracket] = (*pmx(Start,1) == 'n')? 256 : -1;
         break;
 
-      case "br<?|ac>k<?|et><?=s>&K=&K(&d)" :
+      case "br<?$ac>k<?$et><?=s>&K=&K(&d)" :
         parms[ABC_Bracket] = atoi(pmx(Start,1));
         break;
 
@@ -111,11 +111,11 @@ static void abc_clef(abcScanner *scn, char *start, char *end)
          parms[ABC_Volume] = atoi(pmx(Start,1));
          break;
 
-       case "longbaro(<|n|ff>)" :
+       case "longbaro(<$n$ff>)" :
          parms[ABC_Longbar] = *pmx(Start,1) == 'n'? 'y' : 'n';
          break;
 
-      case "gch<?|ords>&K=&K(<=w>)<*S>" :
+      case "gch<?$ords>&K=&K(<=w>)<*S>" :
         switch (*pmx(Start,1)) {
           case '0': case 'n' : case 'N' :
             parms[ABC_Gchord] = 'n'; break;
@@ -124,19 +124,19 @@ static void abc_clef(abcScanner *scn, char *start, char *end)
         }
         break;
 
-      case "t<?|ranspose>&K=&K(&d)" :
+      case "t<?$ranspose>&K=&K(&d)" :
         parms[ABC_Transpose] = atoi(pmx(Start,1));
         break;
 
-      case "o<?|ctave>&K=&K(&d)" :
+      case "o<?$ctave>&K=&K(&d)" :
         parms[ABC_Octave] = atoi(pmx(Start,1));
         break;
 
-      case "s<|tafflines>&K=&K(&d)" :
+      case "s<$tafflines>&K=&K(&d)" :
         parms[ABC_Stafflines] = atoi(pmx(Start,1));
         break;
 
-      case "m<|iddle>&K=&K(<=A-Ga-g>)" :
+      case "m<$iddle>&K=&K(<=A-Ga-g>)" :
         parms[ABC_Middle] = *pmx(Start,1);
         break;
 
@@ -144,11 +144,11 @@ static void abc_clef(abcScanner *scn, char *start, char *end)
         parms[ABC_Transpose] = atoi(pmx(Start,0));
         break;
 
-      case "(<|up|down|u|d>)" :
+      case "(<$up$down$u%d>)" :
         parms[ABC_Stems] = tolower(*pmx(Start,1));
         break;
 
-      case "(<+=A-Za-z&-><*d><?|tab>)" :
+      case "(<+=A-Za-z&-><*d><?$tab>)" :
         setstring(scn,ABC_Clef,pmx(Start,1),pmx(End,1));
         break;
 
@@ -189,21 +189,21 @@ static void abc_key(abcScanner *scn)
 
   switch pmx(p) {
     case "(<=A-Ga-g><?=&#b>)&K" :
-    case "(<|none|hp|Hp|>)&K" :
+    case "(<$none$hp$Hp$>)&K" :
       setstring(scn,ABC_Tonic,pmx(Start,1),pmx(End,1));
       break;
   }
 
   switch pmx(p) {
-    case "&imix<?|olydian>&K"  : parms[ABC_Mode] = 'X';   break;
-    case "&imaj<?|or>&K"       : parms[ABC_Mode] = 'M';   break;
-    case "&imin<?|or>&K"       : parms[ABC_Mode] = 'N';   break;
-    case "&idor<?|ian>&K"      : parms[ABC_Mode] = 'D';   break;
-    case "&iphr<?|ygian>&K"    : parms[ABC_Mode] = 'P';   break;
-    case "&ilyd<?|ian>&K"      : parms[ABC_Mode] = 'Y';   break;
-    case "&iloc<?|rian>&K"     : parms[ABC_Mode] = 'O';   break;
-    case "&iion<?ian>&K"       : parms[ABC_Mode] = 'I';   break;
-    case "&iaeo<?|lian>&K"     : parms[ABC_Mode] = 'A';   break;
+    case "&imix<?$olydian>&K"  : parms[ABC_Mode] = 'X';   break;
+    case "&imaj<?$or>&K"       : parms[ABC_Mode] = 'M';   break;
+    case "&imin<?$or>&K"       : parms[ABC_Mode] = 'N';   break;
+    case "&idor<?$ian>&K"      : parms[ABC_Mode] = 'D';   break;
+    case "&iphr<?$ygian>&K"    : parms[ABC_Mode] = 'P';   break;
+    case "&ilyd<?$ian>&K"      : parms[ABC_Mode] = 'Y';   break;
+    case "&iloc<?$rian>&K"     : parms[ABC_Mode] = 'O';   break;
+    case "&iion<?$ian>&K"      : parms[ABC_Mode] = 'I';   break;
+    case "&iaeo<?$lian>&K"     : parms[ABC_Mode] = 'A';   break;
     case "M&K"                 : parms[ABC_Mode] = 'M';   break;
     case "m&K"                 : parms[ABC_Mode] = 'N';   break;
   }
