@@ -204,7 +204,12 @@ static abcToken abc_lyrics(abcScanner *scn)
                     stategoto(scn,S_LIMBO);
                     break;
 
-    case "\b&K%%&Kbegintext&K(&L)&n" :
+    case "\b&K%%&Kbegin(ps)&K(&L)&n" :
+                    settoken(scn,T_BEGINTEXT);
+                    stategosub(scn,S_TEXT_PS);
+                    break;
+
+    case "\b&K%%&Kbegin(text)&K(&L)&n" :
                     settoken(scn,T_BEGINTEXT);
                     stategosub(scn,S_TEXT);
                     break;
@@ -298,7 +303,12 @@ static abcToken abc_symbols(abcScanner *scn)
                     stategoto(scn,S_LIMBO);
                     break;
 
-    case "\b&K%%&Kbegintext" :
+    case "\b&K%%&Kbegin(ps)&K(&L)&n" :
+                    settoken(scn,T_BEGINTEXT);
+                    stategosub(scn,S_TEXT_PS);
+                    break;
+
+    case "\b&K%%&Kbegin(text)&K(&L)&n" :
                     settoken(scn,T_BEGINTEXT);
                     stategosub(scn,S_TEXT);
                     break;
@@ -405,7 +415,12 @@ static abcToken abc_tune(abcScanner *scn)
                     stategoto(scn,S_SYMBOLS);
                     break;
 
-    case "\b&K%%&Kbegintext" :
+    case "\b&K%%&Kbegin(ps)&K(&L)&n" :
+                    settoken(scn,T_BEGINTEXT);
+                    stategosub(scn,S_TEXT_PS);
+                    break;
+
+    case "\b&K%%&Kbegin(text)&K(&L)&n" :
                     settoken(scn,T_BEGINTEXT);
                     stategosub(scn,S_TEXT);
                     break;
@@ -575,7 +590,8 @@ static abcToken abc_limbo(abcScanner *scn)
                     stategoto(scn,S_HEADER);
                     break;
 
-    case "\b&K%%&Kbegintext" :
+    case "\b&K%%&Kbegin(ps)&K(&L)&n" :
+    case "\b&K%%&Kbegin(text)&K(&L)&n" :
                     settoken(scn,T_BEGINTEXT);
                     stategosub(scn,S_TEXT);
                     break;
@@ -633,7 +649,8 @@ static abcToken abc_header(abcScanner *scn)
                     settoken(scn,T_FIELD);
                     break;
 
-    case "\b&K%%&Kbegintext" :
+    case "\b&K%%&Kbegin(ps)&K(&L)&n" :
+    case "\b&K%%&Kbegin(text)&K(&L)&n" :
                     settoken(scn,T_BEGINTEXT);
                     stategosub(scn,S_TEXT);
                     break;
@@ -803,6 +820,27 @@ static abcToken abc_history(abcScanner *scn)
   return scn->tok;
 }
 
+static abcToken abc_text_ps(abcScanner *scn)
+{
+  skip_token:
+  switch pmx(scn->cur) {
+
+    case "\b&K(%%&Kendps)&K(&L)&n" :
+                    settoken(scn,T_ENDTEXT);
+                    statereturn(scn);
+                    break;
+
+    case "\b" :     goto skip_token;
+
+    case "()(&L)&n" :
+                    settoken(scn,T_TEXT);
+                    break;
+    case "()(<.>)" :
+                    settoken(scn,T_TEXT);
+                    break;
+  }
+  return scn->tok;
+}
 
 static abcToken abc_text(abcScanner *scn)
 {
@@ -823,7 +861,6 @@ static abcToken abc_text(abcScanner *scn)
                     settoken(scn,T_TEXT);
                     break;
   }
-
   return scn->tok;
 }
 
@@ -854,6 +891,7 @@ abcToken abcNextToken(abcScanner *scn)
       case S_LYRICS   : return abc_lyrics(scn);
       case S_SYMBOLS  : return abc_symbols(scn);
       case S_HISTORY  : return abc_history(scn);
+      case S_TEXT_PS  : return abc_text_ps(scn);
       case S_TEXT     : return abc_text(scn);
     }
   }

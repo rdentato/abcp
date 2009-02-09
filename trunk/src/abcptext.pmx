@@ -68,11 +68,13 @@ int abcCommentInline(abcScanner *scn)
 char *abcTextStart(abcScanner *scn)
 {
   if (abcToken(scn) != T_TEXT) return utlEmptyString;
-  if (abcTokenLen(scn,4) == 0) return utlEmptyString;
+  if (abcTokenLen(scn,2) == 0) return utlEmptyString;
+  return abcTokenStart(scn,2);
 }
 
 int abcTextLen(abcScanner *scn)
 {
   if (abcToken(scn) != T_TEXT) return 0;
+  return abcTokenLen(scn,2);
 }
 
