@@ -36,6 +36,7 @@
 #define S_TUNE                0x0008
 #define S_GRACE               0x0009
 #define S_CHORD               0x000A
+#define S_TEXT_PS             0x000B
 
 
 /* -- BEGIN TOKENS  */
