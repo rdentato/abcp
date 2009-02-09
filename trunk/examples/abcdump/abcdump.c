@@ -41,6 +41,16 @@ int main(int argc, char *argv[])
              printf("\n");
              break;
              
+        case T_BAR:
+             printf("BAR: (");
+             if (abcBarInvisible(scn)) 
+               printf("in");
+             printf("visible) %d '%.*s' %d", abcBarRepeatBefore(scn),
+                                             abcBarLen(scn), abcBarStart(scn),
+                                             abcBarRepeatAfter(scn));
+             printf("\n");
+             break;
+             
         case T_NOTE:
              printf("NOTE: ");
              printf("%c", abcNotePitch(scn));

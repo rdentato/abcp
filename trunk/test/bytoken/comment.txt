@@ -1,0 +1,7 @@
+% a full line
+X:1 % A field private comment
+C % end of Notes
+D [r:Inlined] E
+F \ % Not really inline!
+G
+ 

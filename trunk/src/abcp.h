@@ -169,6 +169,16 @@ unsigned short abcNoteCents(abcScanner *scn);
 
 unsigned short abcNoteMidi(abcScanner *scn);
 
+unsigned short abcRestInvisible(abcScanner *scn);
+unsigned short abcRestMultimeasure(abcScanner *scn);
+abcFraction abcRestDuration(abcScanner *scn);
+
+char *abcBarStart(abcScanner *scn);
+int abcBarLen(abcScanner *scn);
+int abcBarInvisible(abcScanner *scn);
+int abcBarRepeatBefore(abcScanner *scn);
+int abcBarRepeatAfter(abcScanner *scn);
+
 /* abcpkey.pmx */
 
 #define ABC_Tonic                    3

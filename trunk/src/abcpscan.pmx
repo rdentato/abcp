@@ -497,27 +497,6 @@ static abcToken abc_tune(abcScanner *scn)
                     settoken(scn,T_ENDING);
                     break;
 
-    case ".&G<!=-()|[]>" :
-    case "<=H-Wh-w~>" :
-                    settoken(scn,T_USERSYMBOL);
-                    break;
-
-    case "(<*=:>)(<?=.>)(<+=|[><+=|]>)(<*=:>)" :
-    case "(<*=:>)(<?=.>)(<*=|><*=[><+=|]>)(<*=:>)" :
-    case "(<*=:>)(<?=.>)(<*=|>)(<*=:>)" :
-                    settoken(scn,T_BAR);
-                    break;
-
-    case "[" :      settoken(scn,T_CHORD);
-                    stategosub(scn,S_CHORD);
-                    break;
-
-    case "<+=&>>" : settoken(scn,T_BROKENRIGHT);
-                    break;
-
-    case "<+=&<>" : settoken(scn,T_BROKENLEFT);
-                    break;
-
     case "(<?=.>)-(<?=',>)" :
                     settoken(scn,T_TIE);
                     break;
@@ -544,6 +523,27 @@ static abcToken abc_tune(abcScanner *scn)
 
     case "&)" :
                     settoken(scn,T_SLUREND);
+                    break;
+
+    case ".&G<!=:|[]>" :
+    case "<=H-Wh-w~>" :
+                    settoken(scn,T_USERSYMBOL);
+                    break;
+
+    case "(<*=:>)(<?=.>)(<+=|[><+=|]>)(<*=:>)" :
+    case "(<*=:>)(<?=.>)(<*=|><*=[><+=|]>)(<*=:>)" :
+    case "(<*=:>)(<?=.>)(<*=|>)(<*=:>)" :
+                    settoken(scn,T_BAR);
+                    break;
+
+    case "[" :      settoken(scn,T_CHORD);
+                    stategosub(scn,S_CHORD);
+                    break;
+
+    case "<+=&>>" : settoken(scn,T_BROKENRIGHT);
+                    break;
+
+    case "<+=&<>" : settoken(scn,T_BROKENLEFT);
                     break;
 
     case "{(<?=/>)": settoken(scn,T_GRACE);
