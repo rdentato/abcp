@@ -45,7 +45,10 @@ int main(int argc, char *argv[])
              printf("BAR: (");
              if (abcBarInvisible(scn)) 
                printf("in");
-             printf("visible) %d '%.*s' %d", abcBarRepeatBefore(scn),
+             printf("visible");
+             if (abcBarDotted(scn))
+               printf(", dotted");
+             printf(") %d '%.*s' %d", abcBarRepeatBefore(scn),
                                              abcBarLen(scn), abcBarStart(scn),
                                              abcBarRepeatAfter(scn));
              printf("\n");
