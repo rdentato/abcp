@@ -1,0 +1,2 @@
+
+Usage: abcdump < file.ab
