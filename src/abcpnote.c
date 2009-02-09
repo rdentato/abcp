@@ -7,7 +7,7 @@
 */
 
 #include <ctype.h>
-#include "abcp.h"
+#include "abcp_priv.h"
 
 unsigned short abcNoteAccidentals(abcScanner *scn)
 {
@@ -130,3 +130,44 @@ abcFraction abcRestDuration(abcScanner *scn)
   return abc_getfraction(scn,2);
 }
 
+/*************/
+
+char *abcBarStart(abcScanner *scn)
+{
+  if (abcToken(scn) != T_BAR) return utlEmptyString;
+  if (abcTokenLen(scn,3) == 0) return utlEmptyString;
+  return abcTokenStart(scn,3);
+}
+
+int abcBarLen(abcScanner *scn)
+{
+  if (abcToken(scn) != T_BAR) return 0;
+  return abcTokenLen(scn,3);
+}
+
+int abcBarInvisible(abcScanner *scn)
+{
+  if (abcToken(scn) != T_BAR) return 1;
+  if (abcTokenLen(scn,2) > 0) return 1;
+  if (abcTokenLen(scn,3) > 0) return 0;
+  if (abcTokenLen(scn,1) & 1) return 1;
+  return 0;
+}
+
+int abcBarRepeatBefore(abcScanner *scn)
+{
+  if (abcToken(scn) != T_BAR) return 0;
+  if (abcTokenLen(scn,2) > 0 || abcTokenLen(scn,3) > 0) 
+    return abcTokenLen(scn,1);
+  else 
+    return abcTokenLen(scn,1) / 2;
+}
+
+int abcBarRepeatAfter(abcScanner *scn)
+{
+  if (abcToken(scn) != T_BAR) return 0;
+  if (abcTokenLen(scn,2) > 0 || abcTokenLen(scn,3) > 0) 
+    return abcTokenLen(scn,4);
+  else 
+    return abcTokenLen(scn,1) / 2;
+}

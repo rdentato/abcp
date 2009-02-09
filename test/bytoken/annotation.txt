@@ -1,0 +1,5 @@
+X:1
+"<left" x ">right" x "^up" x "_down" x |
+"@-1.2,2.5position XY" x "@2.1positionX"
+"@,-2.3position Y" x "@position none" x |
+"noindication" x
