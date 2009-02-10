@@ -175,6 +175,7 @@ abcFraction abcRestDuration(abcScanner *scn);
 
 char *abcBarStart(abcScanner *scn);
 int abcBarLen(abcScanner *scn);
+int abcBarDotted(abcScanner *scn);
 int abcBarInvisible(abcScanner *scn);
 int abcBarRepeatBefore(abcScanner *scn);
 int abcBarRepeatAfter(abcScanner *scn);
