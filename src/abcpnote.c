@@ -146,14 +146,10 @@ int abcBarLen(abcScanner *scn)
 }
 
 int abcBarDotted(abcScanner *scn)
-{
-  char *b;
-  int l;
-  
+{ 
   if (abcToken(scn) != T_BAR) return 0;
   if (abcTokenLen(scn,2) > 0) return 1;
-  if (abcTokenLen(scn,3) == 0 && abcTokenLen(scn,1) & 1)
-    return 1;
+  if (abcTokenLen(scn,3) == 0 && abcTokenLen(scn,1) & 1) return 1;
   return 0;
 }
 
@@ -165,8 +161,11 @@ int abcBarInvisible(abcScanner *scn)
   if (abcToken(scn) != T_BAR) return 1;
   l = abcTokenLen(scn,3);
   b = abcTokenStart(scn,3);
-  if (l == 2 && b[1] == ']') return 1;
-  if (l == 3 && b[1] == '|' && b[2] == ']') return 1;
+  if (b[1] == '[') {
+    if (l == 2 && b[1] == ']') return 1;
+    if (l == 3 && b[1] == '|' && b[2] == ']') return 1;
+  }
+  else if (l == 1 && b[0] == ']') return 1;
   return 0;
 }
 
