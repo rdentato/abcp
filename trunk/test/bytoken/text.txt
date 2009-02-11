@@ -1,0 +1,21 @@
+Limbo text
+% Comment in a limbo text
+
+X:1
+% Comment
+K:C
+ %            
+%%begintext justified
+Lorem Ipsum
+%%endtext
+%
+%%beginps A PS header
+  PSSSS
+%%endps
+%
+ C [r: inline]    \ % not really inline
+C
+   
+Limbo again
+X:2
+klasjdioasjd 
