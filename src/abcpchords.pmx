@@ -1,0 +1,92 @@
+/*
+**  (C) by Remo Dentato (rdentato@gmail.com)
+**
+** This sofwtare is distributed under the terms of the BSD license:
+**   http://creativecommons.org/licenses/BSD/
+**   http://opensource.org/licenses/bsd-license.php
+*/
+
+
+#include "abcp_priv.h"
+
+#define returnifnot(s,r)  do {\
+                              if (abcToken(s) != T_GCHORD) ) \
+                                return r;\
+                              if (!abcTestFlag(scn,ABC_F_CCHORDCANNED)) \
+                                abc_chord(scn);\
+                            } while(utlZero)
+
+char *abcChordRootStart(abcScanner *scn)
+{
+  returnifnot(scn,utlEmptyString);
+  return abcTokenStart(scn,1);
+}
+
+char *abcChordTypeStart(abcScanner *scn)
+{
+  returnifnot(scn,utlEmptyString);
+  return abcTokenStart(scn,2);
+}
+
+char *abcChordBassStart(abcScanner *scn)
+{
+  returnifnot(scn,utlEmptyString);
+  return abcTokenStart(scn,3);
+}
+
+char *abcChordAltRootStart(abcScanner *scn)
+{
+  returnifnot(scn,utlEmptyString);
+  return abcTokenStart(scn,4);
+}
+
+char *abcChordAltTypeStart(abcScanner *scn)
+{
+  returnifnot(scn,utlEmptyString);
+  return abcTokenStart(scn,5);
+}
+
+char *abcChordAltBassStart(abcScanner *scn)
+{
+  returnifnot(scn,utlEmptyString);
+  return abcTokenStart(scn,6);
+}
+
+
+int abcChordRootLen(abcScanner *scn)
+{
+  returnifnot(scn,utlEmptyString);
+  return abcTokenLen(scn,1);
+}
+
+int abcChordTypeLen(abcScanner *scn)
+{
+  returnifnot(scn,utlEmptyString);
+  return abcTokenLen(scn,2);
+}
+
+int abcChordBassLen(abcScanner *scn)
+{
+  returnifnot(scn,utlEmptyString);
+  return abcTokenLen(scn,3);
+}
+
+int abcChordAltRootLen(abcScanner *scn)
+{
+  returnifnot(scn,utlEmptyString);
+  return abcTokenLen(scn,4);
+}
+
+int abcChordAltTypeLen(abcScanner *scn)
+{
+  returnifnot(scn,utlEmptyString);
+  return abcTokenLen(scn,5);
+}
+
+int abcChordAltBassLen(abcScanner *scn)
+{
+  returnifnot(scn,utlEmptyString);
+  return abcTokenLen(scn,6);
+}
+
+  

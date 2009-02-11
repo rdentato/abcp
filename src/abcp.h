@@ -90,6 +90,7 @@
 /* -- END TOKENS  */
 
 #define ABC_F_CLEFSCANNED   0x0001
+#define ABC_F_CHORDSCANNED  0x0001
 #define ABC_F_ONETIMERS     0x00FF
 
 #define abcSetFlag(s,f)  ((s)->flags |= (f))
@@ -283,5 +284,22 @@ char abcTextType(abcScanner *scn);
 int abcTextLen(abcScanner *scn);
 char *abcTextStart(abcScanner *scn);
 char abcTextNL(abcScanner *scn);
+
+
+/* abcpchord.pmx */
+
+char *abcChordRootStart(abcScanner *scn);
+char *abcChordTypeStart(abcScanner *scn);
+char *abcChordBassStart(abcScanner *scn);
+char *abcChordAltRootStart(abcScanner *scn);
+char *abcChordAltTypeStart(abcScanner *scn);
+char *abcChordAltBassStart(abcScanner *scn);
+
+int abcChordRootLen(abcScanner *scn);
+int abcChordTypeLen(abcScanner *scn);
+int abcChordBassLen(abcScanner *scn);
+int abcChordAltRootLen(abcScanner *scn);
+int abcChordAltTypeLen(abcScanner *scn);
+int abcChordAltBassLen(abcScanner *scn);
 
 #endif
