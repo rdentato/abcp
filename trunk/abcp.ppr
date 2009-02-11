@@ -36,7 +36,7 @@ abcp
 		makefile
 		config.mk
 		README.txt
-	-test
+	+test
 		-bytoken
 [Open project files]
 0=src\abcpscan.pmx
@@ -52,14 +52,12 @@ abcp
 10=..\abcm2ps-5.9.3\features.txt
 11=..\abcm2ps-5.9.3\format.txt
 12=test\bytoken\bars.txt
-13=examples\abcdump\README.txt
-14=README.txt
 [Selected Project Files]
 Main=
-Selected=README.txt
+Selected=src\abcptext.pmx
 [src\abcpscan.pmx]
-TopLine=517
-Caret=20,534
+TopLine=571
+Caret=1,598
 [src\abcpkey.pmx]
 TopLine=247
 Caret=17,293
@@ -70,11 +68,11 @@ Caret=40,180
 TopLine=1
 Caret=5,23
 [src\abcpnote.c]
-TopLine=141
+TopLine=140
 Caret=1,170
 [src\abcptext.pmx]
-TopLine=32
-Caret=1,52
+TopLine=37
+Caret=1,85
 [examples\abcdump\makefile]
 TopLine=1
 Caret=1,22
@@ -96,9 +94,3 @@ Caret=1,1134
 [test\bytoken\bars.txt]
 TopLine=1
 Caret=19,11
-[examples\abcdump\README.txt]
-TopLine=1
-Caret=1,2
-[README.txt]
-TopLine=1
-Caret=1,1

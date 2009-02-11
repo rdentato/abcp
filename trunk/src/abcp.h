@@ -44,7 +44,6 @@
 #define T_NONE                0x1000 
 #define T_UNKNOWN             0x1001 
 #define T_EOF                 0x1002 
-#define T_COMMENT             0x1003 
 #define T_FIELD               0x1004 
 #define T_EXTFIELD            0x1005 
 #define T_INFIELD             0x1006 
@@ -96,7 +95,6 @@
 #define abcSetFlag(s,f)  ((s)->flags |= (f))
 #define abcClrFlag(s,f)  ((s)->flags &= ~(f))
 #define abcTestFlag(s,f) ((s)->flags & (f))
-
 
 typedef  unsigned short abcToken; 
 
@@ -280,8 +278,10 @@ int abcAnnotationTextLen(abcScanner *scn);
 float abcAnnotationPosX(abcScanner *scn);
 float abcAnnotationPosY(abcScanner *scn);
 char abcAnnotationPos(abcScanner *scn);
-char *abcCommentStart(abcScanner *scn);
-int abcCommentLen(abcScanner *scn);
-int abcCommentInline(abcScanner *scn);
+
+char abcTextType(abcScanner *scn);
+int abcTextLen(abcScanner *scn);
+char *abcTextStart(abcScanner *scn);
+char abcTextNL(abcScanner *scn);
 
 #endif

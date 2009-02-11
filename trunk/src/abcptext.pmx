@@ -42,39 +42,91 @@ char abcAnnotationPos(abcScanner *scn)
   return (*abcTokenStart(scn,1));
 }
 
-/******/
-
-char *abcCommentStart(abcScanner *scn)
-{
-  if (abcToken(scn) != T_COMMENT) return utlEmptyString;
-  if (abcTokenLen(scn,2) == 0) return utlEmptyString;
-  return abcTokenStart(scn,2);
-}
-
-int abcCommentLen(abcScanner *scn)
-{
-  if (abcToken(scn) != T_COMMENT) return 0;
-  return abcTokenLen(scn,2);
-}
- 
-int abcCommentInline(abcScanner *scn)
-{
-  if (abcToken(scn) != T_COMMENT) return 0;
-  return (*abcTokenStart(scn,1) == 'r');
-}
- 
 /*****/ 
 
 char *abcTextStart(abcScanner *scn)
 {
-  if (abcToken(scn) != T_TEXT) return utlEmptyString;
-  if (abcTokenLen(scn,2) == 0) return utlEmptyString;
-  return abcTokenStart(scn,2);
+  switch (abcToken(scn)) {
+    case T_TEXT:
+    case T_ENDTEXT:
+    case T_BEGINTEXT:
+    case T_EMPTYLINE:
+    case T_WHITESPACE:
+    case T_IGNORE:
+    case T_UNKNOWN:
+
+              if (abcTokenLen(scn,2) == 0) return utlEmptyString;
+              return abcTokenStart(scn,2);
+  }
+  return utlEmptyString;
+  
+  if (abcToken(scn) != T_TEXT && abcToken(scn) != T_BEGINTEXT ) return utlEmptyString;
 }
 
 int abcTextLen(abcScanner *scn)
 {
-  if (abcToken(scn) != T_TEXT) return 0;
-  return abcTokenLen(scn,2);
+  switch (abcToken(scn)) {
+    case T_TEXT:
+    case T_ENDTEXT:
+    case T_BEGINTEXT:
+    case T_EMPTYLINE:
+    case T_WHITESPACE:
+    case T_IGNORE:
+    case T_UNKNOWN:
+              return abcTokenLen(scn,2);
+  }
+  return 0;
+  
+  if (abcToken(scn) != T_TEXT && abcToken(scn) != T_BEGINTEXT ) return 0;
+}
+
+char abcTextNL(abcScanner *scn)
+{
+  if (abcToken(scn) != T_TEXT && abcToken(scn) != T_BEGINTEXT ) return '\0';
+  return abcTokenLen(scn,3) > 0? '\n':'\0';
+}
+
+char abcTextType(abcScanner *scn)
+{
+/*
+'\0' NONE
+I inline
+C comment
+H History
+P ps (%%beginps / %%endps)
+L Limbo
+B Block text (%%begintext / %%endtext)
+T Text (%%text)
+U Unknown
+W Whitespace
+X Ignore
+t text
+*/
+  switch (abcToken(scn)) {
+    case T_ENDTEXT    :
+    case T_BEGINTEXT  : return toupper(*abcTokenStart(scn,1));
+    case T_EMPTYLINE  :
+    case T_WHITESPACE : return 'W';
+    case T_IGNORE     : return 'X';
+    case T_UNKNOWN    : return 'U';
+    case T_TEXT       : break;
+    default           : return '\0';
+  }
+
+  switch (abcCurState(scn)) {
+    case S_TEXT_PS : return 'P';
+    case S_TEXT    : return 'B';    
+    case S_HISTORY : return 'H';
+  }
+  
+  if (abcTokenLen(scn,1) == 0)
+    return 'L';
+    
+  switch (*abcTokenStart(scn,1)) {
+    case '%' : return 'C';
+    case 'r' : return 'I'; 
+  }
+  
+  return 't';
 }
 
