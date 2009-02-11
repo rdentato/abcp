@@ -32,12 +32,17 @@ int main(int argc, char *argv[])
              printf("\n");
              break;
 
-        case T_COMMENT:
-             printf("COMMENT: ");
-             printf("Inline: %c ",abcCommentInline(scn)? 'Y' : 'N');
-             printf("\n");
-             printf("               text: %.*s",abcCommentLen(scn),
-                                                  abcCommentStart(scn));
+        case T_TEXT       : printf("TEXT: "); goto thetext;
+        case T_ENDTEXT    : printf("ENDTEXT: "); goto thetext;
+        case T_BEGINTEXT  : printf("BEGINTEXT: "); goto thetext;
+        case T_EMPTYLINE  : printf("EMPTYLINE: "); goto thetext;
+        case T_WHITESPACE : printf("WHITESPACE: "); goto thetext;
+        case T_IGNORE     : printf("IGNORE: "); goto thetext;
+        case T_UNKNOWN    : printf("UNKNOWN: "); goto thetext;
+        thetext:    
+             printf("type: '%c' [%.*s]",abcTextType(scn),abcTextLen(scn),
+                                                  abcTextStart(scn));
+             printf("%s",abcTextNL(scn)?"\\n":"");
              printf("\n");
              break;
              
@@ -52,6 +57,14 @@ int main(int argc, char *argv[])
                                              abcBarLen(scn), abcBarStart(scn),
                                              abcBarRepeatAfter(scn));
              printf("\n");
+             break;
+ 
+        case T_CONTINUE:
+             printf("CONTINUE:\n");
+             break;
+             
+        case T_ENDLINE:
+             printf("ENDLINE:\n");
              break;
              
         case T_NOTE:
