@@ -53,9 +53,10 @@ abcp
 11=..\abcm2ps-5.9.3\format.txt
 12=test\bytoken\bars.txt
 13=examples\abcdump\README.txt
+14=README.txt
 [Selected Project Files]
 Main=
-Selected=test\bytoken\bars.txt
+Selected=README.txt
 [src\abcpscan.pmx]
 TopLine=517
 Caret=20,534
@@ -69,7 +70,7 @@ Caret=40,180
 TopLine=1
 Caret=5,23
 [src\abcpnote.c]
-TopLine=143
+TopLine=141
 Caret=1,170
 [src\abcptext.pmx]
 TopLine=32
@@ -98,3 +99,6 @@ Caret=19,11
 [examples\abcdump\README.txt]
 TopLine=1
 Caret=1,2
+[README.txt]
+TopLine=1
+Caret=1,1
