@@ -14,8 +14,18 @@ int main(int argc, char *argv[])
   abcToken tok;
   chs_t abctext = NULL;
   int k; 
+  FILE *f;
   
-  abctext = chsRead(abctext,stdin,'w');
+  f = stdin;
+  if (argc>1) {
+    f = fopen(argv[1],"r");
+    if (!f) {
+      fprintf(stderr,"Unable to open input file\n");
+      exit(1);
+    }
+  }
+  abctext = chsRead(abctext,f,'w');
+  if (f!=stdin) fclose(f);
   if (abctext && *abctext) {
     scn = abcNewScanner(str,abctext);
     /*printf("<<\n%s\n>>\n",scn->abc);*/
