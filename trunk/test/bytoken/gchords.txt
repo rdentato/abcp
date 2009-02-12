@@ -1,0 +1,3 @@
+X:1
+"Am" "F#maj(add7)" "B7(5b)" "G(Em)" "B/Eb"
+"A7/B" "C7/9 /E"
