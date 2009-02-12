@@ -879,8 +879,11 @@ static abcToken abc_text(abcScanner *scn)
 
 abcToken abcNextToken(abcScanner *scn)
 {
- 
-  memset(scn->tok_str,0, sizeof scn->tok_str);
+  int k;
+  
+  for (k=0; k< abc_MAXTOKSTR; k++)
+    scn->tok_str[k][0] = scn->tok_str[k][1] = NULL; 
+  
   abcClrFlag(scn,ABC_F_ONETIMERS);
 
   if (scn->nextstate != S_NONE) {

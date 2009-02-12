@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
   
   f = stdin;
   if (argc>1) {
-    f = fopen(argv[1],"r");
+    f = fopen(argv[1],"rb");
     if (!f) {
       fprintf(stderr,"Unable to open input file\n");
       exit(1);
