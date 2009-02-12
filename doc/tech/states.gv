@@ -13,10 +13,8 @@ digraph G {
 	TUNE -> LIMBO ;
 	LYRICS -> TUNE ;
 	LYRICS -> LIMBO ;
-#	CHORD -> TUNE [style=dashed] ;
-#	CHORD -> GRACE [style=dashed] ;
-CHORD -> HISTORY [style=invis] ;
-CHORD -> TEXT [style=invis] ;
+  CHORD -> HISTORY [style=invis] ;
+  CHORD -> TEXT [style=invis] ;
 	GRACE -> TUNE ;
 	GRACE -> CHORD  [style=dashed ] ;
 	SYMBOLS -> TUNE ;
@@ -26,22 +24,12 @@ CHORD -> TEXT [style=invis] ;
 	TUNE -> TEXT [style=dashed];
 	LYRICS -> TEXT [style=dashed];
 	SYMBOLS -> TEXT [style=dashed];
-#	TEXT -> HEADER [style=dashed];
-#	TEXT -> LIMBO [style=dashed] ;
-#	TEXT -> TUNE [style=dashed];
-#	TEXT -> LYRICS [style=dashed];
-#	TEXT -> SYMBOLS [style=dashed];
 
 	HEADER -> HISTORY  [style=dashed];
 	LIMBO -> HISTORY  [style=dashed] ;
 	TUNE -> HISTORY [style=dashed] ;
 	LYRICS -> HISTORY  [style=dashed];
 	SYMBOLS -> HISTORY [style=dashed ] ;
-#	HISTORY -> HEADER [style=dashed];
-#	HISTORY -> LIMBO [style=dashed] ;
-#	HISTORY -> TUNE [style=dashed];
-#	HISTORY -> LYRICS [style=dashed];
-#	HISTORY -> SYMBOLS [style=dashed];
 	
 	overlap=false
   sep = 1.5
