@@ -99,8 +99,8 @@
 
 typedef  unsigned short abcToken; 
 
-#define abc_MAXTOKSTR   10
 #define abc_PMXCAPT     10
+#define abc_MAXTOKSTR   11
 
 typedef struct {
   char  *abc;
