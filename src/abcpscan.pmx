@@ -76,6 +76,7 @@ static void nextline(abcScanner *scn)
     }
     l = t - scn->pos;
     if (l > 0) {
+      dbgmsg("LEN: %d\n",l);
       scn->line = chsAddStrL(scn->line,scn->pos,l);
       scn->pos = t;
     }
@@ -375,7 +376,9 @@ static abcToken abc_symbols(abcScanner *scn)
     case "()()(|)" :settoken(scn,T_BAR);
                     break;
 
-    case "&e\\\"(<=A-G><+#\">)\"" :
+    case "\"(<+=iv><?=#b>)(<*!\">)\"" :
+    case "\"(<+=IV><?=#b>)(<*!\">)\"" :
+    case "\"(<=A-Ga-g><?=#b>)(<*!\">)\"" :
                     settoken(scn,T_GCHORD);
                     break;
 
@@ -554,7 +557,9 @@ static abcToken abc_tune(abcScanner *scn)
                     settoken(scn,T_CONTINUE);
                     break;
 
-    case "&e\\\"(<=A-G><+#\">)\"" :
+    case "\"(<+=iv><?=#b>)(<*!\">)\"" :
+    case "\"(<+=IV><?=#b>)(<*!\">)\"" :
+    case "\"(<=A-Ga-g><?=#b>)(<*!\">)\"" :
                     settoken(scn,T_GCHORD);
                     break;
 
@@ -874,9 +879,8 @@ static abcToken abc_text(abcScanner *scn)
 
 abcToken abcNextToken(abcScanner *scn)
 {
-  void *memset (void *s, int c, size_t n);
-
-  memset(scn->tok_str,0, sizeof scn->tok);
+ 
+  memset(scn->tok_str,0, sizeof scn->tok_str);
   abcClrFlag(scn,ABC_F_ONETIMERS);
 
   if (scn->nextstate != S_NONE) {

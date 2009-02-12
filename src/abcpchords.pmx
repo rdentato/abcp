@@ -9,10 +9,88 @@
 
 #include "abcp_priv.h"
 
+#define setstr(s,k,t,e) \
+      (s)->tok_str[k][0] = t;\
+      (s)->tok_str[k][1] = e;\
+
+static void abc_chord(abcScanner *scn)
+{
+  char *start;
+  char *end;
+  int j;
+  char *p,*q;
+  
+  start = abcTokenStart(scn,2);
+  end = abcTokenEnd(scn,2);
+  
+  setstr(scn,2,NULL,NULL);
+  setstr(scn,3,NULL,NULL); setstr(scn,4,NULL,NULL);
+  setstr(scn,5,NULL,NULL); setstr(scn,6,NULL,NULL);
+  
+  abcSetFlag(scn,ABC_F_CHORDSCANNED); 
+  
+  if (start >= end) return;
+  
+  p=start; q = p;
+  j=0;
+  while (start < end && j == 0) {  
+    switch pmx(start) { /* Type */   
+      case "&(add":
+      case "&(<!iIvVA-Ga-g\">":
+      case "/<d>" :
+      case "<!/&(\">":  q = pmx(End,0); break;
+      default: j = 1; break;
+    }
+  }
+  setstr(scn,2,p,q);
+  if (start >= end) return;
+    
+  switch pmx(start) {  /* Bass */
+    case "&K/(<+=IiVvA-Ga-g><?=#b>)&K": 
+      setstr(scn,3,pmx(Start,1),pmx(End,1));
+      break;
+  }
+  if (start >= end) return;
+  
+  /********** ALTERNATE ************/
+ 
+  printf("{%.*s}", end-start, start);
+  
+  switch pmx(start) {  /* Root note */
+    case "&K&((<+=A-Ga-gIiVv><?=#b>)&K": 
+      setstr(scn,4,pmx(Start,1),pmx(End,1));
+      break;
+    default : return;
+  }
+  
+  if (start >= end) return;
+  
+  p=start; q = p;
+  j=0;
+  while (start < end && j == 0) {  
+    switch pmx(start) { /* Type */   
+      case "/<d>" :
+      case "&(<*!\"&)>&)" :
+      case "<+!&)/\">":  q = pmx(End,0); break;
+      default: j = 1; break;
+    }
+  }
+  setstr(scn,5,p,q);
+  if (start >= end) return;
+    
+  switch pmx(start) {  /* Bass */
+    case "&K/(<+=IiVvA-Ga-g><?=#b>)&K": 
+      setstr(scn,6,pmx(Start,1),pmx(End,1));
+      break;
+  }  
+  return;
+  
+}
+
 #define returnifnot(s,r)  do {\
-                              if (abcToken(s) != T_GCHORD) ) \
+                              if (abcToken(s) != T_GCHORD) \
                                 return r;\
-                              if (!abcTestFlag(scn,ABC_F_CCHORDCANNED)) \
+                              if (!abcTestFlag(scn,ABC_F_CHORDSCANNED)) \
                                 abc_chord(scn);\
                             } while(utlZero)
 
@@ -55,37 +133,37 @@ char *abcChordAltBassStart(abcScanner *scn)
 
 int abcChordRootLen(abcScanner *scn)
 {
-  returnifnot(scn,utlEmptyString);
+  returnifnot(scn,0);
   return abcTokenLen(scn,1);
 }
 
 int abcChordTypeLen(abcScanner *scn)
 {
-  returnifnot(scn,utlEmptyString);
+  returnifnot(scn,0);
   return abcTokenLen(scn,2);
 }
 
 int abcChordBassLen(abcScanner *scn)
 {
-  returnifnot(scn,utlEmptyString);
+  returnifnot(scn,0);
   return abcTokenLen(scn,3);
 }
 
 int abcChordAltRootLen(abcScanner *scn)
 {
-  returnifnot(scn,utlEmptyString);
+  returnifnot(scn,0);
   return abcTokenLen(scn,4);
 }
 
 int abcChordAltTypeLen(abcScanner *scn)
 {
-  returnifnot(scn,utlEmptyString);
+  returnifnot(scn,0);
   return abcTokenLen(scn,5);
 }
 
 int abcChordAltBassLen(abcScanner *scn)
 {
-  returnifnot(scn,utlEmptyString);
+  returnifnot(scn,0);
   return abcTokenLen(scn,6);
 }
 

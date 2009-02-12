@@ -1,5 +1,5 @@
 [Config]
-Compilator.FileName=D:\0_Proj\abcp\mk.bat
+Compilator.FileName=D:\99Personal\c-libutl\mk.bat
 Compilator.PSPar=%ProjectDir% %Input%
 Compilator.DefaultDir=%Dir%
 Compilator.SaveAll=0
@@ -26,7 +26,6 @@ abcp
 			src\abcpscan.pmx
 			src\abcpnote.c
 			src\abcpkey.pmx
-			src\abcpdump.c
 			src\abcpcommon.c
 			src\abcp_priv.h
 			src\abcp.h
@@ -37,64 +36,72 @@ abcp
 		config.mk
 		README.txt
 	+test
-		-bytoken
+		+bytoken
+			test\bytoken\text.txt
+			test\bytoken\comment.txt
+			test\bytoken\bars.txt
+			test\bytoken\annotation.txt
 [Open project files]
 0=src\abcpscan.pmx
 1=src\abcpkey.pmx
 2=src\abcp.h
 3=src\abcpcommon.c
-4=src\abcpnote.c
-5=src\abcptext.pmx
-6=examples\abcdump\abcdump.c
-7=test\bytoken\comment.txt
-8=..\abcm2ps-5.9.3\features.txt
-9=..\abcm2ps-5.9.3\format.txt
-10=test\bytoken\text.txt
-11=New2.txt
-12=..\BarFlyCarbon1v74\Chord definitions
-13=src\abcpchords.pmx
+4=test\bytoken\text.txt
+5=src\abcpnote.c
+6=src\abcptext.pmx
+7=examples\abcdump\abcdump.c
+8=test\bytoken\comment.txt
+9=src\abcpchords.pmx
+10=README.txt
+11=makefile
+12=src\makefile
+13=test\bytoken\gchords.txt
+14=New2.pmx
 [Selected Project Files]
 Main=
-Selected=New2.txt
+Selected=New2.pmx
 [src\abcpscan.pmx]
-TopLine=889
-Caret=10,880
+TopLine=368
+Caret=15,381
 [src\abcpkey.pmx]
-TopLine=151
-Caret=1,174
+TopLine=157
+Caret=26,198
 [src\abcp.h]
-TopLine=260
-Caret=13,289
+TopLine=254
+Caret=26,293
 [src\abcpcommon.c]
 TopLine=1
 Caret=5,23
+[test\bytoken\text.txt]
+TopLine=1
+Caret=10,10
 [src\abcpnote.c]
-TopLine=140
+TopLine=135
 Caret=1,170
 [src\abcptext.pmx]
-TopLine=39
+TopLine=80
 Caret=1,134
 [examples\abcdump\abcdump.c]
-TopLine=45
-Caret=20,64
+TopLine=25
+Caret=26,36
 [test\bytoken\comment.txt]
 TopLine=1
 Caret=30,2
-[..\abcm2ps-5.9.3\features.txt]
-TopLine=181
-Caret=40,197
-[..\abcm2ps-5.9.3\format.txt]
-TopLine=1134
-Caret=1,1134
-[test\bytoken\text.txt]
-TopLine=1
-Caret=4,20
-[New2.txt]
-TopLine=15
-Caret=1,34
-[..\BarFlyCarbon1v74\Chord definitions]
-TopLine=12
-Caret=1,1
 [src\abcpchords.pmx]
-TopLine=25
-Caret=1,93
+TopLine=27
+Caret=28,46
+[README.txt]
+TopLine=1
+Caret=22,17
+[makefile]
+TopLine=1
+Caret=8,34
+[src\makefile]
+TopLine=1
+Caret=26,23
+[test\bytoken\gchords.txt]
+TopLine=1
+Caret=31,2
+[New2.pmx]
+TopLine=1
+Caret=9,3

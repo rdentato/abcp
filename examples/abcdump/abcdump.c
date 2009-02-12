@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
         thetext:    
              printf("type: '%c' [%.*s]",abcTextType(scn),abcTextLen(scn),
                                                   abcTextStart(scn));
-             printf("%s",abcTextNL(scn)?"\\n":"");
+             printf("%s",abcTextNL(scn)?" \\n":"");
              printf("\n");
              break;
              
@@ -75,6 +75,18 @@ int main(int argc, char *argv[])
              
         case T_ENDLINE:
              printf("ENDLINE:\n");
+             break;
+             
+        case T_GCHORD:
+             printf("GCHORD: ");
+             printf("[%.*s]",abcChordRootLen(scn),abcChordRootStart(scn));
+             printf("[%.*s]",abcChordTypeLen(scn),abcChordTypeStart(scn));
+             printf("[%.*s]",abcChordBassLen(scn),abcChordBassStart(scn));
+             printf("[%.*s]",abcChordAltRootLen(scn),abcChordAltRootStart(scn));
+             printf("[%.*s]",abcChordAltTypeLen(scn),abcChordAltTypeStart(scn));
+             printf("[%.*s]",abcChordAltBassLen(scn),abcChordAltBassStart(scn));
+             printf("%.*s ",abcTokenLen(scn,0),abcTokenStart(scn,0));
+             printf("\n");
              break;
              
         case T_NOTE:
