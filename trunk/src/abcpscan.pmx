@@ -375,7 +375,7 @@ static abcToken abc_symbols(abcScanner *scn)
     case "()()(|)" :settoken(scn,T_BAR);
                     break;
 
-    case "&e\\(\")<=A-G><+#\">\"" :
+    case "&e\\\"(<=A-G><+#\">)\"" :
                     settoken(scn,T_GCHORD);
                     break;
 
@@ -554,7 +554,7 @@ static abcToken abc_tune(abcScanner *scn)
                     settoken(scn,T_CONTINUE);
                     break;
 
-    case "&e\\\"()()()(<=A-G><+#\">)\"" :
+    case "&e\\\"(<=A-G><+#\">)\"" :
                     settoken(scn,T_GCHORD);
                     break;
 
