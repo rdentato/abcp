@@ -1,3 +1,5 @@
 X:1
-"Am" "F#maj(add7)" "B7(5b)" "G(Em)" "B/Eb"
+"Am" "F#maj(add7)" "B7(5b)" "G(Em/G)" "B7(5b)/Eb(G7aug(sus2)/E#)"
 "A7/B" "C7/9 /E"
+%
+"C///5" "F(p()A)" "F(a(A" "C//"

@@ -186,3 +186,25 @@ int abcBarRepeatAfter(abcScanner *scn)
   else 
     return abcTokenLen(scn,1) / 2;
 }
+
+/*** Broken rythm */
+
+int abcBroken(abcScanner *scn)
+{
+  if (abcToken(scn) != T_BROKENLEFT && abcToken(scn) != T_BROKENRIGHT)
+     return 0;
+  return abcTokenLen(scn,0);
+}
+
+/*** Chord */
+
+abcFraction abcChordDuration(abcScanner *scn)
+{
+  if (abcToken(scn) != T_CHORDEND) return 1;
+  return abc_getfraction(scn,1);
+}
+
+
+
+
+

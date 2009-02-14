@@ -54,7 +54,7 @@ static void abc_chord(abcScanner *scn)
   
   /********** ALTERNATE ************/
  
-  printf("{%.*s}", end-start, start);
+  _dbgmsg("{%.*s}", end-start, start);
   
   switch pmx(start) {  /* Root note */
     case "&K&((<+=A-Ga-gIiVv><?=#b>)&K": 
@@ -69,9 +69,10 @@ static void abc_chord(abcScanner *scn)
   j=0;
   while (start < end && j == 0) {  
     switch pmx(start) { /* Type */   
+      case "&)" : j = 1; break;
+      case "&b()" :
       case "/<d>" :
-      case "&(<*!\"&)>&)" :
-      case "<+!&)/\">":  q = pmx(End,0); break;
+      case "<+!&/\">":  q = pmx(End,0); break;
       default: j = 1; break;
     }
   }

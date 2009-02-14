@@ -69,8 +69,40 @@ int main(int argc, char *argv[])
              printf("\n");
              break;
  
+        case T_CHORD:
+             printf("CHORD:\n");
+             break;
+             
+        case T_CHORDEND:
+             printf("CHORDEND: ");
+             k = abcChordDuration(scn);
+             printf(" %d/%d\n",abcNumerator(k),abcDenominator(k));
+             break;
+             
         case T_CONTINUE:
              printf("CONTINUE:\n");
+             break;
+             
+        case T_DECORATION:
+             printf("DECORATION: "); 
+             printf("[%.*s]",abcDecorationLen(scn),abcDecorationStart(scn));
+             switch (abcDecorationSpan(scn)) {
+               case '(' : printf(" START"); break;
+               case ')' : printf(" END"); break;
+             }
+             printf("\n");
+             break;
+             
+        case T_BREAKLINE:
+             printf("BREAKLINE:\n");
+             break;
+             
+        case T_BROKENLEFT :
+             printf("BROKENLEFT: %d\n", abcBroken(scn));
+             break;
+             
+        case T_BROKENRIGHT :
+             printf("BROKENRIGHT: %d\n", abcBroken(scn));
              break;
              
         case T_ENDLINE:
@@ -175,6 +207,6 @@ int main(int argc, char *argv[])
     }
     scn = abcFreeScanner(scn);
   }
-
+  abctext = chsFree(abctext);
   return(0);
 }
