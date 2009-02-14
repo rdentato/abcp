@@ -218,3 +218,20 @@ int abcSyllableBlank(abcScanner *scn)
           abcTokenLen(scn,3) == 0);
 }
 
+int abcVerse(abcScanner *scn)
+{
+  if (abcToken(scn) != T_VERSE) return 0;
+  return (atoi(abcTokenStart(scn,1)));
+}
+
+char abcVerseSeparator(abcScanner *scn)
+{
+  if (abcToken(scn) != T_VERSE) return '\0';
+  return *abcTokenStart(scn,2);
+}
+
+char abcUsersymbol(abcScanner *scn)
+{
+  if (abcToken(scn) != T_USERSYMBOL ) return '\0';
+  return *abcTokenStart(scn,1);
+}

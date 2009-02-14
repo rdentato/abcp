@@ -13,21 +13,31 @@ int main(int argc, char *argv[])
   abcScanner *scn;
   abcToken tok;
   chs_t abctext = NULL;
-  int k; 
+  int k = S_NONE; 
   FILE *f;
+  int argn;
   
+  argn = 1;
+
+  if (argn < argc && argv[1][0]=='-') {
+    k = atoi(argv[1]+1);
+    argn++;
+  }
+   
   f = stdin;
-  if (argc>1) {
-    f = fopen(argv[1],"rb");
+  if (argn < argc) {
+    f = fopen(argv[argn],"rb");
     if (!f) {
       fprintf(stderr,"Unable to open input file\n");
       exit(1);
     }
   }
+  
   abctext = chsRead(abctext,f,'w');
   if (f!=stdin) fclose(f);
   if (abctext && *abctext) {
     scn = abcNewScanner(str,abctext);
+    abcSetState(scn,k);
     /*printf("<<\n%s\n>>\n",scn->abc);*/
     while ((tok = abcNextToken(scn)) != T_EOF) {
       printf("%04d %04X %04X ",abcLineNumber(scn), abcCurState(scn), abcToken(scn));
@@ -158,8 +168,16 @@ int main(int argc, char *argv[])
              printf("BROKENRIGHT: %d\n", abcBroken(scn));
              break;
              
+        case T_USERSYMBOL :
+             printf("USERSYMBOL: %c\n", abcUsersymbol(scn));
+             break;
+             
+        case T_VERSE:
+             printf("VERSE: [%d][%c]\n", abcVerse(scn),abcVerseSeparator(scn));
+             break;
+             
         case T_SYLLABLE:
-             printf("SYLLABLE: [%.*s] %d%s%s\n",abcSyllableLen(scn),
+             printf("SYLLABLE: [%.*s] %d%s%s",abcSyllableLen(scn),
                   abcSyllableStart(scn), abcSyllableHold(scn), 
                   (abcSyllableContinue(scn)?" CONTINUE":""),
                   (abcSyllableBlank(scn)?" BLANK":""));
