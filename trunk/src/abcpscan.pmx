@@ -76,7 +76,7 @@ static void nextline(abcScanner *scn)
     }
     l = t - scn->pos;
     if (l > 0) {
-      dbgmsg("LEN: %d\n",l);
+      _dbgmsg("LEN: %d\n",l);
       scn->line = chsAddStrL(scn->line,scn->pos,l);
       scn->pos = t;
     }
@@ -173,16 +173,28 @@ static void getnewline(abcScanner *scn)
 
 /* **************** */
 
+#define adjustdeco() \
+                    if (abcTokenLen(scn,1)>1) {\
+                      switch(abcTokenStart(scn,1)[abcTokenLen(scn,1)-1]) {\
+                        case '(': case ')' :\
+                           scn->tok_str[2][1] = scn->tok_str[1][1]--;\
+                           scn->tok_str[2][0] = scn->tok_str[1][1]; \
+                           break;\
+                        default : break;\
+                      }\
+                    }\
+
 #define settoken(s,t) do { \
     int k;\
-    for ((s)->tok = (t), k = 0; k <= abc_PMXCAPT; k++) {\
+    (s)->tok = (t);\
+    for (k = 0; k < abc_PMXCAPT; k++) {\
       (s)->tok_str[k][0] = pmx(Start,k);\
       (s)->tok_str[k][1] = pmx(End,k);\
+      if ((s)->tok_str[k][0] > (s)->tok_str[k][1])\
+        (s)->tok_str[k][1] = (s)->tok_str[k][0] ;  \
     } \
     if ((s)->tok_str[0][0][0] == '\b')\
       (s)->tok_str[0][0]++;   \
-    if ((s)->tok_str[0][0] > (s)->tok_str[0][1])\
-      (s)->tok_str[0][1] = (s)->tok_str[0][0] ;  \
   } while(utlZero)
 
 
@@ -223,8 +235,8 @@ static abcToken abc_lyrics(abcScanner *scn)
                     settoken(scn,T_IGNORE);
                     break;
 
-    case "\b&KH:" :
-                    settoken(scn,T_BEGINHISTORY);
+    case "\b&K(H):" :
+                    settoken(scn,T_BEGINTEXT);
                     stategosub(scn,S_HISTORY);
                     break;
 
@@ -322,8 +334,8 @@ static abcToken abc_symbols(abcScanner *scn)
                     settoken(scn,T_IGNORE);
                     break;
 
-    case "\b&KH:" :
-                    settoken(scn,T_BEGINHISTORY);
+    case "\b&K(H):" :
+                    settoken(scn,T_BEGINTEXT);
                     stategosub(scn,S_HISTORY);
                     break;
 
@@ -391,10 +403,11 @@ static abcToken abc_symbols(abcScanner *scn)
                     settoken(scn,T_USERSYMBOL);
                     break;
 
-    case "*()" :
+    case "(*)" :
     case "+(<+!=+ \f\t\n\r|[:]>)+":
     case "!(<+!=! \f\t\n\r|[:]>)!":
                     settoken(scn,T_DECORATION);
+                    adjustdeco();
                     break;
 
     case "()(<.>)" :    settoken(scn,T_UNKNOWN);
@@ -408,12 +421,12 @@ static abcToken abc_tune(abcScanner *scn)
 {
   skip_token:
   switch pmx(scn->cur) {
-    case "\b&w:&K" :
+    case "\b&Kw:&K" :
                     settoken(scn,T_LYRICS);
                     stategoto(scn,S_LYRICS);
                     break;
 
-    case "\b&s:&K" :
+    case "\b&Ks:&K" :
                     settoken(scn,T_SYMBOLS);
                     stategoto(scn,S_SYMBOLS);
                     break;
@@ -432,8 +445,8 @@ static abcToken abc_tune(abcScanner *scn)
                     settoken(scn,T_EXTFIELD);
                     break;
 
-    case "\b&KH:" :
-                    settoken(scn,T_BEGINHISTORY);
+    case "\b&K(H):" :
+                    settoken(scn,T_BEGINTEXT);
                     stategosub(scn,S_HISTORY);
                     break;
 
@@ -483,6 +496,7 @@ static abcToken abc_tune(abcScanner *scn)
     case "+(<+!=+ \f\t\n\r|[:]>)+":
     case "!(<+!=! \f\t\n\r|[:]>)!":
                     settoken(scn,T_DECORATION);
+                    adjustdeco();
                     break;
 
     case "!" :      settoken(scn,T_BREAKLINE);
@@ -585,8 +599,8 @@ static abcToken abc_limbo(abcScanner *scn)
                     settoken(scn,T_EMPTYLINE);
                     break;
 
-    case "\b&KH:" :
-                    settoken(scn,T_BEGINHISTORY);
+    case "\b&K(H):" :
+                    settoken(scn,T_BEGINTEXT);
                     stategosub(scn,S_HISTORY);
                     break;
 
@@ -649,8 +663,8 @@ static abcToken abc_header(abcScanner *scn)
                     stategoto(scn,S_LIMBO);
                     break;
 
-    case "\b&KH:" :
-                    settoken(scn,T_BEGINHISTORY);
+    case "\b&K(H):" :
+                    settoken(scn,T_BEGINTEXT);
                     stategosub(scn,S_HISTORY);
                     break;
 
@@ -729,6 +743,7 @@ static abcToken abc_grace(abcScanner *scn)
     case "+(<+!=+ \t\n\r|[:]>)+":
     case "!(<+!=! \t\n\r|[:]>)!":
                     settoken(scn,T_DECORATION);
+                    adjustdeco();
                     break;
 
     case "[" :      settoken(scn,T_CHORD);
@@ -777,6 +792,7 @@ static abcToken abc_chord(abcScanner *scn)
     case "+(<+!=+ \t\n\r|[:]>)+":
     case "!(<+!=! \t\n\r|[:]>)!":
                     settoken(scn,T_DECORATION);
+                    adjustdeco();
                     break;
 
     case "(<?=.>)&((<?=',>)" :
@@ -806,9 +822,9 @@ static abcToken abc_history(abcScanner *scn)
   skip_token:
   switch pmx(scn->cur) {
 
-    case "\b&K(H:)&K(&L)(&n)" :
+    case "\b&K(H):&K(&L)(&n)" :
                     if (pmx(Len,1) == 0) {
-                      settoken(scn,T_ENDHISTORY);
+                      settoken(scn,T_ENDTEXT);
                       statereturn(scn);
                     }
                     else

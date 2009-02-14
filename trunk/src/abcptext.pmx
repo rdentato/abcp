@@ -130,4 +130,23 @@ t text
   return 't';
 }
 
+/*** DECORATION */
 
+char *abcDecorationStart(abcScanner *scn)
+{
+  if (abcToken(scn) != T_DECORATION) return utlEmptyString;
+  return abcTokenStart(scn,1);
+}
+
+int abcDecorationLen(abcScanner *scn)
+{
+  if (abcToken(scn) != T_DECORATION) return 0;
+  return abcTokenLen(scn,1);
+}
+
+int abcDecorationSpan(abcScanner *scn)
+{
+  if (abcToken(scn) != T_DECORATION) return '?';
+  if (abcTokenLen(scn,2) > 0) return *abcTokenStart(scn,2);  
+  return '^';
+}

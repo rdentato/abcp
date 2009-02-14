@@ -99,8 +99,9 @@
 
 typedef  unsigned short abcToken; 
 
+/* must be abc_MAXTOKSTR >= abcPMXCAPT */
 #define abc_PMXCAPT     10
-#define abc_MAXTOKSTR   11
+#define abc_MAXTOKSTR   abc_PMXCAPT
 
 typedef struct {
   char  *abc;
@@ -178,6 +179,9 @@ int abcBarDotted(abcScanner *scn);
 int abcBarInvisible(abcScanner *scn);
 int abcBarRepeatBefore(abcScanner *scn);
 int abcBarRepeatAfter(abcScanner *scn);
+
+int abcBroken(abcScanner *scn);
+abcFraction abcChordDuration(abcScanner *scn);
 
 /* abcpkey.pmx */
 
@@ -285,6 +289,9 @@ int abcTextLen(abcScanner *scn);
 char *abcTextStart(abcScanner *scn);
 char abcTextNL(abcScanner *scn);
 
+char *abcDecorationStart(abcScanner *scn);
+int abcDecorationLen(abcScanner *scn);
+int abcDecorationSpan(abcScanner *scn);
 
 /* abcpchord.pmx */
 
