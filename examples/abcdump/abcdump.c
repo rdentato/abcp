@@ -42,13 +42,16 @@ int main(int argc, char *argv[])
              printf("\n");
              break;
 
+        case T_UNKNOWN    : printf("UNKNOWN: "); 
+             printf("[%.*s]\n", abcTokenLen(scn,0),abcTokenStart(scn,0));
+             break;
+
         case T_TEXT       : printf("TEXT: "); goto thetext;
         case T_ENDTEXT    : printf("ENDTEXT: "); goto thetext;
         case T_BEGINTEXT  : printf("BEGINTEXT: "); goto thetext;
         case T_EMPTYLINE  : printf("EMPTYLINE: "); goto thetext;
         case T_WHITESPACE : printf("WHITESPACE: "); goto thetext;
         case T_IGNORE     : printf("IGNORE: "); goto thetext;
-        case T_UNKNOWN    : printf("UNKNOWN: "); goto thetext;
         thetext:    
              printf("type: '%c' [%.*s]",abcTextType(scn),abcTextLen(scn),
                                                   abcTextStart(scn));
@@ -69,6 +72,15 @@ int main(int argc, char *argv[])
              printf("\n");
              break;
  
+
+        case T_SYMBOLS:
+             printf("SYMBOLS:\n");
+             break;
+             
+        case T_LYRICS:
+             printf("LYRICS:\n");
+             break;
+             
         case T_CHORD:
              printf("CHORD:\n");
              break;
@@ -77,6 +89,10 @@ int main(int argc, char *argv[])
              printf("CHORDEND: ");
              k = abcChordDuration(scn);
              printf(" %d/%d\n",abcNumerator(k),abcDenominator(k));
+             break;
+             
+        case T_SPACER:
+             printf("SPACER: %f\n",abcSpacer(scn));
              break;
              
         case T_CONTINUE:
@@ -93,16 +109,65 @@ int main(int argc, char *argv[])
              printf("\n");
              break;
              
+        case T_PRAGMA:
+             printf("PRAGMA: "); 
+             printf("[%.*s]",abcPragmaLen(scn),abcPragmaStart(scn));
+             printf("[%.*s]",abcPragmaArgsLen(scn),abcPragmaArgsStart(scn));
+             printf("\n");
+             break;
+             
+        case T_SLUREND:
+             printf("SLUREND:\n");
+             break;
+             
+        case T_TIE:
+             printf("TIE: %c", abcTieDirection(scn));
+             printf(" %sdotted\n", abcTieDotted(scn)?"":"un");
+             break;
+             
+        case T_SLURSTART:
+             printf("SLURSTART: %c", abcSlurDirection(scn));
+             printf(" %sdotted\n", abcSlurDotted(scn)?"":"un");
+             break;
+             
         case T_BREAKLINE:
              printf("BREAKLINE:\n");
              break;
              
+        case T_ENDING :
+             printf("ENDING: %.*s\n",abcBarEndingLen(scn),abcBarEndingStart(scn));
+             break;
+             
+        case T_OVLRESET:
+             printf("T_OVLRESET: %d\n", abcOverlay(scn));
+             break;
+             
+        case T_OVLSTART:
+             printf("T_OVLSTART: %d\n", abcOverlay(scn));
+             break;
+             
+        case T_OVLEND:
+             printf("T_OVLEND: %d\n", abcOverlay(scn));
+             break;
+        
         case T_BROKENLEFT :
              printf("BROKENLEFT: %d\n", abcBroken(scn));
              break;
              
         case T_BROKENRIGHT :
              printf("BROKENRIGHT: %d\n", abcBroken(scn));
+             break;
+             
+        case T_SYLLABLE:
+             printf("SYLLABLE: [%.*s] %d%s%s\n",abcSyllableLen(scn),
+                  abcSyllableStart(scn), abcSyllableHold(scn), 
+                  (abcSyllableContinue(scn)?" CONTINUE":""),
+                  (abcSyllableBlank(scn)?" BLANK":""));
+             printf("\n");
+             break;
+             
+        case T_TUPLET:
+             printf("TUPLET: %d:%d:%d\n",abcTuplet(scn),abcTupletTime(scn),abcTupletNext(scn));
              break;
              
         case T_ENDLINE:
@@ -117,7 +182,6 @@ int main(int argc, char *argv[])
              printf("[%.*s]",abcChordAltRootLen(scn),abcChordAltRootStart(scn));
              printf("[%.*s]",abcChordAltTypeLen(scn),abcChordAltTypeStart(scn));
              printf("[%.*s]",abcChordAltBassLen(scn),abcChordAltBassStart(scn));
-             printf("%.*s ",abcTokenLen(scn,0),abcTokenStart(scn,0));
              printf("\n");
              break;
              

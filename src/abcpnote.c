@@ -187,6 +187,18 @@ int abcBarRepeatAfter(abcScanner *scn)
     return abcTokenLen(scn,1) / 2;
 }
 
+char *abcBarEndingStart(abcScanner *scn)
+{
+  if (abcToken(scn) != T_ENDING) return utlEmptyString;
+  return abcTokenStart(scn,2);
+}
+
+int abcBarEndingLen(abcScanner *scn)
+{
+  if (abcToken(scn) != T_ENDING) return 0;
+  return abcTokenLen(scn,2);
+}
+
 /*** Broken rythm */
 
 int abcBroken(abcScanner *scn)
@@ -204,6 +216,58 @@ abcFraction abcChordDuration(abcScanner *scn)
   return abc_getfraction(scn,1);
 }
 
+/*** Overlay */
+
+int abcOverlay(abcScanner *scn)
+{
+  if (abcToken(scn) != T_OVLRESET  && abcToken(scn) != T_OVLSTART   && abcToken(scn) != T_OVLEND)
+     return 0;
+  return abcTokenLen(scn,1);
+}
+
+char abcSlurDirection(abcScanner *scn)
+{
+  if (abcToken(scn) != T_SLURSTART || abcTokenLen(scn,2) == 0) return '-';
+  return *abcTokenStart(scn,2);
+}
+
+char abcTieDirection(abcScanner *scn)
+{
+  if (abcToken(scn) != T_TIE || abcTokenLen(scn,2) == 0) return '-';
+  return *abcTokenStart(scn,2);
+}
+
+int abcSlurDotted(abcScanner *scn)
+{
+  if (abcToken(scn) != T_SLURSTART) return 0;
+  return (abcTokenLen(scn,1) > 0);
+}
+
+int abcTieDotted(abcScanner *scn)
+{
+  if (abcToken(scn) != T_TIE) return 0;
+  return (abcTokenLen(scn,1) > 0);
+}
+
+/** TUPLET */
+
+int abcTuplet(abcScanner *scn)
+{
+  if (abcToken(scn) != T_TUPLET) return 0;
+  return atoi(abcTokenStart(scn,1));
+}
+
+int abcTupletTime(abcScanner *scn)
+{
+  if (abcToken(scn) != T_TUPLET || abcTokenLen(scn,2)==0) return 0;
+  return atoi(abcTokenStart(scn,2));
+}
+
+int abcTupletNext(abcScanner *scn)
+{
+  if (abcToken(scn) != T_TUPLET || abcTokenLen(scn,3)==0) return 0;
+  return atoi(abcTokenStart(scn,3));
+}
 
 
 

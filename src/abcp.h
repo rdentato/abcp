@@ -37,6 +37,7 @@
 #define S_GRACE               0x0009
 #define S_CHORD               0x000A
 #define S_TEXT_PS             0x000B
+#define S_MAXSTATE            0x000C
 
 
 /* -- BEGIN TOKENS  */
@@ -116,6 +117,7 @@ typedef struct {
   unsigned short lnumber;
   unsigned short ln_logical;
   unsigned short flags;
+  abcToken lasttok;
   abcToken tok;
   char *tok_str[abc_MAXTOKSTR][2]; /* begin, end */
 } abcScanner;
@@ -140,6 +142,8 @@ int abcTokenLen(abcScanner *scn, int strnum);
 #define abcCurState(s) ((s)->state)
 #define abcNextState(s) ((s)->nextstate)
 #define abcLineNumber(s) ((s)->ln_logical)
+
+unsigned short abcSetState(abcScanner *scn, unsigned short state);
 
 /********/
 
@@ -179,9 +183,21 @@ int abcBarDotted(abcScanner *scn);
 int abcBarInvisible(abcScanner *scn);
 int abcBarRepeatBefore(abcScanner *scn);
 int abcBarRepeatAfter(abcScanner *scn);
+char *abcBarEndingStart(abcScanner *scn);
+int abcBarEndingLen(abcScanner *scn);
 
 int abcBroken(abcScanner *scn);
 abcFraction abcChordDuration(abcScanner *scn);
+
+int abcOverlay(abcScanner *scn);
+char abcSlurDirection(abcScanner *scn);
+char abcTieDirection(abcScanner *scn);
+int abcSlurDotted(abcScanner *scn);
+int abcTieDotted(abcScanner *scn);
+
+int abcTupletNext(abcScanner *scn);
+int abcTupletTime(abcScanner *scn);
+int abcTuplet(abcScanner *scn);
 
 /* abcpkey.pmx */
 
@@ -292,6 +308,19 @@ char abcTextNL(abcScanner *scn);
 char *abcDecorationStart(abcScanner *scn);
 int abcDecorationLen(abcScanner *scn);
 int abcDecorationSpan(abcScanner *scn);
+
+char *abcPragmaStart(abcScanner *scn);
+int abcPragmaLen(abcScanner *scn);
+char *abcPragmaArgsStart(abcScanner *scn);
+int abcPragmaArgsLen(abcScanner *scn);
+
+float abcSpacer(abcScanner *scn);
+
+char *abcSyllableStart(abcScanner *scn);
+int abcSyllableLen(abcScanner *scn);
+int abcSyllableContinue(abcScanner *scn);
+int abcSyllableHold(abcScanner *scn);
+int abcSyllableBlank(abcScanner *scn);
 
 /* abcpchord.pmx */
 

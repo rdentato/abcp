@@ -150,3 +150,71 @@ int abcDecorationSpan(abcScanner *scn)
   if (abcTokenLen(scn,2) > 0) return *abcTokenStart(scn,2);  
   return '^';
 }
+
+/** Pragma */
+
+char *abcPragmaStart(abcScanner *scn)
+{
+  if (abcToken(scn) != T_PRAGMA) return utlEmptyString;
+  return abcTokenStart(scn,1);
+}
+
+int abcPragmaLen(abcScanner *scn)
+{
+  if (abcToken(scn) != T_PRAGMA) return 0;
+  return abcTokenLen(scn,1);
+}
+
+char *abcPragmaArgsStart(abcScanner *scn)
+{
+  if (abcToken(scn) != T_PRAGMA) return utlEmptyString;
+  return abcTokenStart(scn,2);
+}
+
+int abcPragmaArgsLen(abcScanner *scn)
+{
+  if (abcToken(scn) != T_PRAGMA) return 0;
+  return abcTokenLen(scn,2);
+}
+
+/* spacer */
+float abcSpacer(abcScanner *scn)
+{
+  if (abcToken(scn) != T_SPACER) return 0.0;
+  return atof(abcTokenStart(scn,1));
+}
+
+/** Lyrics */
+
+char *abcSyllableStart(abcScanner *scn)
+{
+  if (abcToken(scn) != T_SYLLABLE ) return utlEmptyString;
+  return abcTokenStart(scn,2);
+}
+
+int abcSyllableLen(abcScanner *scn)
+{
+  if (abcToken(scn) != T_SYLLABLE ) return 0;
+  return abcTokenLen(scn,2);
+}
+
+int abcSyllableContinue(abcScanner *scn)
+{
+  if (abcToken(scn) != T_SYLLABLE ) return 0;
+  return (abcTokenLen(scn,1) > 0);
+}
+
+int abcSyllableHold(abcScanner *scn)
+{
+  if (abcToken(scn) != T_SYLLABLE ) return 0;
+  return (abcTokenLen(scn,3));
+}
+
+int abcSyllableBlank(abcScanner *scn)
+{
+  if (abcToken(scn) != T_SYLLABLE ) return 0;
+  return (abcTokenLen(scn,1) == 0 &&
+          abcTokenLen(scn,2) == 0 &&
+          abcTokenLen(scn,3) == 0);
+}
+

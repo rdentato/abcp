@@ -1,0 +1,8 @@
+X:1
+#if xxx
+a & 
+b
+(&& c a && f e &&)
+#else
+a sda
+#endif
