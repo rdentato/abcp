@@ -198,6 +198,58 @@ int abcTieDotted(abcScanner *scn);
 int abcTupletNext(abcScanner *scn);
 int abcTupletTime(abcScanner *scn);
 int abcTuplet(abcScanner *scn);
+            
+/* abcptext.c */
+
+char *abcAnnotationTextStart(abcScanner *scn);
+int abcAnnotationTextLen(abcScanner *scn);
+float abcAnnotationPosX(abcScanner *scn);
+float abcAnnotationPosY(abcScanner *scn);
+char abcAnnotationPos(abcScanner *scn);
+
+char abcTextType(abcScanner *scn);
+int abcTextLen(abcScanner *scn);
+char *abcTextStart(abcScanner *scn);
+char abcTextNL(abcScanner *scn);
+
+char *abcDecorationStart(abcScanner *scn);
+int abcDecorationLen(abcScanner *scn);
+int abcDecorationSpan(abcScanner *scn);
+
+char *abcPragmaStart(abcScanner *scn);
+int abcPragmaLen(abcScanner *scn);
+char *abcPragmaArgsStart(abcScanner *scn);
+int abcPragmaArgsLen(abcScanner *scn);
+
+float abcSpacer(abcScanner *scn);
+
+char *abcSyllableStart(abcScanner *scn);
+int abcSyllableLen(abcScanner *scn);
+int abcSyllableContinue(abcScanner *scn);
+int abcSyllableHold(abcScanner *scn);
+int abcSyllableBlank(abcScanner *scn);
+
+int abcVerse(abcScanner *scn);
+char abcVerseSeparator(abcScanner *scn);
+char abcUsersymbol(abcScanner *scn);
+
+
+/* abcpchord.pmx */
+
+char *abcChordRootStart(abcScanner *scn);
+char *abcChordTypeStart(abcScanner *scn);
+char *abcChordBassStart(abcScanner *scn);
+char *abcChordAltRootStart(abcScanner *scn);
+char *abcChordAltTypeStart(abcScanner *scn);
+char *abcChordAltBassStart(abcScanner *scn);
+
+int abcChordRootLen(abcScanner *scn);
+int abcChordTypeLen(abcScanner *scn);
+int abcChordBassLen(abcScanner *scn);
+int abcChordAltRootLen(abcScanner *scn);
+int abcChordAltTypeLen(abcScanner *scn);
+int abcChordAltBassLen(abcScanner *scn);
+
 
 /* abcpkey.pmx */
 
@@ -291,51 +343,5 @@ char *abcKVExp(abcScanner *scn,char kv);
 #define abcVoiceAccidentals(s)       abcKVExp(s,'V')
             
 #define abcVoiceTranspose(s)         abcKVTranspose(s,'V')
-             
-/* abcptext.c */
-
-char *abcAnnotationTextStart(abcScanner *scn);
-int abcAnnotationTextLen(abcScanner *scn);
-float abcAnnotationPosX(abcScanner *scn);
-float abcAnnotationPosY(abcScanner *scn);
-char abcAnnotationPos(abcScanner *scn);
-
-char abcTextType(abcScanner *scn);
-int abcTextLen(abcScanner *scn);
-char *abcTextStart(abcScanner *scn);
-char abcTextNL(abcScanner *scn);
-
-char *abcDecorationStart(abcScanner *scn);
-int abcDecorationLen(abcScanner *scn);
-int abcDecorationSpan(abcScanner *scn);
-
-char *abcPragmaStart(abcScanner *scn);
-int abcPragmaLen(abcScanner *scn);
-char *abcPragmaArgsStart(abcScanner *scn);
-int abcPragmaArgsLen(abcScanner *scn);
-
-float abcSpacer(abcScanner *scn);
-
-char *abcSyllableStart(abcScanner *scn);
-int abcSyllableLen(abcScanner *scn);
-int abcSyllableContinue(abcScanner *scn);
-int abcSyllableHold(abcScanner *scn);
-int abcSyllableBlank(abcScanner *scn);
-
-/* abcpchord.pmx */
-
-char *abcChordRootStart(abcScanner *scn);
-char *abcChordTypeStart(abcScanner *scn);
-char *abcChordBassStart(abcScanner *scn);
-char *abcChordAltRootStart(abcScanner *scn);
-char *abcChordAltTypeStart(abcScanner *scn);
-char *abcChordAltBassStart(abcScanner *scn);
-
-int abcChordRootLen(abcScanner *scn);
-int abcChordTypeLen(abcScanner *scn);
-int abcChordBassLen(abcScanner *scn);
-int abcChordAltRootLen(abcScanner *scn);
-int abcChordAltTypeLen(abcScanner *scn);
-int abcChordAltBassLen(abcScanner *scn);
-
+ 
 #endif

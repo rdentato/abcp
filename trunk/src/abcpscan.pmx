@@ -290,7 +290,7 @@ static abcToken abc_lyrics(abcScanner *scn)
                     break;
 
 
-    case "(<+d>)(<=.):>)"  :
+    case "(<+d>)(<=.):&->)"  :
                     settoken(scn,T_VERSE);
                     break;
 

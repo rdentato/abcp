@@ -1,5 +1,5 @@
 X:1
 C
-w: W\"i w\"i siwi-li d\"o-r\"i
-w: \"I\"osz da__ | felt~dos f\=unker sti--\"ik
-w: re\:i\vs * | sti-ih--tz__ klo\-wit\vs
+w: 1. W\"i w\"i siwi-li d\"o-r\"i
+w: 2. \"I\"osz da__ | felt~dos f\=unker sti--\"ik
+w: 3. re\:i\vs * | sti-ih--tz__ klo\-wit\vs
