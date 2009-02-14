@@ -509,9 +509,12 @@ static abcToken abc_tune(abcScanner *scn)
                       settoken(scn,T_INFIELD);
                     break;
 
-    case "<?=[>(<d><*=,0-9&->)" :
-    case "[&K(&e\\&b\"\")" :
-                    settoken(scn,T_ENDING);
+    case "(<?=[>)(<d><*=,0-9&->)" :
+    case "([)&K(&e\\&b\"\")" :
+                    if (scn->lasttok == T_BAR)
+                      settoken(scn,T_ENDING);
+                    else
+                      settoken(scn,T_UNKNOWN);
                     break;
 
     case "(<?=.>)-(<?=',>)" :
@@ -898,11 +901,12 @@ abcToken abcNextToken(abcScanner *scn)
   int k;
   
   for (k=0; k< abc_MAXTOKSTR; k++)
-    scn->tok_str[k][0] = scn->tok_str[k][1] = NULL; 
-  
+    scn->tok_str[k][0] = scn->tok_str[k][1] = NULL;
+     
+  scn->lasttok = scn->tok;
   abcClrFlag(scn,ABC_F_ONETIMERS);
 
-  if (scn->nextstate != S_NONE) {
+  if (scn->nextstate != S_NONE && scn->nextstate < S_MAXSTATE) {
     scn->state = scn->nextstate;
     scn->nextstate = S_NONE;
   }
@@ -955,4 +959,11 @@ int abcTokenLen(abcScanner *scn, int strnum)
   }
   return len;
 }
+
+unsigned short abcSetState(abcScanner *scn, unsigned short state)
+{
+  scn->nextstate = state;
+  return scn->state;
+}
+
 

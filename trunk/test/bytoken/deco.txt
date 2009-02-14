@@ -1,4 +1,6 @@
 X:1
 +>+ +dacapo+ !fine! !5!
 ++ !! +ped(+ +ped)+
-s: +trill(+ !+! !-! +!+ +trill)+
+s: +trill(+ !+! !-! +!+ +trill)+ \
+   +8va(+  | +8va)+
++mark1+ y1.32 +mark2+ 

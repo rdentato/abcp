@@ -1,0 +1,5 @@
+X:1
+a (C d C) 
+b ('E f E)
+.(c G)-G
+(,C D-D E) F.-,F 
