@@ -154,7 +154,7 @@ int abcDecorationSpan(abcScanner *scn)
 char abcUserSymbol(abcScanner *scn)
 {
   if (abcToken(scn) == T_USERSYMBOL  || abcField(scn) == 'U')
-    return *abcTokenStart(scn,1);
+    return *abcTokenStart(scn,2);
   else
     return '\0';
 }
@@ -182,13 +182,13 @@ char *abcUserSymbolDefineStart(abcScanner *scn)
 {
   if ((abcField(scn) != 'U')) return utlEmptyString;
   
-  return abcTokenStart(scn,3);
+  return abcTokenStart(scn,4);
 }
 
 int abcUserSymbolDefineLen(abcScanner *scn)
 {
   if (abcField(scn) != 'U')  return 0;
-  return abcTokenLen(scn,3);
+  return abcTokenLen(scn,4);
 }
 
 

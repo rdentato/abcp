@@ -6,6 +6,16 @@
 #   http://opensource.org/licenses/bsd-license.php
 #
 
+TOP=../../
+
+include $(TOP)config.mk
+
+nousym$(_EXE): $(CHKLIB) nousym$(_OBJ)
+	$(LN)$@ nousym$(_OBJ) -labcp $(MLIB)
+
 clean:
-	cd abcdump; make clean
-	cd nousym; make clean
+	$(RM) nousym$(_EXE)
+	$(RM) nousym$(_OBJ)
+	$(RM) gmon.out
+
+include $(TOP)targets.mk

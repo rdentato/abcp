@@ -235,6 +235,8 @@ int abcVerse(abcScanner *scn);
 char abcVerseSeparator(abcScanner *scn);
 char abcUserSymbol(abcScanner *scn);
 char *abcUserSymbolDefault(abcScanner *scn);
+char *abcUserSymbolDefineStart(abcScanner *scn);
+int abcUserSymbolDefineLen(abcScanner *scn);
 
 
 /* abcpchord.pmx */

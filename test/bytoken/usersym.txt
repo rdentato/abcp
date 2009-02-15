@@ -1,0 +1,5 @@
+X:1
+U: p = +xx+
+U: q = "^upup"
+K:
+p q 
