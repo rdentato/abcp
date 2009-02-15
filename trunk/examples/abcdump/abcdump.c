@@ -225,7 +225,7 @@ int main(int argc, char *argv[])
              
         case T_INFIELD:
         case T_FIELD:
-             switch (*abcTokenStart(scn,1)) {
+             switch (abcField(scn)) {
                case 'K' : 
                  printf("KEY: %.*s\n", abcKeyTonicLen(scn), abcKeyTonicStart(scn));
                  printf("               mode: %c\n", abcKeyMode(scn));
@@ -278,8 +278,14 @@ int main(int argc, char *argv[])
                  printf("               gchord: %c\n",abcVoiceGchord(scn));           
                  break;
                  
-              default:
-                 printf("%.*s", abcTokenLen(scn,0),abcTokenStart(scn,0));
+               case 'U' :
+                 printf("FIELD U: [%c][%.*s]\n", abcUserSymbol(scn),
+                          abcUserSymbolDefineLen(scn),
+                          abcUserSymbolDefineStart(scn));
+                 break;
+                 
+               default:
+                 printf("FIELD: %.*s", abcTokenLen(scn,0),abcTokenStart(scn,0));
                  if (tok == T_INFIELD) printf("\n");
              }
              break; 

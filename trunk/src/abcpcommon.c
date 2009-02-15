@@ -32,3 +32,4 @@ char abcField(abcScanner *scn)
   if (abcToken(scn) != T_FIELD) return '\0';
   return *abcTokenStart(scn,0);
 }
+

@@ -1,0 +1,12 @@
+U: h = +hello+
+U: R = +ring(+
+U: r = +ring)+
+
+X:1
+U: q = "^quasi"
+hA RB rC qD
+
+X:2
+hA RB rC qD
+
+
