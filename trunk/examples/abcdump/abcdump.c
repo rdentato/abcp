@@ -169,7 +169,7 @@ int main(int argc, char *argv[])
              break;
              
         case T_USERSYMBOL :
-             printf("USERSYMBOL: %c\n", abcUsersymbol(scn));
+             printf("USERSYMBOL: %c %s\n", abcUserSymbol(scn),abcUserSymbolDefault(scn));
              break;
              
         case T_VERSE:
@@ -200,6 +200,7 @@ int main(int argc, char *argv[])
              printf("[%.*s]",abcChordAltRootLen(scn),abcChordAltRootStart(scn));
              printf("[%.*s]",abcChordAltTypeLen(scn),abcChordAltTypeStart(scn));
              printf("[%.*s]",abcChordAltBassLen(scn),abcChordAltBassStart(scn));
+             /*printf(" %.*s",abcTokenLen(scn,0),abcTokenStart(scn,0));*/
              printf("\n");
              break;
              

@@ -151,6 +151,48 @@ int abcDecorationSpan(abcScanner *scn)
   return '^';
 }
 
+char abcUserSymbol(abcScanner *scn)
+{
+  if (abcToken(scn) == T_USERSYMBOL  || abcField(scn) == 'U')
+    return *abcTokenStart(scn,1);
+  else
+    return '\0';
+}
+
+char *abcUserSymbolDefault(abcScanner *scn)
+{
+  if (abcToken(scn) != T_USERSYMBOL ) return utlEmptyString;
+  switch (*abcTokenStart(scn,1)) {
+    case '.' : return "+staccato+"         ;
+    case '~' : return "+roll+"         ;
+    case 'T' : return "+trill+";
+    case 'H' : return "+fermata+";
+    case 'L' : return "+emphasis+";
+    case 'M' : return "+lowermordent+";
+    case 'P' : return "+uppermordent+";
+    case 'S' : return "+segno+";
+    case 'O' : return "+coda+";
+    case 'u' : return "+upbow+";
+    case 'v' : return "+downbow+";
+  }
+  return utlEmptyString; 
+}
+
+char *abcUserSymbolDefineStart(abcScanner *scn)
+{
+  if ((abcField(scn) != 'U')) return utlEmptyString;
+  
+  return abcTokenStart(scn,3);
+}
+
+int abcUserSymbolDefineLen(abcScanner *scn)
+{
+  if (abcField(scn) != 'U')  return 0;
+  return abcTokenLen(scn,3);
+}
+
+
+
 /** Pragma */
 
 char *abcPragmaStart(abcScanner *scn)
@@ -230,8 +272,3 @@ char abcVerseSeparator(abcScanner *scn)
   return *abcTokenStart(scn,2);
 }
 
-char abcUsersymbol(abcScanner *scn)
-{
-  if (abcToken(scn) != T_USERSYMBOL ) return '\0';
-  return *abcTokenStart(scn,1);
-}
