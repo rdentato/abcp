@@ -225,9 +225,12 @@ int abcOverlay(abcScanner *scn)
   return abcTokenLen(scn,1);
 }
 
+/** slur and tie */
+
 char abcSlurDirection(abcScanner *scn)
 {
-  if (abcToken(scn) != T_SLURSTART || abcTokenLen(scn,2) == 0) return '-';
+  if ((abcToken(scn) != T_SLURSTART && abcToken(scn) != T_SLUREND) ||
+      abcTokenLen(scn,2) == 0) return '-';
   return *abcTokenStart(scn,2);
 }
 
@@ -239,7 +242,7 @@ char abcTieDirection(abcScanner *scn)
 
 int abcSlurDotted(abcScanner *scn)
 {
-  if (abcToken(scn) != T_SLURSTART) return 0;
+  if (abcToken(scn) != T_SLURSTART && abcToken(scn) != T_SLUREND) return 0;
   return (abcTokenLen(scn,1) > 0);
 }
 

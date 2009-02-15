@@ -27,3 +27,8 @@ abcFraction abc_getfraction(abcScanner *scn,int ndx)
    return ((num & 0xFF)<< 8 | (den & 0xFF));
 }
 
+char abcField(abcScanner *scn)
+{
+  if (abcToken(scn) != T_FIELD) return '\0';
+  return *abcTokenStart(scn,0);
+}

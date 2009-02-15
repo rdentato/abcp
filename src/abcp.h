@@ -153,6 +153,8 @@ typedef unsigned short abcFraction;
 #define abcDenominator(x)  ((x) & 0x00FF)
 abcFraction abc_getfraction(abcScanner *scn,int ndx);
 
+char abcField(abcScanner *scn);
+
 /****** */
 
 /* abcpnote.c */
@@ -231,7 +233,8 @@ int abcSyllableBlank(abcScanner *scn);
 
 int abcVerse(abcScanner *scn);
 char abcVerseSeparator(abcScanner *scn);
-char abcUsersymbol(abcScanner *scn);
+char abcUserSymbol(abcScanner *scn);
+char *abcUserSymbolDefault(abcScanner *scn);
 
 
 /* abcpchord.pmx */

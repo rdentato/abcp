@@ -3,4 +3,5 @@ X:1
 ++ !! +ped(+ +ped)+
 s: +trill(+ !+! !-! +!+ +trill)+ \
    +8va(+  | +8va)+
-+mark1+ y1.32 +mark2+ 
++mark1+ y1.32 +mark2+
+uAvC .G 
