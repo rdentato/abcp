@@ -113,7 +113,7 @@ t text
     default           : return '\0';
   }
 
-  switch (abcCurState(scn)) {
+  switch (abcScannerCurState(scn)) {
     case S_TEXT_PS : return 'P';
     case S_TEXT    : return 'B';    
     case S_HISTORY : return 'H';

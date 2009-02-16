@@ -89,6 +89,7 @@
 #define T_ENDHISTORY          0x102D
 #define T_INCLUDE             0x102E
 #define T_INCLUDEEND          0x102F
+#define T_INCLUDEPATH         0x1030
 
 
 /* -- END TOKENS  */
@@ -115,6 +116,7 @@ typedef struct abc_scanner {
   char  *line;
   char  *cur;
   char  *tmpbuf;
+  char  *incpath;
   unsigned short state;
   unsigned short nextstate;
   unsigned short prevstate;
@@ -132,8 +134,13 @@ abcScanner *abc_newscanner(char *text,char how);
 #define abcNew_str(s)  abc_newscanner(s,'S')
 #define abcNew_chs(s)  abc_newscanner(s,'C')
 
-#define abcNewScanner(x,y) abcNew_##x(y)
-abcScanner *abcFreeScanner(abcScanner *scn);
+#define abcScannerNew(x,y) abcNew_##x(y)
+
+abcScanner *abcScannerFree(abcScanner *scn);
+
+char *abcScannerAddToIncludePath(abcScanner *scn,char *path);
+char *abcScannerSetIncludePath(abcScanner *scn,char *path);
+char *abcScannerGetIncludePath(abcScanner *scn);
 
 abcToken abcNextToken(abcScanner *scn);
 
@@ -142,12 +149,11 @@ char *abcTokenStart(abcScanner *scn, int strnum);
 char *abcTokenEnd(abcScanner *scn, int strnum);
 int abcTokenLen(abcScanner *scn, int strnum);
 
+#define abcScannerCurState(s) ((s)->state)
+#define abcScannerNextState(s) ((s)->nextstate)
+#define abcScannerLineNumber(s) ((s)->ln_logical)
 
-#define abcCurState(s) ((s)->state)
-#define abcNextState(s) ((s)->nextstate)
-#define abcLineNumber(s) ((s)->ln_logical)
-
-unsigned short abcSetState(abcScanner *scn, unsigned short state);
+unsigned short abcScannerSetState(abcScanner *scn, unsigned short state);
 
 int abcInclude(abcScanner *scn);
 
