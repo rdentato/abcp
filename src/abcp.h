@@ -87,6 +87,9 @@
 #define T_ENDTEXT             0x102B
 #define T_BEGINHISTORY        0x102C
 #define T_ENDHISTORY          0x102D
+#define T_INCLUDE             0x102E
+#define T_INCLUDEEND          0x102F
+
 
 /* -- END TOKENS  */
 
@@ -104,7 +107,8 @@ typedef  unsigned short abcToken;
 #define abc_PMXCAPT     10
 #define abc_MAXTOKSTR   abc_PMXCAPT
 
-typedef struct {
+typedef struct abc_scanner {
+  struct abc_scanner *saved;
   char  *abc;
   char  *pos;
   FILE  *file;
@@ -144,6 +148,9 @@ int abcTokenLen(abcScanner *scn, int strnum);
 #define abcLineNumber(s) ((s)->ln_logical)
 
 unsigned short abcSetState(abcScanner *scn, unsigned short state);
+
+int abcInclude(abcScanner *scn);
+
 
 /********/
 

@@ -223,6 +223,16 @@ int main(int argc, char *argv[])
              printf("               cents: %d\n",abcNoteCents(scn));
              break;
              
+        case T_INCLUDE:
+             printf("INCLUDE: %.*s%.*s", abcTokenLen(scn,1),abcTokenStart(scn,1),
+                                         abcTokenLen(scn,2),abcTokenStart(scn,2));                                             
+             printf(" %s\n", abcInclude(scn)? "OK":"FAILED");
+             break;
+        
+        case T_INCLUDEEND:
+             printf("INCLUDEEND\n");
+             break;
+        
         case T_INFIELD:
         case T_FIELD:
              switch (abcField(scn)) {
