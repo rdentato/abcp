@@ -29,6 +29,7 @@ abcScanner *abc_newscanner(char *text,char how)
     scn->line = NULL;
     scn->cur = NULL;
     scn->tmpbuf = NULL;
+    scn->saved = NULL;
 
     switch(how) {
       case 'F' : scn->file = f; break;
@@ -44,11 +45,14 @@ abcScanner *abc_newscanner(char *text,char how)
 
 abcScanner *abcFreeScanner(abcScanner *scn)
 {
-  if (scn) {
+  abcScanner *tmp;
+  while (scn) {
     if (scn->file) fclose(scn->file);
     if (scn->line) chsFree(scn->line);
     if (scn->tmpbuf) chsFree(scn->tmpbuf);
-    free(scn);
+    tmp = scn;
+    scn = scn->saved;
+    free(tmp);
   }
   return NULL;
 }
@@ -226,6 +230,7 @@ static abcToken abc_lyrics(abcScanner *scn)
                     settoken(scn,T_BEGINTEXT);
                     stategosub(scn,S_TEXT);
                     break;
+
 
     case "\b&K%%&K(<+! \t\n\r\f\b:>)<?=:>(<*S>)&K(&L)&n" :
                     settoken(scn,T_EXTFIELD);
@@ -443,6 +448,11 @@ static abcToken abc_tune(abcScanner *scn)
                     stategosub(scn,S_TEXT);
                     break;
 
+    case "\b&K%%&K<?$abc->include&k&e\\(&q)()&K(&L)(&n)" :
+    case "\b&K%%&K<?$abc->include&k()(<+S>)&K(&L)(&n)" :
+                    settoken(scn,T_INCLUDE);
+                    break;
+
     case "\b&K%%&K(<+S>)&K(&L)&n" :
                     settoken(scn,T_EXTFIELD);
                     break;
@@ -627,6 +637,11 @@ static abcToken abc_limbo(abcScanner *scn)
                     stategosub(scn,S_TEXT);
                     break;
 
+    case "\b&K%%&K<?$abc->include&k&e\\(&q)()&K(&L)(&n)" :
+    case "\b&K%%&K<?$abc->include&k()(<+S>)&K(&L)(&n)" :
+                    settoken(scn,T_INCLUDE);
+                    break;
+
     case "\b&K%%&K(<+S>)&K(&L)&n" :
                     settoken(scn,T_EXTFIELD);
                     stategoto(scn,S_HEADER);
@@ -691,6 +706,11 @@ static abcToken abc_header(abcScanner *scn)
     case "\b&K%%&Kbegin(text)&K(&L)(&n)" :
                     settoken(scn,T_BEGINTEXT);
                     stategosub(scn,S_TEXT);
+                    break;
+
+    case "\b&K%%&K<?$abc->include&k&e\\(&q)()&K(&L)(&n)" :
+    case "\b&K%%&K<?$abc->include&k()(<+S>)&K(&L)(&n)" :
+                    settoken(scn,T_INCLUDE);
                     break;
 
     case "\b&K%%&K(<+S>)&K(&L)&n" :
@@ -911,6 +931,8 @@ abcToken abcNextToken(abcScanner *scn)
 {
   int k;
   
+  if (scn == NULL) return T_EOF;
+  
   for (k=0; k< abc_MAXTOKSTR; k++)
     scn->tok_str[k][0] = scn->tok_str[k][1] = NULL;
      
@@ -941,6 +963,19 @@ abcToken abcNextToken(abcScanner *scn)
       case S_TEXT     : return abc_text(scn);
     }
   }
+
+  if (scn->saved != NULL) {
+    abcScanner tmp;
+    tmp = *scn->saved;
+    scn->saved->saved = NULL;
+    abcFreeScanner(scn->saved);
+    *scn = tmp;
+    scn->tok = T_INCLUDEEND;
+    for (k=0; k< abc_MAXTOKSTR; k++)
+      scn->tok_str[k][0] = scn->tok_str[k][1] = NULL;   
+    return T_INCLUDEEND;
+  }
+  
   scn->nextstate = S_EOF;
   return T_EOF;
 }
@@ -977,4 +1012,31 @@ unsigned short abcSetState(abcScanner *scn, unsigned short state)
   return scn->state;
 }
 
-
+int abcInclude(abcScanner *scn)
+{
+  abcScanner *save = NULL;
+  abcScanner tmp;
+  char fname[256];
+  int len;
+  
+  if (abcToken(scn) == T_INCLUDE) {
+    if ((len = abcTokenLen(scn,1)) > 0)
+      strncpy(fname,abcTokenStart(scn,1)+1,len-2);
+    else if ( (len = abcTokenLen(scn,2)) > 0)
+      strncpy(fname,abcTokenStart(scn,2),len);
+    else return 0;
+    fname[len] = '\0';
+    _dbgmsg("including: %s\n",fname);
+    save = abcNewScanner(file,fname);
+    
+    if (save != NULL) {
+      save->nextstate = scn->state;
+      tmp = *scn;
+      *scn = *save;
+      *save = tmp;
+      scn->saved = save;
+      return 1;               
+    }      
+  }
+  return 0;
+}
