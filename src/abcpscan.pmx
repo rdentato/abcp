@@ -1026,7 +1026,10 @@ int abcInclude(abcScanner *scn)
       strncpy(fname,abcTokenStart(scn,2),len);
     else return 0;
     fname[len] = '\0';
+    
     _dbgmsg("including: %s\n",fname);
+    
+    /* #TODO: handle an include path */
     save = abcNewScanner(file,fname);
     
     if (save != NULL) {
