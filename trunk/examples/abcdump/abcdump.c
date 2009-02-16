@@ -36,11 +36,11 @@ int main(int argc, char *argv[])
   abctext = chsRead(abctext,f,'w');
   if (f!=stdin) fclose(f);
   if (abctext && *abctext) {
-    scn = abcNewScanner(str,abctext);
-    abcSetState(scn,k);
+    scn = abcScannerNew(str,abctext);
+    abcScannerSetState(scn,k);
     /*printf("<<\n%s\n>>\n",scn->abc);*/
     while ((tok = abcNextToken(scn)) != T_EOF) {
-      printf("%04d %04X %04X ",abcLineNumber(scn), abcCurState(scn), abcToken(scn));
+      printf("%04d %04X %04X ",abcScannerLineNumber(scn), abcScannerCurState(scn), abcToken(scn));
       switch (tok) {
         case T_ANNOTATION:
              printf("ANNOTATION: ");
@@ -304,7 +304,7 @@ int main(int argc, char *argv[])
              printf("%.*s\n", abcTokenLen(scn,0),abcTokenStart(scn,0));
       }
     }
-    scn = abcFreeScanner(scn);
+    scn = abcScannerFree(scn);
   }
   abctext = chsFree(abctext);
   return(0);

@@ -26,6 +26,7 @@ static short tablature[MAXTABSTRINGS];
 static void settablature(char *start, char *end)
 {
   int k;
+  /* #TODO: */
 }
 
 static void abc_clef(abcScanner *scn, char *start, char *end)

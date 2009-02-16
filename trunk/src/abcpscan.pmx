@@ -30,6 +30,7 @@ abcScanner *abc_newscanner(char *text,char how)
     scn->cur = NULL;
     scn->tmpbuf = NULL;
     scn->saved = NULL;
+    scn->incpath = NULL;
 
     switch(how) {
       case 'F' : scn->file = f; break;
@@ -43,13 +44,14 @@ abcScanner *abc_newscanner(char *text,char how)
 }
 
 
-abcScanner *abcFreeScanner(abcScanner *scn)
+abcScanner *abcScannerFree(abcScanner *scn)
 {
   abcScanner *tmp;
   while (scn) {
     if (scn->file) fclose(scn->file);
     if (scn->line) chsFree(scn->line);
     if (scn->tmpbuf) chsFree(scn->tmpbuf);
+    if (scn->incpath) chsFree(scn->incpath);
     tmp = scn;
     scn = scn->saved;
     free(tmp);
@@ -230,7 +232,6 @@ static abcToken abc_lyrics(abcScanner *scn)
                     settoken(scn,T_BEGINTEXT);
                     stategosub(scn,S_TEXT);
                     break;
-
 
     case "\b&K%%&K(<+! \t\n\r\f\b:>)<?=:>(<*S>)&K(&L)&n" :
                     settoken(scn,T_EXTFIELD);
@@ -448,6 +449,10 @@ static abcToken abc_tune(abcScanner *scn)
                     stategosub(scn,S_TEXT);
                     break;
 
+    case "\b&K%%&K<?$abc->includepath&k(<?=+>)&K&e\\(&q)&L&n" :
+                    settoken(scn,T_INCLUDEPATH);
+                    break;
+
     case "\b&K%%&K<?$abc->include&k&e\\(&q)()&K(&L)(&n)" :
     case "\b&K%%&K<?$abc->include&k()(<+S>)&K(&L)(&n)" :
                     settoken(scn,T_INCLUDE);
@@ -637,9 +642,15 @@ static abcToken abc_limbo(abcScanner *scn)
                     stategosub(scn,S_TEXT);
                     break;
 
+    case "\b&K%%&K<?$abc->includepath&k(<?=+>)&K&e\\(&q)&L&n" :
+                    settoken(scn,T_INCLUDEPATH);
+                    stategoto(scn,S_HEADER);
+                    break;
+
     case "\b&K%%&K<?$abc->include&k&e\\(&q)()&K(&L)(&n)" :
     case "\b&K%%&K<?$abc->include&k()(<+S>)&K(&L)(&n)" :
                     settoken(scn,T_INCLUDE);
+                    stategoto(scn,S_HEADER);
                     break;
 
     case "\b&K%%&K(<+S>)&K(&L)&n" :
@@ -706,6 +717,10 @@ static abcToken abc_header(abcScanner *scn)
     case "\b&K%%&Kbegin(text)&K(&L)(&n)" :
                     settoken(scn,T_BEGINTEXT);
                     stategosub(scn,S_TEXT);
+                    break;
+
+    case "\b&K%%&K<?$abc->includepath&k(<?=+>)&K&e\\(&q)&L&n" :
+                    settoken(scn,T_INCLUDEPATH);
                     break;
 
     case "\b&K%%&K<?$abc->include&k&e\\(&q)()&K(&L)(&n)" :
@@ -950,7 +965,7 @@ abcToken abcNextToken(abcScanner *scn)
     getnewline(scn);
 
   if (scn->cur && *scn->cur) {
-    switch (abcCurState(scn)) {
+    switch (abcScannerCurState(scn)) {
       case S_LIMBO    : return abc_limbo(scn);
       case S_HEADER   : return abc_header(scn);
       case S_TUNE     : return abc_tune(scn);
@@ -968,7 +983,7 @@ abcToken abcNextToken(abcScanner *scn)
     abcScanner tmp;
     tmp = *scn->saved;
     scn->saved->saved = NULL;
-    abcFreeScanner(scn->saved);
+    abcScannerFree(scn->saved);
     *scn = tmp;
     scn->tok = T_INCLUDEEND;
     for (k=0; k< abc_MAXTOKSTR; k++)
@@ -1006,10 +1021,34 @@ int abcTokenLen(abcScanner *scn, int strnum)
   return len;
 }
 
-unsigned short abcSetState(abcScanner *scn, unsigned short state)
+unsigned short abcScannerSetState(abcScanner *scn, unsigned short state)
 {
   scn->nextstate = state;
   return scn->state;
+}
+
+
+char *abcScannerGetIncludePath(abcScanner *scn)
+{
+  return scn->incpath;
+}
+
+char *abcScannerSetIncludePath(abcScanner *scn,char *path)
+{
+  scn->incpath = chsCpy(scn->incpath,path);
+  return scn->incpath ;
+}
+
+char *abcScannerAddToIncludePath(abcScanner *scn,char *path)
+{
+  scn->incpath = chsAddStr(scn->incpath,path);
+  return scn->incpath ;
+}
+
+
+char *abcIncludePath(abcScanner *scn)
+{
+  
 }
 
 int abcInclude(abcScanner *scn)
@@ -1030,10 +1069,11 @@ int abcInclude(abcScanner *scn)
     _dbgmsg("including: %s\n",fname);
     
     /* #TODO: handle an include path */
-    save = abcNewScanner(file,fname);
+    save = abcScannerNew(file,fname);
     
     if (save != NULL) {
       save->nextstate = scn->state;
+      if (scn->incpath) save->incpath = chsDup(scn->incpath);
       tmp = *scn;
       *scn = *save;
       *save = tmp;

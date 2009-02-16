@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
     exit (1);
   }
 
-  scn = abcNewScanner(file,argv[1]);
+  scn = abcScannerNew(file,argv[1]);
   if (scn == NULL) {
     fprintf(stderr,"Unable to create a scanner for file: '%s'\n",argv[1]);
     exit (1);    
@@ -143,6 +143,6 @@ int main(int argc, char *argv[])
     }
   }
 
-  abcFreeScanner(scn);
+  abcScannerFree(scn);
   return (0);
 }
