@@ -222,7 +222,7 @@ int main(int argc, char *argv[])
              printf("               microtones: %d/%d\n",abcNumerator(k),abcDenominator(k));
              printf("               cents: %d\n",abcNoteCents(scn));
              break;
-             
+              
         case T_INCLUDE:
              printf("INCLUDE: %.*s%.*s", abcTokenLen(scn,1),abcTokenStart(scn,1),
                                          abcTokenLen(scn,2),abcTokenStart(scn,2));                                             
@@ -231,6 +231,12 @@ int main(int argc, char *argv[])
         
         case T_INCLUDEEND:
              printf("INCLUDEEND\n");
+             break;
+        
+        case T_INCLUDEPATH:
+             printf("INCLUDEPATH: %s%.*s\n",abcIncludePathAdding(scn)?"+ ":"",
+                                              abcIncludePathLen(scn),abcIncludePathStart(scn));
+             printf("               current: %s\n",abcIncludePathSet(scn));
              break;
         
         case T_INFIELD:

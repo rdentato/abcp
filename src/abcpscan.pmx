@@ -1030,7 +1030,7 @@ unsigned short abcScannerSetState(abcScanner *scn, unsigned short state)
 
 char *abcScannerGetIncludePath(abcScanner *scn)
 {
-  return scn->incpath;
+  return scn->incpath ? scn->incpath : utlEmptyString;
 }
 
 char *abcScannerSetIncludePath(abcScanner *scn,char *path)
@@ -1045,31 +1045,78 @@ char *abcScannerAddToIncludePath(abcScanner *scn,char *path)
   return scn->incpath ;
 }
 
-
-char *abcIncludePath(abcScanner *scn)
+char *abcIncludePathStart(abcScanner *scn)
 {
-  
+  if (abcToken(scn) != T_INCLUDEPATH) return utlEmptyString;
+  return (abcTokenStart(scn,2)+1) ;  
+}
+
+int abcIncludePathLen(abcScanner *scn)
+{
+  if (abcToken(scn) != T_INCLUDEPATH) return 0;
+  return (abcTokenLen(scn,2)-2) ;  
+}
+
+int abcIncludePathAdding(abcScanner *scn)
+{
+  if (abcToken(scn) != T_INCLUDEPATH) return 0;
+  return (abcTokenLen(scn,1)) ;  
+}
+
+char *abcIncludePathSet(abcScanner *scn)
+{
+  if (abcToken(scn) == T_INCLUDEPATH && abcTokenLen(scn,2) > 2) {
+    scn->incpath = chsAddChr(scn->incpath,';');
+    if (abcTokenLen(scn,1) > 0)
+      scn->incpath = chsAddStrL(scn->incpath, abcTokenStart(scn,2)+1,abcTokenLen(scn,2)-2);
+    else
+      scn->incpath = chsCpyL(scn->incpath, abcTokenStart(scn,2)+1,abcTokenLen(scn,2)-2);
+  }  
+  return scn->incpath;
 }
 
 int abcInclude(abcScanner *scn)
 {
   abcScanner *save = NULL;
   abcScanner tmp;
-  char fname[256];
+  chs_t fname = NULL;
+  chs_t pname = NULL;
+  int ret = 0;
   int len;
+  int c;
+  char *p,*q;
   
   if (abcToken(scn) == T_INCLUDE) {
     if ((len = abcTokenLen(scn,1)) > 0)
-      strncpy(fname,abcTokenStart(scn,1)+1,len-2);
+      fname = chsCpyL(fname,abcTokenStart(scn,1)+1,len-2);
     else if ( (len = abcTokenLen(scn,2)) > 0)
-      strncpy(fname,abcTokenStart(scn,2),len);
+      fname = chsCpyL(fname,abcTokenStart(scn,2),len);
     else return 0;
-    fname[len] = '\0';
     
-    _dbgmsg("including: %s\n",fname);
     
-    /* #TODO: handle an include path */
-    save = abcScannerNew(file,fname);
+    /* {{ handle the include path */
+    
+    pname = chsCpy(pname,abcScannerGetIncludePath(scn));
+    pname = chsSubStr(pname,0,">?",fname);
+    
+    _dbgmsg("including: %s\n",pname);
+    ret = 1;
+    while (save == NULL && ret == 1) {
+      switch pmx(pname) {
+        case "<+!;>" :   c = *pmx(End,0);
+                         *pmx(End,0) = '\0';
+                         _dbgmsg("trying: %s\n",pmx(Start,0));
+                         save = abcScannerNew(file,pmx(Start,0));           
+                         *pmx(End,0) = c;
+                        break;
+                        
+        case ";"     :  break;
+        
+        default      :  ret = 0;
+      }
+    }
+    
+    /* }} */
     
     if (save != NULL) {
       save->nextstate = scn->state;
@@ -1078,8 +1125,10 @@ int abcInclude(abcScanner *scn)
       *scn = *save;
       *save = tmp;
       scn->saved = save;
-      return 1;               
+      ret = 1;               
     }      
+    fname = chsFree(fname);
+    pname = chsFree(pname);
   }
-  return 0;
+  return ret;
 }

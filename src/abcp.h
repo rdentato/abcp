@@ -157,6 +157,14 @@ unsigned short abcScannerSetState(abcScanner *scn, unsigned short state);
 
 int abcInclude(abcScanner *scn);
 
+char *abcScannerGetIncludePath(abcScanner *scn);
+char *abcScannerSetIncludePath(abcScanner *scn,char *path);
+char *abcScannerAddToIncludePath(abcScanner *scn,char *path);
+char *abcIncludePathStart(abcScanner *scn);
+int abcIncludePathLen(abcScanner *scn);
+char *abcIncludePathSet(abcScanner *scn);
+int abcIncludePathAdding(abcScanner *scn);
+
 
 /********/
 
