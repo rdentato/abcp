@@ -1,3 +1,6 @@
 Test for Include
-%%abc-include inc2.txt
+%%abc-includepath "?;?.txt;bytoken\?;bytoken\?.txt" 
+%%abc-includepath + "test\bytoken\?;test\bytoken\?.txt" 
+
+%%abc-include inc2
 X:2
