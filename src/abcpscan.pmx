@@ -1030,7 +1030,7 @@ unsigned short abcScannerSetState(abcScanner *scn, unsigned short state)
 
 char *abcScannerGetIncludePath(abcScanner *scn)
 {
-  return scn->incpath ? scn->incpath : utlEmptyString;
+  return (scn->incpath && *scn->incpath) ? scn->incpath : "?";
 }
 
 char *abcScannerSetIncludePath(abcScanner *scn,char *path)
@@ -1095,7 +1095,7 @@ int abcInclude(abcScanner *scn)
     
     
     /* {{ handle the include path */
-    
+
     pname = chsCpy(pname,abcScannerGetIncludePath(scn));
     pname = chsSubStr(pname,0,">?",fname);
     
@@ -1115,7 +1115,8 @@ int abcInclude(abcScanner *scn)
         default      :  ret = 0;
       }
     }
-    
+   
+   
     /* }} */
     
     if (save != NULL) {
