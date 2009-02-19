@@ -142,7 +142,7 @@ static void abc_clef(abcScanner *scn, char *start, char *end)
         parms[ABC_Middle] = *pmx(Start,1);
         break;
 
-      case "<=+&-><d><?d>" :
+      case "&d" :
         parms[ABC_Transpose] = atoi(pmx(Start,0));
         break;
 
@@ -191,7 +191,7 @@ static void abc_key(abcScanner *scn)
 
   switch pmx(p) {
     case "(<=A-Ga-g><?=&#b>)&K" :
-    case "(<$none$hp$Hp$>)&K" :
+    case "(<$none$hp$Hp>)&K" :
       setstring(scn,ABC_Tonic,pmx(Start,1),pmx(End,1));
       break;
   }
