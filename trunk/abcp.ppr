@@ -34,10 +34,10 @@ abcp
 			src\abcp_priv.h
 			src\abcp.h
 			src\makefile
-		targets.mk
-		mk.bat
-		makefile
 		config.mk
+		targets.mk
+		makefile
+		mk.bat
 		README.txt
 	+test
 		+bytoken
@@ -51,6 +51,8 @@ abcp
 			test\bytoken\slurtie.txt
 			test\bytoken\text.txt
 			test\bytoken\tuplet.txt
+			test\bytoken\include.txt
+			test\bytoken\inc2.txt
 [Open project files]
 0=examples\abcdump\abcdump.c
 1=src\abcpscan.pmx
@@ -59,32 +61,32 @@ abcp
 4=src\abcp.h
 5=tools\libutl\libutl.h
 6=src\abcpkey.pmx
-7=examples\nousym\nousym.c
+7=src\abcpfield.pmx
 [Selected Project Files]
 Main=
-Selected=src\abcpscan.pmx
+Selected=src\abcpfield.pmx
 [examples\abcdump\abcdump.c]
-TopLine=257
-Caret=6,306
+TopLine=98
+Caret=22,122
 Mark1=1,112
 [src\abcpscan.pmx]
-TopLine=1030
-Caret=3,1051
+TopLine=1
+Caret=1,11
 [src\abcpnote.c]
-TopLine=229
-Caret=1,276
+TopLine=226
+Caret=40,251
 [src\abcptext.pmx]
-TopLine=99
-Caret=21,116
+TopLine=180
+Caret=1,1
 [src\abcp.h]
-TopLine=313
-Caret=16,118
+TopLine=148
+Caret=21,171
 [tools\libutl\libutl.h]
-TopLine=708
+TopLine=730
 Caret=13,733
 [src\abcpkey.pmx]
 TopLine=11
 Caret=15,29
-[examples\nousym\nousym.c]
-TopLine=116
-Caret=7,122
+[src\abcpfield.pmx]
+TopLine=11
+Caret=40,19

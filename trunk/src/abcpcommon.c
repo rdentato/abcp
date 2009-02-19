@@ -8,6 +8,8 @@
 #include <stdlib.h> 
 #include "abcp.h"
 
+int abc_tmpi;
+
 abcFraction abc_getfraction(abcScanner *scn,int ndx)
 {
    short num=1 , den=-1;
@@ -25,11 +27,5 @@ abcFraction abc_getfraction(abcScanner *scn,int ndx)
      den = 1;
    
    return ((num & 0xFF)<< 8 | (den & 0xFF));
-}
-
-char abcField(abcScanner *scn)
-{
-  if (abcToken(scn) != T_FIELD) return '\0';
-  return *abcTokenStart(scn,0);
 }
 

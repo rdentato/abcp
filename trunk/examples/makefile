@@ -6,6 +6,15 @@
 #   http://opensource.org/licenses/bsd-license.php
 #
 
+
+release:
+	cd abcdump; make release
+	cd nousym; make release
+
+debug:
+	cd abcdump; make debug
+	cd nousym; make debug
+
 clean:
 	cd abcdump; make clean
 	cd nousym; make clean

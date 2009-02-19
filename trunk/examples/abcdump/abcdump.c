@@ -14,6 +14,7 @@ int main(int argc, char *argv[])
   abcToken tok;
   chs_t abctext = NULL;
   int k = S_NONE; 
+  int c;
   FILE *f;
   int argn;
   
@@ -301,8 +302,8 @@ int main(int argc, char *argv[])
                  break;
                  
                default:
-                 printf("FIELD: %.*s", abcTokenLen(scn,0),abcTokenStart(scn,0));
-                 if (tok == T_INFIELD) printf("\n");
+                 printf("FIELD: [%c][%.*s]", abcField(scn), abcFieldLen(scn),abcFieldStart(scn));
+                 printf("\n");
              }
              break; 
         

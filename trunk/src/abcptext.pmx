@@ -125,6 +125,9 @@ t text
   switch (*abcTokenStart(scn,1)) {
     case '%' : return 'C';
     case 'r' : return 'I'; 
+    case 'b' : return 'B';
+    case 'p' : return 'P';
+    case 't' : return 'T'; 
   }
   
   return 't';
