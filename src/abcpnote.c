@@ -272,6 +272,3 @@ int abcTupletNext(abcScanner *scn)
   return atoi(abcTokenStart(scn,3));
 }
 
-
-
-

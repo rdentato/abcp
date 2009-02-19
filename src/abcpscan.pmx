@@ -32,7 +32,7 @@ abcScanner *abc_newscanner(char *text,char how)
     scn->saved = NULL;
     scn->incpath = NULL;
 
-    switch(how) {
+    switch (how) {
       case 'F' : scn->file = f; break;
       case 'S' : scn->abc = text; break;
       default : free(scn); return (NULL);
@@ -223,18 +223,22 @@ static abcToken abc_lyrics(abcScanner *scn)
                     stategoto(scn,S_LIMBO);
                     break;
 
+    case "\b&K%%&K(t)ext&K(&L)(&n)" :
+                    settoken(scn,T_TEXT);
+                    break;
+
     case "\b&K%%&Kbegin(ps)&K(&L)(&n)" :
                     settoken(scn,T_BEGINTEXT);
                     stategosub(scn,S_TEXT_PS);
                     break;
 
-    case "\b&K%%&Kbegin(text)&K(&L)(&n)" :
+    case "\b&K%%&K(begintext)&K(&L)(&n)" :
                     settoken(scn,T_BEGINTEXT);
                     stategosub(scn,S_TEXT);
                     break;
 
-    case "\b&K%%&K(<+! \t\n\r\f\b:>)<?=:>(<*S>)&K(&L)&n" :
-                    settoken(scn,T_EXTFIELD);
+    case "\b&K%(%)&K((<+S>)&K(&L))&n" :
+                    settoken(scn,T_FIELD);
                     break;
 
     case "\b()(&Kw:&K)" :
@@ -246,6 +250,7 @@ static abcToken abc_lyrics(abcScanner *scn)
                     stategosub(scn,S_HISTORY);
                     break;
 
+    case "\b&K(I):&K((<*S>)&K(&L))&n" :
     case "\b&K(U):&K((<.>)&K=&K&e\\(&q)&L)&n" :
     case "\b&K(U):&K((<.>)&K=&K(<+S>)&L)&n" :
     case "\b&K(<a>):&K(&L)&n" :
@@ -323,18 +328,22 @@ static abcToken abc_symbols(abcScanner *scn)
                     stategoto(scn,S_LIMBO);
                     break;
 
+    case "\b&K%%&K(t)ext&K(&L)(&n)" :
+                    settoken(scn,T_TEXT);
+                    break;
+
     case "\b&K%%&Kbegin(ps)&K(&L)(&n)" :
                     settoken(scn,T_BEGINTEXT);
                     stategosub(scn,S_TEXT_PS);
                     break;
 
-    case "\b&K%%&Kbegin(text)&K(&L)(&n)" :
+    case "\b&K%%&K(begintext)&K(&L)(&n)" :
                     settoken(scn,T_BEGINTEXT);
                     stategosub(scn,S_TEXT);
                     break;
 
-    case "\b&K%%&K(<+S>)&K(&L)&n" :
-                    settoken(scn,T_EXTFIELD);
+    case "\b&K%(%)&K((<+S>)&K(&L))&n" :
+                    settoken(scn,T_FIELD);
                     break;
 
     case "\b()(&Ks:&K)" :
@@ -346,6 +355,7 @@ static abcToken abc_symbols(abcScanner *scn)
                     stategosub(scn,S_HISTORY);
                     break;
 
+    case "\b&K(I):&K((<*S>)&K(&L))&n" :
     case "\b&K(U):&K((<.>)&K=&K&e\\(&q)&L)&n" :
     case "\b&K(U):&K((<.>)&K=&K(<+S>)&L)&n" :
     case "\b&K(<a>):&K(&L)&n" :
@@ -439,12 +449,16 @@ static abcToken abc_tune(abcScanner *scn)
                     stategoto(scn,S_SYMBOLS);
                     break;
 
+    case "\b&K%%&K(t)ext&K(&L)(&n)" :
+                    settoken(scn,T_TEXT);
+                    break;
+
     case "\b&K%%&Kbegin(ps)&K(&L)(&n)" :
                     settoken(scn,T_BEGINTEXT);
                     stategosub(scn,S_TEXT_PS);
                     break;
 
-    case "\b&K%%&Kbegin(text)&K(&L)(&n)" :
+    case "\b&K%%&K(begintext)&K(&L)(&n)" :
                     settoken(scn,T_BEGINTEXT);
                     stategosub(scn,S_TEXT);
                     break;
@@ -458,8 +472,8 @@ static abcToken abc_tune(abcScanner *scn)
                     settoken(scn,T_INCLUDE);
                     break;
 
-    case "\b&K%%&K(<+S>)&K(&L)&n" :
-                    settoken(scn,T_EXTFIELD);
+    case "\b&K%(%)&K((<+S>)&K(&L))&n" :
+                    settoken(scn,T_FIELD);
                     break;
 
     case "\b&K(H):" :
@@ -467,6 +481,7 @@ static abcToken abc_tune(abcScanner *scn)
                     stategosub(scn,S_HISTORY);
                     break;
 
+    case "\b&K(I):&K((<*S>)&K(&L))&n" :
     case "\b&K(U):&K((<.>)&K=&K&e\\(&q)&L)&n" :
     case "\b&K(U):&K((<.>)&K=&K(<+S>)&L)&n" :
     case "\b&K(<a>):&K(&L)&n" :
@@ -625,6 +640,7 @@ static abcToken abc_limbo(abcScanner *scn)
                     stategosub(scn,S_HISTORY);
                     break;
 
+    case "\b&K(I):&K((<*S>)&K(&L))&n" :
     case "\b&K(U):&K((<.>)&K=&K&e\\(&q)&L)&n" :
     case "\b&K(U):&K((<.>)&K=&K(<+S>)&L)&n" :
     case "\b&K(<a>):&K(&L)&n" :
@@ -632,12 +648,16 @@ static abcToken abc_limbo(abcScanner *scn)
                     stategoto(scn,S_HEADER);
                     break;
 
+    case "\b&K%%&K(t)ext&K(&L)(&n)" :
+                    settoken(scn,T_TEXT);
+                    break;
+
     case "\b&K%%&Kbegin(ps)&K(&L)(&n)" :
                     settoken(scn,T_BEGINTEXT);
                     stategosub(scn,S_TEXT_PS);
                     break;
 
-    case "\b&K%%&Kbegin(text)&K(&L)(&n)" :
+    case "\b&K%%&K(begintext)&K(&L)(&n)" :
                     settoken(scn,T_BEGINTEXT);
                     stategosub(scn,S_TEXT);
                     break;
@@ -653,8 +673,8 @@ static abcToken abc_limbo(abcScanner *scn)
                     stategoto(scn,S_HEADER);
                     break;
 
-    case "\b&K%%&K(<+S>)&K(&L)&n" :
-                    settoken(scn,T_EXTFIELD);
+    case "\b&K%(%)&K((<+S>)&K(&L))&n" :
+                    settoken(scn,T_FIELD);
                     stategoto(scn,S_HEADER);
                     break;
 
@@ -703,10 +723,15 @@ static abcToken abc_header(abcScanner *scn)
                     stategosub(scn,S_HISTORY);
                     break;
 
+    case "\b&K(I):&K((<*S>)&K(&L))&n" :
     case "\b&K(U):&K((<.>)&K=&K&e\\(&q)&L)&n" :
     case "\b&K(U):&K((<.>)&K=&K(<+S>)&L)&n" :
     case "\b&K(<a>):&K(&L)&n" :
                     settoken(scn,T_FIELD);
+                    break;
+
+    case "\b&K%%&K(t)ext&K(&L)(&n)" :
+                    settoken(scn,T_TEXT);
                     break;
 
     case "\b&K%%&Kbegin(ps)&K(&L)(&n)" :
@@ -714,7 +739,7 @@ static abcToken abc_header(abcScanner *scn)
                     stategosub(scn,S_TEXT_PS);
                     break;
 
-    case "\b&K%%&Kbegin(text)&K(&L)(&n)" :
+    case "\b&K%%&K(begintext)&K(&L)(&n)" :
                     settoken(scn,T_BEGINTEXT);
                     stategosub(scn,S_TEXT);
                     break;
@@ -728,8 +753,8 @@ static abcToken abc_header(abcScanner *scn)
                     settoken(scn,T_INCLUDE);
                     break;
 
-    case "\b&K%%&K(<+S>)&K(&L)&n" :
-                    settoken(scn,T_EXTFIELD);
+    case "\b&K%(%)&K((<+S>)&K(&L))&n" :
+                    settoken(scn,T_FIELD);
                     break;
 
     case "\b&K#(<+S>)&K(&L)&n" :
@@ -878,6 +903,7 @@ static abcToken abc_history(abcScanner *scn)
                       settoken(scn,T_TEXT);
                     break;
 
+    case "\b&K(I):&K((<*S>)&K(&L))&n" :
     case "\b&K(U):&K((<.>)&K=&K&e\\(&q)&L)&n" :
     case "\b&K(U):&K((<.>)&K=&K(<+S>)&L)&n" :
     case "\b&K(<a>):&K(&L)&n" :
