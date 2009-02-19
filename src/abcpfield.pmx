@@ -1,0 +1,73 @@
+/*
+**  (C) by Remo Dentato (rdentato@gmail.com)
+**
+** This sofwtare is distributed under the terms of the BSD license:
+**   http://creativecommons.org/licenses/BSD/
+**   http://opensource.org/licenses/bsd-license.php
+*/
+
+#include "abcp_priv.h"
+
+char *abcFieldStart(abcScanner *scn)
+{
+  if (abcToken(scn) != T_FIELD &&
+      abcToken(scn) != T_INFIELD) return utlEmptyString;
+  return abcTokenStart(scn,2);
+}
+
+int abcFieldLen(abcScanner *scn)
+{
+  if (abcToken(scn) != T_FIELD &&
+      abcToken(scn) != T_INFIELD) return 0;
+  return abcTokenLen(scn,2);  
+}
+
+char abcField(abcScanner *scn) 
+{
+  char c;
+  switch (abcToken(scn)) {
+   case T_FIELD    :
+   case T_INFIELD  : 
+     c = *abcTokenStart(scn,1);
+     if (c=='%') c='I';
+     break;
+   default : c = '\0'; 
+  }
+  return c;
+}
+
+/*
+   M: none
+   M: free 
+   M: (2+2+3)/8
+   M: C
+   M: C|
+
+   <?=(>(<+= 0-9+>)<?=)>&K<?=/>&K(<*d>)   
+   
+*/
+
+
+
+char *abcMeterStart(abcScanner *scn)
+{
+  
+}
+
+int abcMeterLen(abcScanner *scn)
+{
+  
+}
+
+
+int abcMeterBeats(abcScanner *scn)
+{
+  
+}
+
+int abcMeterUnit(abcScanner *scn)
+{
+
+}
+
+
