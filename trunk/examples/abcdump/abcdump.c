@@ -219,7 +219,7 @@ int main(int argc, char *argv[])
              printf("midi: %d ",abcNoteMidi(scn));
              k = abcNoteMicrotone(scn);
              printf("microtones: %d/%d ",abcNumerator(k),abcDenominator(k));
-             printf("cents: %d\n",abcNoteCents(scn));
+             printf("cents: %.2f\n",abcNoteCents(scn));
              break;
               
         case T_INCLUDE:
@@ -238,7 +238,6 @@ int main(int argc, char *argv[])
              printf("               current: %s\n",abcIncludePathSet(scn));
              break;
         
-        case T_INFIELD:
         case T_FIELD:
              switch (abcField(scn)) {
                case 'K' : 

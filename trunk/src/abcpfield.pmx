@@ -10,31 +10,42 @@
 
 char *abcFieldStart(abcScanner *scn)
 {
-  if (abcToken(scn) != T_FIELD &&
-      abcToken(scn) != T_INFIELD) return utlEmptyString;
-  return abcTokenStart(scn,2);
+  if (abcToken(scn) != T_FIELD ) return utlEmptyString;
+  return abcTokenStart(scn,3);
 }
 
 int abcFieldLen(abcScanner *scn)
 {
-  if (abcToken(scn) != T_FIELD &&
-      abcToken(scn) != T_INFIELD) return 0;
-  return abcTokenLen(scn,2);  
+  if (abcToken(scn) != T_FIELD) return 0;
+  return abcTokenLen(scn,3);  
 }
 
 char abcField(abcScanner *scn) 
 {
-  char c;
-  switch (abcToken(scn)) {
-   case T_FIELD    :
-   case T_INFIELD  : 
-     c = *abcTokenStart(scn,1);
-     if (c=='%') c='I';
-     break;
-   default : c = '\0'; 
+  char c = '?';
+  if (abcToken(scn) == T_FIELD) {
+    c = *abcTokenStart(scn,2);
+    if (c=='%') c='I';
   }
   return c;
 }
+
+char *abcFieldNameStart(abcScanner *scn)
+{
+  char c;
+  if (abcToken(scn) != T_FIELD ) return utlEmptyString;
+  c = abcField(scn);
+  if (c == 'I') return abcTokenStart(scn,4); 
+  return c;
+}
+
+int abcFieldNameLen(abcScanner *scn)
+{
+  if (abcToken(scn) != T_FIELD) return 0;
+  if (abcField(scn) == 'I') return abcTokenLen(scn,4); 
+  return 1;
+}
+
 
 /*
    M: none
