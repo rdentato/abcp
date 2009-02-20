@@ -4,7 +4,8 @@ U: r = +ring)+
 
 X:1
 U: q = "^quasi"
-hA RB rC qD
+U: v = "Am"
+hA vB rC qD
 
 X:2
 hA RB rC qD

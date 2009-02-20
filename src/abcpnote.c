@@ -42,18 +42,17 @@ abcFraction abcNoteMicrotone(abcScanner *scn)
   return abc_getfraction(scn,2);
 }
 
-unsigned short abcNoteCents(abcScanner *scn)
+float abcNoteCents(abcScanner *scn)
 {
-  unsigned short k;
+  abcFraction k;
   if (abcToken(scn) != T_NOTE) return 0;
   k = abc_getfraction(scn,2);
-  if (k == 257) /* 1/1 */
-    k = 100;
+  if (k == 0x00010001) /* 1/1 */
+    return 100.0;
   else if (abcDenominator(k) <= 1) 
-    k >>= 8; 
+    return (abcNumerator(k) / 100.0); 
   else
-    k = (abcNumerator(k)*100)/abcDenominator(k); 
-  return k;
+    return (abcNumerator(k)*100.0)/abcDenominator(k); 
 }
 
 unsigned short abcNoteOctave(abcScanner *scn)

@@ -41,13 +41,15 @@
 
 
 /* -- BEGIN TOKENS  */
+/*
+#define T_EXTFIELD            0x1005 
+#define T_INFIELD             0x1006 
 
+*/
 #define T_NONE                0x1000 
 #define T_UNKNOWN             0x1001 
 #define T_EOF                 0x1002 
 #define T_FIELD               0x1004 
-#define T_EXTFIELD            0x1005 
-#define T_INFIELD             0x1006 
 #define T_PRAGMA              0x1007 
 #define T_NOTE                0x1008 
 #define T_REST                0x1009 
@@ -168,10 +170,10 @@ int abcIncludePathAdding(abcScanner *scn);
 
 /********/
 
-typedef unsigned short abcFraction;
+typedef unsigned long abcFraction;
 
-#define abcNumerator(x)   (((x) & 0xFF00) >> 8)
-#define abcDenominator(x)  ((x) & 0x00FF)
+#define abcNumerator(x)    ((x) >> 16)
+#define abcDenominator(x)  ((x) & 0xFFFF)
 abcFraction abc_getfraction(abcScanner *scn,int ndx);
 
 /* abcpfield.pmx */
@@ -195,7 +197,7 @@ abcFraction abcNoteDuration(abcScanner *scn);
 abcFraction abcNoteMicrotone(abcScanner *scn);
 unsigned short abcNoteOctave(abcScanner *scn);
 unsigned char abcNotePitch(abcScanner *scn);
-unsigned short abcNoteCents(abcScanner *scn);
+float abcNoteCents(abcScanner *scn);
 
 unsigned short abcNoteMidi(abcScanner *scn);
 
@@ -283,11 +285,11 @@ int abcChordAltBassLen(abcScanner *scn);
 /* abcpkey.pmx */
 extern int abc_tmpi;
 
-#define ABC_Tonic                    3
-#define ABC_VoiceId                  4
-#define ABC_Name                     5 
-#define ABC_ShortName                6 
-#define ABC_Clef                     7
+#define ABC_Tonic                    4
+#define ABC_VoiceId                  5
+#define ABC_Name                     6 
+#define ABC_ShortName                7 
+#define ABC_Clef                     8
  
 #define ABC_Transpose               0 
 #define ABC_Octave                  1
@@ -373,5 +375,8 @@ char *abcKVExp(abcScanner *scn,char kv);
 #define abcVoiceAccidentals(s)       abcKVExp(s,'V')
             
 #define abcVoiceTranspose(s)         abcKVTranspose(s,'V')
+
+/********* */
  
+
 #endif

@@ -9,6 +9,17 @@
 #include "abcp_priv.h"
 
 /*
+  xxxx xx xx
+  
+  1 A
+  2 B
+  3 C
+  4 D
+  5 E
+  6 F
+  7 G
+   
+
   1 (K or V)
   2 the field line
 */
@@ -17,7 +28,7 @@
 
 static short parms[MAXPARMS];
 
-static char eplicit[8];
+static char explacc[8];
 
 #define MAXTABSTRINGS 20
 static short tablature[MAXTABSTRINGS];
@@ -162,9 +173,8 @@ static void abc_clef(abcScanner *scn, char *start, char *end)
 }
 
 #define returnifnot(s,c,r)  do {\
-                              if ((abcToken(s) != T_FIELD && \
-                                   abcToken(scn) != T_INFIELD) || \
-                                  (*abcTokenStart(scn,1) != c)) \
+                              if ((abcToken(s) != T_FIELD) || \
+                                  (*abcTokenStart(scn,2) != c)) \
                                 return r;\
                               if (!abcTestFlag(scn,ABC_F_CLEFSCANNED)) {\
                                 if (kv == 'K') abc_key(scn);\
@@ -178,15 +188,15 @@ static void abc_key(abcScanner *scn)
   char *p, *q;
   int k;
 
-  p = abcTokenStart(scn,2);
-  q = abcTokenEnd(scn,2);
+  p = abcTokenStart(scn,3);
+  q = abcTokenEnd(scn,3);
 
   if (p == NULL || p >= q || abcTestFlag(scn,ABC_F_CLEFSCANNED)) return;
 
   abcSetFlag(scn,ABC_F_CLEFSCANNED);
   for (k = 0; k<MAXTABSTRINGS; k++) tablature[k] = 0;
-  for (k = 0; k<8; k++) eplicit[k] = ' ';
-  eplicit[7] = '\0';
+  for (k = 0; k<8; k++) explacc[k] = ' ';
+  explacc[7] = '\0';
   for (k = 0; k<MAXPARMS; k++) parms[k] = 0;
 
   switch pmx(p) {
@@ -204,8 +214,8 @@ static void abc_key(abcScanner *scn)
     case "&iphr<?$ygian>&K"    : parms[ABC_Mode] = 'P';   break;
     case "&ilyd<?$ian>&K"      : parms[ABC_Mode] = 'Y';   break;
     case "&iloc<?$rian>&K"     : parms[ABC_Mode] = 'O';   break;
-    case "&iion<?$ian>&K"      : parms[ABC_Mode] = 'I';   break;
-    case "&iaeo<?$lian>&K"     : parms[ABC_Mode] = 'A';   break;
+    case "&iion<?$ian>&K"      : parms[ABC_Mode] = 'M';   break;
+    case "&iaeo<?$lian>&K"     : parms[ABC_Mode] = 'N';   break;
     case "M&K"                 : parms[ABC_Mode] = 'M';   break;
     case "m&K"                 : parms[ABC_Mode] = 'N';   break;
   }
@@ -218,11 +228,11 @@ static void abc_key(abcScanner *scn)
   while (k) {
     switch pmx(p) {
       case "(<+=^_=>)(<=A-Ga-g>)&K" :
-        k = (tolower(*pmx(Start,2)) + 7 -'c') % 7 ;
+        k = tolower(*pmx(Start,2)) - 'a';
         switch (*pmx(Start,1)) {
-          case '=' : eplicit[k] = 'n';  break;
-          case '_' : eplicit[k] = (pmx(Len,1) > 1) ? 'F' : 'f';  break;
-          case '^' : eplicit[k] = (pmx(Len,1) > 1) ? 'S' : 's';  break;
+          case '=' : explacc[k] = 'n';  break;
+          case '_' : explacc[k] = (pmx(Len,1) > 1) ? 'F' : 'f';  break;
+          case '^' : explacc[k] = (pmx(Len,1) > 1) ? 'S' : 's';  break;
         }
         k = 1;
         break;
@@ -239,15 +249,15 @@ static void abc_voice(abcScanner *scn)
   char *p, *q;
   int k;
 
-  p = abcTokenStart(scn,2);
-  q = abcTokenEnd(scn,2);
+  p = abcTokenStart(scn,3);
+  q = abcTokenEnd(scn,3);
 
   if (p == NULL || p >= q || abcTestFlag(scn,ABC_F_CLEFSCANNED)) return;
 
   abcSetFlag(scn,ABC_F_CLEFSCANNED);
   for (k = 0; k<MAXTABSTRINGS; k++) tablature[k] = 0;
-  for (k = 0; k<8; k++) eplicit[k] = ' ';
-  eplicit[7] = '\0';
+  for (k = 0; k<8; k++) explacc[k] = ' ';
+  explacc[7] = '\0';
   for (k = 0; k<MAXPARMS; k++) parms[k] = 0;
 
   switch pmx(p) {
@@ -292,6 +302,6 @@ short abcKVTranspose(abcScanner *scn,char kv)
 char *abcKVExp(abcScanner *scn,char kv)
 {
   returnifnot(scn,kv,utlEmptyString);
-  return eplicit;
+  return explacc;
 }
 

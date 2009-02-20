@@ -97,8 +97,6 @@ int main(int argc, char *argv[])
   abcScanner *scn;
   abcToken tok;
   int cur_header = GLOBAL_HEADER;
-  char sym;
-  int k;
   
   if (argc < 2) {
     fprintf(stderr,"Usage: nousym filename\n");

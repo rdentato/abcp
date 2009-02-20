@@ -12,7 +12,7 @@ int abc_tmpi;
 
 abcFraction abc_getfraction(abcScanner *scn,int ndx)
 {
-   short num=1 , den=-1;
+   long num=1 , den=-1;
    int k;
    
    if (abcTokenLen(scn,ndx) > 0) num = atoi(abcTokenStart(scn,ndx));
@@ -26,6 +26,6 @@ abcFraction abc_getfraction(abcScanner *scn,int ndx)
    else if (den <= 0)
      den = 1;
    
-   return ((num & 0xFF)<< 8 | (den & 0xFF));
+   return ((num & 0xFFFF)<< 16 | (den & 0xFFFF));
 }
 
