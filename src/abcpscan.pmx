@@ -513,8 +513,8 @@ static abcToken abc_tune(abcScanner *scn)
                     settoken(scn,T_TEXT);
                     break;
 
-    case "&((<+=^_=>)(<*d>)(<*=/>)(<*d>)&)(<=A-Ga-g>)(<*=,'>)(<*d>)(<*=/>)(<*d>)" :
-    case "(<*=^_=>)(<*d>)(<*=/>)(<*d>)(<=A-Ga-g>)(<*=,'>)(<*d>)(<*=/>)(<*d>)" :
+    case "&((<+=^_=>)(&F)(<*=/>)(&F)&)(<=A-Ga-g>)(<*=,'>)(<*d>)(<*=/>)(<*d>)" :
+    case "(<*=^_=>)(&F)(<*=/>)(&F)(<=A-Ga-g>)(<*=,'>)(<*d>)(<*=/>)(<*d>)" :
                     settoken(scn,T_NOTE);
                     break;
 

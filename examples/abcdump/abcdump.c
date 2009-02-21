@@ -218,7 +218,7 @@ int main(int argc, char *argv[])
              printf("               octave: %d ",abcNoteOctave(scn));
              printf("midi: %d ",abcNoteMidi(scn));
              k = abcNoteMicrotone(scn);
-             printf("microtones: %d/%d ",abcNumerator(k),abcDenominator(k));
+             /*printf("microtones: %d/%d ",abcNumerator(k),abcDenominator(k));*/
              printf("cents: %.2f\n",abcNoteCents(scn));
              break;
               
