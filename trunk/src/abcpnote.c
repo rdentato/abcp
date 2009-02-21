@@ -44,15 +44,29 @@ abcFraction abcNoteMicrotone(abcScanner *scn)
 
 float abcNoteCents(abcScanner *scn)
 {
-  abcFraction k;
+  int k, j = 0;
+  float num = 1.0 ,den=-1;
+  
   if (abcToken(scn) != T_NOTE) return 0;
-  k = abc_getfraction(scn,2);
-  if (k == 0x00010001) /* 1/1 */
-    return 100.0;
-  else if (abcDenominator(k) <= 1) 
-    return (abcNumerator(k) / 100.0); 
-  else
-    return (abcNumerator(k)*100.0)/abcDenominator(k); 
+
+  if (abcTokenLen(scn,2)>0) {num = atof(abcTokenStart(scn,2)); j++;}
+  if (abcTokenLen(scn,4)>0) {den = atof(abcTokenStart(scn,4)); j++;}
+  
+  k = abcTokenLen(scn,3);
+  if (k > 0) {
+    if (den <= 0.0) den = 2.0;
+    den = den * ((float)(1 << (k-1)));
+    j++;
+  }
+  if (j == 0)  {
+    if (abcTokenLen(scn,1) > 0) return 0.0;
+    else return 0.0;
+  }
+  
+  _dbgmsg("MT: %f /(%d) %f",num,k,den);
+  if (den <= 0.0)  den = 100.0;
+
+  return (num *100.0)/den; 
 }
 
 unsigned short abcNoteOctave(abcScanner *scn)

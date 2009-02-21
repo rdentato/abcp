@@ -18,9 +18,11 @@ ProjectFilesOnly=0
 abcp
 	+abcp
 		+examples
+			+explicit
+				examples\explicit\explicit.c
 			+nousym
-				examples\nousym\nousym.c
 				examples\nousym\makefile
+				examples\nousym\nousym.c
 			+abcdump
 				examples\nousym\makefile.mk
 				examples\abcdump\abcdump.c
@@ -40,7 +42,7 @@ abcp
 		makefile
 		mk.bat
 		README.txt
-	-test
+	+test
 		+bytoken
 			test\bytoken\annotation.txt
 			test\bytoken\bars.txt
@@ -54,6 +56,14 @@ abcp
 			test\bytoken\tuplet.txt
 			test\bytoken\include.txt
 			test\bytoken\inc2.txt
+			test\bytoken\usersym.txt
+			test\bytoken\usersym2.txt
+		test\a6.txt
+		test\a5.txt
+		test\a4.txt
+		test\a3.txt
+		test\a2.txt
+		test\a1.txt
 [Open project files]
 0=examples\abcdump\abcdump.c
 1=src\abcpscan.pmx
@@ -62,44 +72,72 @@ abcp
 4=src\abcp.h
 5=src\abcpkey.pmx
 6=src\abcpfield.pmx
-7=examples\abcdump\p_hardy.tok
-8=test\p_hardy.abc
-9=src\abcpcommon.c
-10=examples\makefile
+7=examples\makefile
+8=src\abcp_priv.h
+9=test\a6.txt
+10=test\a5.txt
+11=examples\abcdump\p_hardy.tok
+12=key.lua
+13=src\abcpcommon.c
+14=src\New4.pmx
+15=test\a1.txt
+16=test\a3.txt
+17=test\a4.txt
 [Selected Project Files]
 Main=
-Selected=src\abcpkey.pmx
+Selected=key.lua
 [examples\abcdump\abcdump.c]
-TopLine=1
-Caret=1,17
+TopLine=203
+Caret=76,217
 Mark1=1,112
 [src\abcpscan.pmx]
-TopLine=502
-Caret=40,518
+TopLine=501
+Caret=27,526
 [src\abcpnote.c]
-TopLine=226
-Caret=40,251
+TopLine=34
+Caret=15,47
 [src\abcptext.pmx]
-TopLine=112
-Caret=2,134
+TopLine=165
+Caret=1,196
 [src\abcp.h]
-TopLine=329
-Caret=57,347
+TopLine=175
+Caret=6,200
 [src\abcpkey.pmx]
-TopLine=120
-Caret=15,145
+TopLine=261
+Caret=1,308
 [src\abcpfield.pmx]
-TopLine=6
-Caret=27,22
-[examples\abcdump\p_hardy.tok]
-TopLine=24389
-Caret=48,24389
-[test\p_hardy.abc]
-TopLine=4012
-Caret=1,1
-[src\abcpcommon.c]
-TopLine=1
-Caret=23,29
+TopLine=17
+Caret=2,34
 [examples\makefile]
 TopLine=1
 Caret=1,17
+[src\abcp_priv.h]
+TopLine=1
+Caret=1,17
+[test\a6.txt]
+TopLine=1
+Caret=1,3
+[test\a5.txt]
+TopLine=1
+Caret=1,6
+[examples\abcdump\p_hardy.tok]
+TopLine=75366
+Caret=1,1
+[key.lua]
+TopLine=25
+Caret=28,52
+[src\abcpcommon.c]
+TopLine=1
+Caret=22,13
+[src\New4.pmx]
+TopLine=18
+Caret=23,30
+[test\a1.txt]
+TopLine=1
+Caret=1,1
+[test\a3.txt]
+TopLine=1
+Caret=1,1
+[test\a4.txt]
+TopLine=1
+Caret=1,10
