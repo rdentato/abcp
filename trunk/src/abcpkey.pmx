@@ -9,17 +9,6 @@
 #include "abcp_priv.h"
 
 /*
-  xxxx xx xx
-  
-  1 A
-  2 B
-  3 C
-  4 D
-  5 E
-  6 F
-  7 G
-   
-
   1 (K or V)
   2 the field line
 */
@@ -43,7 +32,6 @@ static void settablature(char *start, char *end)
 
 static void abc_clef(abcScanner *scn, char *start, char *end)
 {
-  _dbgmsg("XXXX\n");
   while (start < end) {
     switch pmx(start) {
 
