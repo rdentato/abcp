@@ -2,4 +2,4 @@ X:1
 V:1 t=2 bass program 2 3 nm="pop" snm="Ten"
 K:Cmix ^f transpose=-1 octave=+2 clef=treble-2
 K:BbLyd =E -8 bass up
-A  [K: A min t=+2] C
+A  [K: A min t=+2] C [K: EbDor] D [K: E#] C

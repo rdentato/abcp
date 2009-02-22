@@ -97,8 +97,7 @@ int main(int argc, char *argv[])
              
         case T_CHORDEND:
              printf("CHORDEND: ");
-             k = abcChordDuration(scn);
-             printf(" %d/%d\n",abcNumerator(k),abcDenominator(k));
+             printf(" %.2f\n",abcChordDuration(scn));
              break;
              
         case T_SPACER:
@@ -212,13 +211,10 @@ int main(int argc, char *argv[])
              printf(" flats: %d ",abcNoteFlats(scn));
              printf("sharp: %d ",abcNoteSharps(scn));
              printf("naturals: %d ",abcNoteNaturals(scn));
-             printf("courtesy: %d ",abcNoteCourtesyAccidentals(scn));
-             k = abcNoteDuration(scn);
-             printf("duration: %d/%d\n",abcNumerator(k),abcDenominator(k));
-             printf("               octave: %d ",abcNoteOctave(scn));
+             printf("courtesy: %d\n",abcNoteCourtesyAccidentals(scn));
+             printf("               duration: %.2f ",abcNoteDuration(scn));
+             printf("octave: %d ",abcNoteOctave(scn));
              printf("midi: %d ",abcNoteMidi(scn));
-             k = abcNoteMicrotone(scn);
-             /*printf("microtones: %d/%d ",abcNumerator(k),abcDenominator(k));*/
              printf("cents: %.2f\n",abcNoteCents(scn));
              break;
               
@@ -240,57 +236,39 @@ int main(int argc, char *argv[])
         
         case T_FIELD:
              switch (abcField(scn)) {
+               case 'V' : 
                case 'K' : 
-                 printf("KEY: %.*s\n", abcKeyTonicLen(scn), abcKeyTonicStart(scn));
-                 printf("               mode: %c", abcKeyMode(scn));
-                 printf(" accidentals: <%s>", abcKeyAccidentals(scn));
-                 printf(" transpose: %d", abcKeyTranspose(scn));
-                 printf(" clef: %.*s", abcKeyClefLen(scn), abcKeyClefStart(scn));
-                 printf(" stafflines: %d\n",abcKeyStafflines(scn));       
-                 printf("               middle: %c",abcKeyMiddle(scn));           
-                 printf(" stems: %c",abcKeyStems(scn));            
-                 printf(" gstems: %c",abcKeyGstems(scn));           
-                 printf(" spaces: %d",abcKeySpace(scn));            
-                 printf(" staves: %d",abcKeyStaves(scn));           
-                 printf(" brace: %d\n",abcKeyBrace(scn));            
-                 printf("               bracket: %d",abcKeyBracket(scn));
-                 printf(" program: %d",abcKeyProgram(scn));          
-                 printf(" prog ch.: %d",abcKeyProgramChannel(scn));   
-                 printf(" merge: %c",abcKeyMerge(scn));            
-                 printf(" tune: %d",abcKeyTune(scn));             
-                 printf(" mute: %c\n",abcKeyMute(scn));             
-                 printf("               pan: %d",abcKeyPan(scn));              
-                 printf(" volume: %d",abcKeyVolume(scn));           
-                 printf(" longbar: %c",abcKeyLongbar(scn));          
-                 printf(" gchord: %c\n",abcKeyGchord(scn));           
+                 printf("VOICE: %.*s ", abcVoiceIdLen(scn), abcVoiceIdStart(scn));
+                 printf("KEY: %.*s ", abcKeyTonicLen(scn), abcKeyTonicStart(scn));
+                 printf("mode: %c\n", abcKeyMode(scn));
+                 printf("               sig: ");
+                 printf("%.2f", abcKeySignature(scn)[0]);
+                 for (k=1; k<7; k++) {
+                   printf(", %.2f", abcKeySignature(scn)[k]);
+                 }
+                 printf("\n");
+               /*  printf(" accidentals: <%s>", abcKeyAccidentals(scn));*/
+    
+                 printf("               transpose: %d", abcVoiceTranspose(scn));
+                 printf(" clef: %.*s", abcClefLen(scn), abcClefStart(scn));
+                 printf(" stafflines: %d\n",abcVoiceStafflines(scn));       
+                 printf("               middle: %c",abcVoiceMiddle(scn));           
+                 printf(" stems: %d",abcVoiceStems(scn));            
+                 printf(" gstems: %d",abcVoiceGstems(scn));           
+                 printf(" spaces: %d",abcVoiceSpace(scn));            
+                 printf(" staves: %d",abcVoiceStaves(scn));           
+                 printf(" brace: %d\n",abcVoiceBrace(scn));            
+                 printf("               bracket: %d",abcVoiceBracket(scn));
+                 printf(" program: %d",abcVoiceProgram(scn));          
+                 printf(" prog ch.: %d",abcVoiceProgramChannel(scn));   
+                 printf(" merge: %d",abcVoiceMerge(scn));            
+                 printf(" mute: %d\n",abcVoiceMute(scn));             
+                 printf("               pan: %d",abcVoicePan(scn));              
+                 printf(" volume: %d",abcVoiceVolume(scn));           
+                 printf(" longbar: %d",abcVoiceLongbar(scn));          
+                 printf(" gchord: %d\n",abcVoiceGchord(scn));           
                  break;
                  
-               case 'V' : 
-                 printf("VOICE: %.*s\n", abcVoiceIdLen(scn), abcVoiceIdStart(scn));
-                 printf("               name: %.*s\n", abcVoiceNameLen(scn), abcVoiceNameStart(scn));
-                 printf("               shortname: %.*s\n", abcVoiceShortNameLen(scn), abcVoiceShortNameStart(scn));
-                 printf("               mode: %c\n", abcVoiceMode(scn));
-                 printf("               accidentals: <%s>\n", abcVoiceAccidentals(scn));
-                 printf("               transpose: %d\n", abcVoiceTranspose(scn));
-                 printf("               clef: %.*s\n", abcVoiceClefLen(scn), abcVoiceClefStart(scn));
-                 printf("               stafflines: %d\n",abcVoiceStafflines(scn));       
-                 printf("               middle: %c\n",abcVoiceMiddle(scn));           
-                 printf("               stems: %c\n",abcVoiceStems(scn));            
-                 printf("               gstems: %c\n",abcVoiceGstems(scn));           
-                 printf("               spaces: %d\n",abcVoiceSpace(scn));            
-                 printf("               staves: %d\n",abcVoiceStaves(scn));           
-                 printf("               brace: %d\n",abcVoiceBrace(scn));            
-                 printf("               bracket: %d\n",abcVoiceBracket(scn));
-                 printf("               program: %d\n",abcVoiceProgram(scn));          
-                 printf("               prog ch.: %d\n",abcVoiceProgramChannel(scn));   
-                 printf("               merge: %c\n",abcVoiceMerge(scn));            
-                 printf("               tune: %d\n",abcVoiceTune(scn));             
-                 printf("               mute: %c\n",abcVoiceMute(scn));             
-                 printf("               pan: %d\n",abcVoicePan(scn));              
-                 printf("               volume: %d\n",abcVoiceVolume(scn));           
-                 printf("               longbar: %c\n",abcVoiceLongbar(scn));          
-                 printf("               gchord: %c\n",abcVoiceGchord(scn));           
-                 break;
                  
                case 'U' :
                  printf("USRSYMDEF: [%c][%.*s]\n", abcUserSymbol(scn),

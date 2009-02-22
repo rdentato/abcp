@@ -170,11 +170,7 @@ int abcIncludePathAdding(abcScanner *scn);
 
 /********/
 
-typedef unsigned long abcFraction;
-
-#define abcNumerator(x)    ((x) >> 16)
-#define abcDenominator(x)  ((x) & 0xFFFF)
-abcFraction abc_getfraction(abcScanner *scn,int ndx);
+float abc_getfraction(abcScanner *scn,int ndx);
 
 /* abcpfield.pmx */
 char abcField(abcScanner *scn); 
@@ -193,8 +189,7 @@ char *abcFieldStart(abcScanner *scn);
 
 unsigned short abcNoteAccidentals(abcScanner *scn);
 
-abcFraction abcNoteDuration(abcScanner *scn);
-abcFraction abcNoteMicrotone(abcScanner *scn);
+float abcNoteDuration(abcScanner *scn);
 unsigned short abcNoteOctave(abcScanner *scn);
 unsigned char abcNotePitch(abcScanner *scn);
 float abcNoteCents(abcScanner *scn);
@@ -203,7 +198,7 @@ unsigned short abcNoteMidi(abcScanner *scn);
 
 unsigned short abcRestInvisible(abcScanner *scn);
 unsigned short abcRestMultimeasure(abcScanner *scn);
-abcFraction abcRestDuration(abcScanner *scn);
+float abcRestDuration(abcScanner *scn);
 
 char *abcBarStart(abcScanner *scn);
 int abcBarLen(abcScanner *scn);
@@ -215,7 +210,7 @@ char *abcBarEndingStart(abcScanner *scn);
 int abcBarEndingLen(abcScanner *scn);
 
 int abcBroken(abcScanner *scn);
-abcFraction abcChordDuration(abcScanner *scn);
+float abcChordDuration(abcScanner *scn);
 
 int abcOverlay(abcScanner *scn);
 char abcSlurDirection(abcScanner *scn);
@@ -312,69 +307,55 @@ extern int abc_tmpi;
 #define ABC_Gchord                 18
 #define ABC_Mode                   19 
 
+#define ABC_Mode_Ion 1
+#define ABC_Mode_Dor 2
+#define ABC_Mode_Phr 3
+#define ABC_Mode_Lyd 4
+#define ABC_Mode_Mix 5
+#define ABC_Mode_Aeo 6
+#define ABC_Mode_Loc 7
 
-char *abcKVStringStart(abcScanner *scn,int str, char kv);
-int abcKVStringLen(abcScanner *scn,int str, char kv);
-short abcKVParm(abcScanner *scn,int p,char kv);
-short abcKVTranspose(abcScanner *scn, char kv);
-char *abcKVExp(abcScanner *scn,char kv);
+extern char *abc_modes;
 
-#define abcKeyTonicStart(s)        abcKVStringStart(s,ABC_Tonic,'K')        
-#define abcKeyTonicLen(s)          abcKVStringLen(s,ABC_Tonic,'K')                                          
-#define abcKeyClefStart(s)         abcKVStringStart(s,ABC_Clef,'K')           
-#define abcKeyClefLen(s)           abcKVStringLen(s,ABC_Clef,'K')
+char *abcKVStringStart(abcScanner *scn,int str);
+int abcKVStringLen(abcScanner *scn,int str);
+short abcKVParm(abcScanner *scn,int p);
+short abcVoiceTranspose(abcScanner *scn);
+float *abcKeySignature(abcScanner *scn);
                                    
-#define abcKeyMode(s)              (abc_tmpi = abcKVParm(s,ABC_Mode,'K')?abc_tmpi: '?')
-#define abcKeyStafflines(s)        abcKVParm(s,ABC_Stafflines,'K')
-#define abcKeyMiddle(s)            (abc_tmpi = abcKVParm(s,ABC_Middle,'K')?abc_tmpi: '?')
-#define abcKeyStems(s)             (abc_tmpi = abcKVParm(s,ABC_Stems,'K')?abc_tmpi: '?')
-#define abcKeyGstems(s)            (abc_tmpi = abcKVParm(s,ABC_Gstems,'K')?abc_tmpi: '?')
-#define abcKeySpace(s)             abcKVParm(s,ABC_Space,'K')
-#define abcKeyStaves(s)            abcKVParm(s,ABC_Staves,'K')            
-#define abcKeyBrace(s)             abcKVParm(s,ABC_Brace,'K')             
-#define abcKeyBracket(s)           abcKVParm(s,ABC_Bracket,'K')           
-#define abcKeyProgram(s)           abcKVParm(s,ABC_Program,'K')           
-#define abcKeyProgramChannel(s)    abcKVParm(s,ABC_ProgramChannel,'K')    
-#define abcKeyMerge(s)             (abc_tmpi = abcKVParm(s,ABC_Merge,'K')?abc_tmpi: '?')             
-#define abcKeyTune(s)              abcKVParm(s,ABC_Tune,'K')              
-#define abcKeyMute(s)              (abc_tmpi = abcKVParm(s,ABC_Mute,'K') ?abc_tmpi: '?')                  
-#define abcKeyPan(s)               abcKVParm(s,ABC_Pan,'K')               
-#define abcKeyVolume(s)            abcKVParm(s,ABC_Volume,'K')            
-#define abcKeyLongbar(s)           (abc_tmpi = abcKVParm(s,ABC_Longbar,'K')?abc_tmpi: '?')          
-#define abcKeyGchord(s)            (abc_tmpi = abcKVParm(s,ABC_Gchord,'K')?abc_tmpi: '?')
-#define abcKeyAccidentals(s)       abcKVExp(s,'K')
-            
-#define abcKeyTranspose(s)         abcKVTranspose(s,'K')
+#define abcKeyTonicStart(s)        abcKVStringStart(s,ABC_Tonic)      
+#define abcKeyTonicLen(s)          abcKVStringLen(s,ABC_Tonic)                                          
+#define abcKeyMode(s)              abc_modes[abcKVParm(s,ABC_Mode)&0x0F]
+  
+#define abcClefStart(s)             abcKVStringStart(s,ABC_Clef)           
+#define abcClefLen(s)               abcKVStringLen(s,ABC_Clef)
+#define abcVoiceMiddle(s)           abcKVParm(s,ABC_Middle)
 
-#define abcVoiceIdStart(s)           abcKVStringStart(s,ABC_VoiceId,'V')           
-#define abcVoiceIdLen(s)             abcKVStringLen(s,ABC_VoiceId,'V')
-#define abcVoiceNameStart(s)         abcKVStringStart(s,ABC_Name,'V')           
-#define abcVoiceNameLen(s)           abcKVStringLen(s,ABC_Name,'V')
-#define abcVoiceShortNameStart(s)    abcKVStringStart(s,ABC_ShortName,'V')           
-#define abcVoiceShortNameLen(s)      abcKVStringLen(s,ABC_ShortName,'V')                                   
-#define abcVoiceClefStart(s)         abcKVStringStart(s,ABC_Clef,'V')           
-#define abcVoiceClefLen(s)           abcKVStringLen(s,ABC_Clef,'V')
-#define abcVoiceMode(s)              (abc_tmpi = abcKVParm(s,ABC_Mode,'V')?abc_tmpi: '?')   
-#define abcVoiceStafflines(s)        abcKVParm(s,ABC_Stafflines,'V')
-#define abcVoiceMiddle(s)            (abc_tmpi = abcKVParm(s,ABC_Middle,'V')?abc_tmpi: '?')   
-#define abcVoiceStems(s)             (abc_tmpi = abcKVParm(s,ABC_Stems,'V')?abc_tmpi: '?')   
-#define abcVoiceGstems(s)            (abc_tmpi = abcKVParm(s,ABC_Gstems,'V')?abc_tmpi: '?')   
-#define abcVoiceSpace(s)             abcKVParm(s,ABC_Space,'V')
-#define abcVoiceStaves(s)            abcKVParm(s,ABC_Staves,'V')            
-#define abcVoiceBrace(s)             abcKVParm(s,ABC_Brace,'V')             
-#define abcVoiceBracket(s)           abcKVParm(s,ABC_Bracket,'V')           
-#define abcVoiceProgram(s)           abcKVParm(s,ABC_Program,'V')           
-#define abcVoiceProgramChannel(s)    abcKVParm(s,ABC_ProgramChannel,'V')    
-#define abcVoiceMerge(s)             (abc_tmpi = abcKVParm(s,ABC_Merge,'V')?abc_tmpi: '?')                
-#define abcVoiceTune(s)              abcKVParm(s,ABC_Tune,'V')              
-#define abcVoiceMute(s)              (abc_tmpi = abcKVParm(s,ABC_Mute,'V')?abc_tmpi: '?')                 
-#define abcVoicePan(s)               abcKVParm(s,ABC_Pan,'V')               
-#define abcVoiceVolume(s)            abcKVParm(s,ABC_Volume,'V')            
-#define abcVoiceLongbar(s)           (abc_tmpi = abcKVParm(s,ABC_Longbar,'V')?abc_tmpi: '?')              
-#define abcVoiceGchord(s)            (abc_tmpi = abcKVParm(s,ABC_Gchord,'V')?abc_tmpi: '?')   
-#define abcVoiceAccidentals(s)       abcKVExp(s,'V')
+#define abcVoiceIdStart(s)           abcKVStringStart(s,ABC_VoiceId)           
+#define abcVoiceIdLen(s)             abcKVStringLen(s,ABC_VoiceId)
+#define abcVoiceNameStart(s)         abcKVStringStart(s,ABC_Name)           
+#define abcVoiceNameLen(s)           abcKVStringLen(s,ABC_Name)
+#define abcVoiceShortNameStart(s)    abcKVStringStart(s,ABC_ShortName)           
+#define abcVoiceShortNameLen(s)      abcKVStringLen(s,ABC_ShortName)
+
+#define abcVoiceMute(s)              abcKVParm(s,ABC_Mute)                  
+#define abcVoiceProgram(s)           abcKVParm(s,ABC_Program)           
+#define abcVoiceProgramChannel(s)    abcKVParm(s,ABC_ProgramChannel)    
+#define abcVoicePan(s)               abcKVParm(s,ABC_Pan)               
+#define abcVoiceVolume(s)            abcKVParm(s,ABC_Volume)            
+#define abcVoiceStems(s)             abcKVParm(s,ABC_Stems)
+#define abcVoiceGstems(s)            abcKVParm(s,ABC_Gstems)
+#define abcVoiceStafflines(s)        abcKVParm(s,ABC_Stafflines)
+
+#define abcVoiceSpace(s)             abcKVParm(s,ABC_Space)
+#define abcVoiceStaves(s)            abcKVParm(s,ABC_Staves)            
+#define abcVoiceBrace(s)             abcKVParm(s,ABC_Brace)             
+#define abcVoiceBracket(s)           abcKVParm(s,ABC_Bracket)           
+#define abcVoiceMerge(s)             abcKVParm(s,ABC_Merge)             
+#define abcVoiceLongbar(s)           abcKVParm(s,ABC_Longbar)          
+#define abcKeyTune(s)                abcKVParm(s,ABC_Tune)              
+#define abcVoiceGchord(s)            abcKVParm(s,ABC_Gchord)
             
-#define abcVoiceTranspose(s)         abcKVTranspose(s,'V')
 
 /********* */
  

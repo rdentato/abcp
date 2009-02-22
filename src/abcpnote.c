@@ -30,43 +30,22 @@ unsigned short abcNoteAccidentals(abcScanner *scn)
   return acc; 
 }
 
-abcFraction abcNoteDuration(abcScanner *scn)
+float abcNoteDuration(abcScanner *scn)
 {
   if (abcToken(scn) != T_NOTE) return 1;
   return abc_getfraction(scn,7);
 }
 
-abcFraction abcNoteMicrotone(abcScanner *scn)
-{
-  if (abcToken(scn) != T_NOTE) return 1;
-  return abc_getfraction(scn,2);
-}
-
 float abcNoteCents(abcScanner *scn)
 {
-  int k, j = 0;
-  float num = 1.0 ,den=-1;
+  float cents;
   
-  if (abcToken(scn) != T_NOTE) return 0;
-
-  if (abcTokenLen(scn,2)>0) {num = atof(abcTokenStart(scn,2)); j++;}
-  if (abcTokenLen(scn,4)>0) {den = atof(abcTokenStart(scn,4)); j++;}
-  
-  k = abcTokenLen(scn,3);
-  if (k > 0) {
-    if (den <= 0.0) den = 2.0;
-    den = den * ((float)(1 << (k-1)));
-    j++;
-  }
-  if (j == 0)  {
-    if (abcTokenLen(scn,1) > 0) return 0.0;
-    else return 0.0;
-  }
-  
-  _dbgmsg("MT: %f /(%d) %f",num,k,den);
-  if (den <= 0.0)  den = 100.0;
-
-  return (num *100.0)/den; 
+  if (abcTokenLen(scn,2) == 0) return 0.0;
+   
+  cents = abc_getfraction(scn,2);
+  if (abcTokenLen(scn,3) > 0)
+    cents = cents * 100.0; 
+  return cents ; 
 }
 
 unsigned short abcNoteOctave(abcScanner *scn)
@@ -137,7 +116,7 @@ unsigned short abcRestMultimeasure(abcScanner *scn)
   return (*abcTokenStart(scn,1) == 'Z'); 
 }
 
-abcFraction abcRestDuration(abcScanner *scn)
+float abcRestDuration(abcScanner *scn)
 {
   if (abcToken(scn) != T_REST) return 1;
   return abc_getfraction(scn,2);
@@ -223,7 +202,7 @@ int abcBroken(abcScanner *scn)
 
 /*** Chord */
 
-abcFraction abcChordDuration(abcScanner *scn)
+float abcChordDuration(abcScanner *scn)
 {
   if (abcToken(scn) != T_CHORDEND) return 1;
   return abc_getfraction(scn,1);

@@ -505,7 +505,7 @@ static abcToken abc_tune(abcScanner *scn)
     case "()(<+=`>)" :  settoken(scn,T_IGNORE);
                     break;
 
-    case "()(&k)" :     settoken(scn,T_WHITESPACE);
+    case "()(&k)" : settoken(scn,T_WHITESPACE);
                     break;
 
     case "[(r):&K&e\\(<+#]>)]" :

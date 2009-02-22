@@ -36,7 +36,7 @@ char *abcFieldNameStart(abcScanner *scn)
   if (abcToken(scn) != T_FIELD ) return utlEmptyString;
   c = abcField(scn);
   if (c == 'I') return abcTokenStart(scn,4); 
-  return c;
+  return abcTokenStart(scn,2);
 }
 
 int abcFieldNameLen(abcScanner *scn)
