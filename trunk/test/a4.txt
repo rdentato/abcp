@@ -1,8 +1,8 @@
 X:1
-A,, B,, C, D, E, F, G, A, B, C D E F G A B c d e f g a b c' d' e' f' g' a' b' a' b'
+A,, B,, C, D, E, F, G, A, B, C D E F G A B c d e f g a b c' d' e' f' g' g'' g'''
 
 X:2
-C C/ C7/ C3/4 C3// C/3 C0 C3 C/2 C7//8
+C C/ C7/ C3/4 C3// C/3 C0 C3 C/2 C7//8 C7/16
 
 X:3
 ^C _C ^^C __C ^_C _^C ^/C ^3/2C _3/7C ^19.35C ^1C
