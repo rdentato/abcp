@@ -578,7 +578,7 @@ static abcToken abc_tune(abcScanner *scn)
                     settoken(scn,T_SLUREND);
                     break;
 
-    case "(((.)))&G<!=:|[]>" :
+    case "(((.)))&G<!:|[]>" :
     case "(((<=H-Wh-w~>)))" :
                     settoken(scn,T_USERSYMBOL);
                     break;
@@ -696,11 +696,11 @@ static abcToken abc_limbo(abcScanner *scn)
                     settoken(scn,T_TEXT);
                     break;
 
-    case "()&K(&l)(&n)" :
-                    settoken(scn,T_TEXT);
+    case "(&K)&n" : settoken(scn,T_WHITESPACE);
                     break;
 
-    case "(&K)&n" : settoken(scn,T_WHITESPACE);
+    case "()&K(&l)(&n)" :
+                    settoken(scn,T_TEXT);
                     break;
   }
 

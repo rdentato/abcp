@@ -181,20 +181,22 @@ char *abcFieldStart(abcScanner *scn);
 
 /* abcpnote.c */
 
-#define abcNoteFlats(scn)     (abcNoteAccidentals(scn) & 0x000F)
-#define abcNoteSharps(scn)   ((abcNoteAccidentals(scn) & 0x00F0) >> 4)
-#define abcNoteNaturals(scn) ((abcNoteAccidentals(scn) & 0x0F00) >> 8)
+extern char abcSemitones[7];
 
-#define abcNoteCourtesyAccidentals(scn) (abcNoteAccidentals(scn) & 0x1000)
+int abcNoteCourtesyAccidentals(abcScanner *scn);
+int abcNoteNatural(abcScanner *scn);
 
-unsigned short abcNoteAccidentals(abcScanner *scn);
+float abcNoteBending(abcScanner *scn);
+
+#define abcNote2Num(c) ((tolower(c)-'c'+7) % 7)
 
 float abcNoteDuration(abcScanner *scn);
 unsigned short abcNoteOctave(abcScanner *scn);
-unsigned char abcNotePitch(abcScanner *scn);
+unsigned char *abcNotePitch(abcScanner *scn);
 float abcNoteCents(abcScanner *scn);
 
 unsigned short abcNoteMidi(abcScanner *scn);
+unsigned short abcNoteMidiPitchBend(abcScanner *scn);
 
 unsigned short abcRestInvisible(abcScanner *scn);
 unsigned short abcRestMultimeasure(abcScanner *scn);
