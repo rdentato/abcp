@@ -1,0 +1,11 @@
+X:01
+T:Marcha Soldado
+C:Melodia Folclórica Brasileira
+M:2/4
+L:1/8
+Q:100
+K:C
+"C" G2 GE|C2 CE|GG GE|"G7" D2 zE|\
+FF FD|G2 GA|GF ED|"C" C4|z2 z|]
+w:Mar-cha sol-da-do ca-be-ça de pa-pel\
+  quem não mar-char di-rei- tovai pre-so pro quar-tel. 

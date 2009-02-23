@@ -201,7 +201,7 @@ int main(int argc, char *argv[])
              printf("[%.*s]",abcChordAltBassLen(scn),abcChordAltBassStart(scn));
              /*printf(" %.*s",abcTokenLen(scn,0),abcTokenStart(scn,0));*/
              printf("\n");
-             break;
+             break; 
              
         case T_NOTE:
              printf("NOTE: ");
@@ -213,6 +213,11 @@ int main(int argc, char *argv[])
              printf("midi: (%d,%d)\n",abcNoteMidi(scn),abcNoteMidiPitchBend(scn));
              break;
               
+        case T_REST:
+             printf("REST: %.2f%s\n", abcRestDuration(scn),
+                                       abcRestMultimeasure(scn)?" measures":"");
+             break;
+             
         case T_INCLUDE:
              printf("INCLUDE: %.*s%.*s", abcTokenLen(scn,1),abcTokenStart(scn,1),
                                          abcTokenLen(scn,2),abcTokenStart(scn,2));                                             
