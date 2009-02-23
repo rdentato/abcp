@@ -10,11 +10,14 @@
 release:
 	cd abcdump; make release
 	cd nousym; make release
+	cd crdlyr; make release
 
 debug:
 	cd abcdump; make debug
 	cd nousym; make debug
+	cd crdlyr; make debug
 
 clean:
 	cd abcdump; make clean
 	cd nousym; make clean
+	cd crdlyr; make clean
