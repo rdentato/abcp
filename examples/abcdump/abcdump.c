@@ -205,17 +205,12 @@ int main(int argc, char *argv[])
              
         case T_NOTE:
              printf("NOTE: ");
-             printf("%c", abcNotePitch(scn));
-             printf("%.*s", abcNoteSharps(scn), "####");
-             printf("%.*s", abcNoteFlats(scn), "bbbb");
-             printf(" flats: %d ",abcNoteFlats(scn));
-             printf("sharp: %d ",abcNoteSharps(scn));
-             printf("naturals: %d ",abcNoteNaturals(scn));
+             printf("%s%s ", abcNotePitch(scn),abcNoteNatural(scn)?" (natural)":"");
+             printf("bend: %.2f ",abcNoteBending(scn));
              printf("courtesy: %d\n",abcNoteCourtesyAccidentals(scn));
              printf("               duration: %.2f ",abcNoteDuration(scn));
              printf("octave: %d ",abcNoteOctave(scn));
-             printf("midi: %d ",abcNoteMidi(scn));
-             printf("cents: %.2f\n",abcNoteCents(scn));
+             printf("midi: (%d,%d)\n",abcNoteMidi(scn),abcNoteMidiPitchBend(scn));
              break;
               
         case T_INCLUDE:
@@ -242,9 +237,9 @@ int main(int argc, char *argv[])
                  printf("KEY: %.*s ", abcKeyTonicLen(scn), abcKeyTonicStart(scn));
                  printf("mode: %c\n", abcKeyMode(scn));
                  printf("               sig: ");
-                 printf("%.2f", abcKeySignature(scn)[0]);
+                 printf("%.0f", abcKeySignature(scn)[0]);
                  for (k=1; k<7; k++) {
-                   printf(", %.2f", abcKeySignature(scn)[k]);
+                   printf(", %.0f", abcKeySignature(scn)[k]);
                  }
                  printf("\n");
                /*  printf(" accidentals: <%s>", abcKeyAccidentals(scn));*/
