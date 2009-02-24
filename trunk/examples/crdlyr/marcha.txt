@@ -8,4 +8,8 @@ K:C
 "C" G2 GE|C2 CE|GG GE|"G7" D2 zE|\
 FF FD|G2 GA|GF ED|"C" C4|z2 z|]
 w:Mar-cha sol-da-do ca-be-ça de pa-pel\
-  quem não mar-char di-rei- tovai pre-so pro quar-tel. 
+  quem não mar-char | di-rei-to vai pre-so pro quar-tel. 
+"F" G2 GE|C2 CE|GG GE|"A7" D2 zE|\
+FF FD|G2 GA|GF ED|"F" C4|z2 z|]
+w:Mar-cha sol-da-do_ ca-be-ça de pa-pel\
+  quem não mar-char | di-rei-to vai pre-so pro quar-tel.

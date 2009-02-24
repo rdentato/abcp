@@ -65,24 +65,23 @@ int main(int argc, char *argv[])
         thetext:    
              printf("type: '%c' [%.*s]",abcTextType(scn),abcTextLen(scn),
                                                   abcTextStart(scn));
-             printf("%s",abcTextNL(scn)?" \\n":"");
+             if (abcTextNL(scn)) printf(" \\n");
              printf("\n");
              break;
              
+        case T_SYMBAR     : printf("SYMBAR:\n"); break;
+        case T_LYRBAR     : printf("LYRBAR:\n"); break;
+        
         case T_BAR:
-             printf("BAR: (");
-             if (abcBarInvisible(scn)) 
-               printf("in");
-             printf("visible");
-             if (abcBarDotted(scn))
-               printf(", dotted");
-             printf(") %d '%.*s' %d", abcBarRepeatBefore(scn),
+             printf("BAR: ");
+             if (abcBarInvisible(scn)) printf("invisible ");
+             if (abcBarDotted(scn))   printf("dotted ");
+             printf("%d '%.*s' %d", abcBarRepeatBefore(scn),
                                              abcBarLen(scn), abcBarStart(scn),
                                              abcBarRepeatAfter(scn));
              printf("\n");
              break;
  
-
         case T_SYMBOLS:
              printf("SYMBOLS:\n");
              break;
@@ -230,7 +229,7 @@ int main(int argc, char *argv[])
         
         case T_INCLUDEPATH:
              printf("INCLUDEPATH: %s%.*s\n",abcIncludePathAdding(scn)?"+ ":"",
-                                              abcIncludePathLen(scn),abcIncludePathStart(scn));
+                               abcIncludePathLen(scn),abcIncludePathStart(scn));
              printf("               current: %s\n",abcIncludePathSet(scn));
              break;
         

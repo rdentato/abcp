@@ -298,7 +298,7 @@ static abcToken abc_lyrics(abcScanner *scn)
                     settoken(scn,T_FIELD);
                     break;
 
-    case "()()(|)" :settoken(scn,T_BAR);
+    case "()()(|)" :settoken(scn,T_LYRBAR);
                     break;
 
 
@@ -403,7 +403,7 @@ static abcToken abc_symbols(abcScanner *scn)
                     settoken(scn,T_FIELD);
                     break;
 
-    case "()()(|)" :settoken(scn,T_BAR);
+    case "()()(|)" :settoken(scn,T_SYMBAR);
                     break;
 
     case "\"(<+=iv><?=#b>)(<*!\">)\"" :
