@@ -17,12 +17,7 @@ chords and prints them aligned them.
 #include <stdlib.h>
 #include <strings.h>
 #include "abcp.h"
-#include "libutl.h"
 
-#define STATE_OUT 1
-#define STATE_IN 2
-
-int state = STATE_OUT;
 int count_notes = 0;
 int count_chords = 0;
 int count_syl = 0;
@@ -99,7 +94,6 @@ int main(int argc, char *argv[])
         
         sprintf(cur_chord_ptr,"%.*s",abcTokenLen(scn,0)-2,abcTokenStart(scn,0)+1);
         cur_chord_ptr[abcTokenLen(scn,0)-2] = '\0';
-        _dbgmsg("CHORD: %d @ %d [%s]\n",count_chords,chord_pos[count_chords] ,chord_name[count_chords]);
         cur_chord_ptr += (abcTokenLen(scn,0)-1);
         chord_pos[++count_chords] = 0x7F00;
         break;
