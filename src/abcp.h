@@ -92,12 +92,15 @@
 #define T_INCLUDE             0x102E
 #define T_INCLUDEEND          0x102F
 #define T_INCLUDEPATH         0x1030
+#define T_LYRBAR              0x1031
+#define T_SYMBAR              0x1032
 
 
 /* -- END TOKENS  */
 
 #define ABC_F_CLEFSCANNED   0x0001
 #define ABC_F_CHORDSCANNED  0x0001
+#define ABC_F_FIELDSCANNED  0x0001
 #define ABC_F_ONETIMERS     0x00FF
 
 #define abcSetFlag(s,f)  ((s)->flags |= (f))

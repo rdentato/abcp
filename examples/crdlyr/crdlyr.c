@@ -23,14 +23,24 @@ chords and prints them aligned them.
 #define STATE_IN 2
 
 int state = STATE_OUT;
-int count_notes;
+int count_notes = 0;
+int count_chords = 0;
+int count_syl = 0;
+
+char chords_buf[2048];
+
+/* no more than 100 chords per line */
+char *chord_name[100];  /* name of the ith chord */
+short chord_pos[100];   /* notes before the ith chord */
+
 
 int main(int argc, char *argv[])
 {
   abcScanner *scn;
   abcToken tok;
-  int line_end = 1;
-  
+  char *cur_chord_ptr;
+  int chords_used;
+    
   if (argc < 2) {
     fprintf(stderr,"Usage: crdlyr filename\n");
     exit (1);
@@ -43,6 +53,9 @@ int main(int argc, char *argv[])
   }
   
   count_notes = 0;
+  cur_chord_ptr = chords_buf;
+  chords_used = 0;
+  count_chords = 0;
   while ((tok = abcNextToken(scn)) != T_EOF) {
     switch(tok) {
     
@@ -52,27 +65,56 @@ int main(int argc, char *argv[])
           case 'C' :
             printf("          %.*s\n",abcTokenLen(scn,3),abcTokenStart(scn,3));
             break;
-            
         }
         break;
  
       case T_ENDLINE:
+        if (abcScannerCurState(scn) == S_LYRICS) {
+          while (chords_used < count_chords) {
+            printf("{%s}",chord_name[chords_used++]);
+          }
+          chords_used = 0;
+          count_chords = 0;
+          count_syl = 0;
+          chord_pos[0] = 0x7F00;
+          printf("\n");
+        }
         count_notes = 0;
         break;
 
       case T_REST : 
-      case T_NOTE : 
+      case T_NOTE :
         count_notes++;
         break;
       
       case T_BAR :
-        printf("%d|\n",count_notes);
         break;
        
+      case T_LYRBAR :
+        break;
+        
       case T_GCHORD :
-        printf("%d%.*s",count_notes,abcTokenLen(scn,0),abcTokenStart(scn,0));
+        chord_pos[count_chords] = count_notes;
+        chord_name[count_chords] = cur_chord_ptr;
+        
+        sprintf(cur_chord_ptr,"%.*s",abcTokenLen(scn,0)-2,abcTokenStart(scn,0)+1);
+        cur_chord_ptr[abcTokenLen(scn,0)-2] = '\0';
+        _dbgmsg("CHORD: %d @ %d [%s]\n",count_chords,chord_pos[count_chords] ,chord_name[count_chords]);
+        cur_chord_ptr += (abcTokenLen(scn,0)-1);
+        chord_pos[++count_chords] = 0x7F00;
+        break;
+        
+      case T_SYLLABLE :
+        while (count_syl >= chord_pos[chords_used]) {
+          printf("{%s}",chord_name[chords_used++]);
+        }
+        printf("%.*s", abcTokenLen(scn,2),abcTokenStart(scn,2));
+        count_syl += 1 + abcSyllableHold(scn);
         break;
        
+      case T_WHITESPACE :
+        if (abcScannerCurState(scn) == S_LYRICS) printf(" ");
+        break;
     }
   }
 
