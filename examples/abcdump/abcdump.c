@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
         case T_ANNOTATION:
              printf("ANNOTATION: ");
              printf("pos: %c ",abcAnnotationPos(scn));
-             printf("x: %f y: %f ",abcAnnotationPosX(scn), abcAnnotationPosY(scn));
+             printf("x: %.2f y: %.2f ",abcAnnotationPosX(scn), abcAnnotationPosY(scn));
              printf("\n");
              printf("               text: %.*s",abcAnnotationTextLen(scn),
                                                   abcAnnotationTextStart(scn));
