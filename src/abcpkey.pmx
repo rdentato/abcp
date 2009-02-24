@@ -260,9 +260,9 @@ static void abc_KV(abcScanner *scn, char kv)
   p = abcTokenStart(scn,3);
   q = abcTokenEnd(scn,3);
 
-  if (p == NULL || p >= q || abcTestFlag(scn,ABC_F_CLEFSCANNED)) return;
+  if (p == NULL || p >= q || abcTestFlag(scn,ABC_F_FIELDSCANNED)) return;
 
-  abcSetFlag(scn,ABC_F_CLEFSCANNED);
+  abcSetFlag(scn,ABC_F_FIELDSCANNED);
   for (k = 0; k<MAXTABSTRINGS; k++) tablature[k] = 0;
   for (k = 0; k<MAXPARMS; k++) parms[k] = 0;
 
@@ -318,7 +318,26 @@ static void abc_KV(abcScanner *scn, char kv)
   
     switch pmx(p) {
       case "&iexp&K<?==>&K" :  break;
-    }    
+    }
+        
+    /* Get explicit accidentals */ 
+    k = 1;
+    while (k) {
+    printf("[%s]\n",p);
+      switch pmx(p) {
+        case "&k" : break;
+        case "(<+=^_=>)(&F)(<*=/>)(&F)(<=A-Ga-g>)&K" :
+          k = abcNote2Num(*abcTokenStart(scn,5));
+          expsig[k] = abc_notebending(scn,abcToken(scn));
+          if (expsig[k] == 0.0 && abcTokenLen(scn,1) == 1 &&
+              *abcTokenStart(scn,1) == '=')
+            expsig[k] = ABC_Natural;           
+          k = 1;
+          break;
+          
+        default: k = 0;
+      }
+    }
   }
   
   if (abcTokenLen(scn,ABC_Tonic) == 0) {
@@ -331,34 +350,24 @@ static void abc_KV(abcScanner *scn, char kv)
             abcTokenStart(scn,ABC_Tonic)[1],
             parms[ABC_Mode] );
   
-  if (kv == 'K') {
-    /* Apply explicit accidentals
-    k = 1;
-    while (k) {
-      switch pmx(p) {
-        case "(<+=^_=>)(&F)(<*=/>)(&F)(<=A-Ga-g>)&K" :
-          k = (tolower(*pmx(Start,2)) - 'c' + 7) % 7;
-          if (pmx(Len,1) == 1 && *pmx(Start,1) == '=')
-            keysig[k] = 0;
-          cents = abc_getfraction(scn,2);
-          
-          switch (*pmx(Start,1)) {
-            case '=' :   break;
-            case '_' : keysig[k] -= 100.0 * pmx(Len,1);  break;
-            case '^' : keysig[k] += 100.0 * pmx(Len,1);  break;
-          }
-          k = 1;
-          break;
   
-        default: k = 0;
-      }
-    }
-    */
-  }
 
   abc_clef(scn,p,q);
 }
 
+int abcKeyExpNatural(abcScanner *scn,char pitch)
+{
+  if (expsig[abcNote2Num(pitch)] == ABC_Natural) return 1;
+  return 0;
+}
+
+float abcKeyExpBending(abcScanner *scn,char pitch)
+{  
+  float bend;
+  bend = expsig[abcNote2Num(pitch)];
+  if (bend == ABC_Natural) return 0.0;
+  return bend;
+}
 
 char *abcKVStringStart(abcScanner *scn,int str)
 {
@@ -390,4 +399,11 @@ float *abcKeySignature(abcScanner *scn)
   returnifnotKV(scn, NULL);
   return keysig;
 }
+
+float *abcKeyExpSignature(abcScanner *scn)
+{
+  returnifnotKV(scn, NULL);
+  return expsig;
+}
+
 

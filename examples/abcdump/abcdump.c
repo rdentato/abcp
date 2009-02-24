@@ -241,9 +241,15 @@ int main(int argc, char *argv[])
                  printf("KEY: %.*s ", abcKeyTonicLen(scn), abcKeyTonicStart(scn));
                  printf("mode: %c\n", abcKeyMode(scn));
                  printf("               sig: ");
-                 printf("%.0f", abcKeySignature(scn)[0]);
+                 printf("%6.2f", abcKeySignature(scn)[0]);
                  for (k=1; k<7; k++) {
-                   printf(", %.0f", abcKeySignature(scn)[k]);
+                   printf(", %6.2f", abcKeySignature(scn)[k]);
+                 }
+                 printf("\n");
+                 printf("               exp: ");
+                 printf("%6.2f", abcKeyExpSignature(scn)[0]);
+                 for (k=1; k<7; k++) {
+                   printf(", %6.2f", abcKeyExpSignature(scn)[k]);
                  }
                  printf("\n");
                /*  printf(" accidentals: <%s>", abcKeyAccidentals(scn));*/

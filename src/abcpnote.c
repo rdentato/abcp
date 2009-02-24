@@ -48,12 +48,12 @@ float abcNoteCents(abcScanner *scn)
   return cents ; 
 }
 
-float abcNoteBending(abcScanner *scn)
+float abc_notebending(abcScanner *scn, unsigned short tok)
 {
   float cents = 0.0;
   char *p;
   
-  if (abcToken(scn) != T_NOTE) return 0.0;
+  if (abcToken(scn) != tok) return 0.0;
   
   p = abcTokenEnd(scn,1);
   
@@ -73,6 +73,7 @@ float abcNoteBending(abcScanner *scn)
       case '_' : cents -= 100.0; break ;
     }
   } 
+  printf("==%s==\n",abcTokenStart(scn,1));
    
   return cents ; 
 }
