@@ -194,8 +194,11 @@ int abcNoteNatural(abcScanner *scn);
 float abcNoteDuration(abcScanner *scn);
 unsigned short abcNoteOctave(abcScanner *scn);
 unsigned char *abcNotePitch(abcScanner *scn);
+
 float abcNoteCents(abcScanner *scn);
-float abcNoteBending(abcScanner *scn);
+
+#define abcNoteBending(s) abc_notebending(s,T_NOTE)
+float abc_notebending(abcScanner *scn, unsigned short tok);
 
 unsigned short abcNoteMidi(abcScanner *scn);
 unsigned short abcNoteMidiPitchBend(abcScanner *scn);
@@ -326,6 +329,11 @@ int abcKVStringLen(abcScanner *scn,int str);
 short abcKVParm(abcScanner *scn,int p);
 short abcVoiceTranspose(abcScanner *scn);
 float *abcKeySignature(abcScanner *scn);
+float *abcKeyExpSignature(abcScanner *scn);
+                            
+#define ABC_Natural 9999.0
+int abcKeyExpNatural(abcScanner *scn,char pitch);
+float abcKeyExpBending(abcScanner *scn,char pitch);
                                    
 #define abcKeyTonicStart(s)        abcKVStringStart(s,ABC_Tonic)      
 #define abcKeyTonicLen(s)          abcKVStringLen(s,ABC_Tonic)                                          
