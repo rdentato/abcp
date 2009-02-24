@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
         break;
  
       case T_ENDLINE:
-        if (abcScannerCurState(scn) == S_LYRICS) {
+        if (abcStateCurrent(scn) == S_LYRICS) {
           while (chords_used < count_chords) {
             printf("{%s}",chord_name[chords_used++]);
           }
@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
         break;
        
       case T_WHITESPACE :
-        if (abcScannerCurState(scn) == S_LYRICS) printf(" ");
+        if (abcStateCurrent(scn) == S_LYRICS) printf(" ");
         break;
     }
   }

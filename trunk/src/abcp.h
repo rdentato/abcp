@@ -154,11 +154,11 @@ char *abcTokenStart(abcScanner *scn, int strnum);
 char *abcTokenEnd(abcScanner *scn, int strnum);
 int abcTokenLen(abcScanner *scn, int strnum);
 
-#define abcScannerCurState(s) ((s)->state)
-#define abcScannerNextState(s) ((s)->nextstate)
-#define abcScannerLineNumber(s) ((s)->ln_logical)
+#define abcStateCurrent(s) ((s)->state)
+#define abcStateNext(s) ((s)->nextstate)
+#define abcStateSet(s,t) ((s)->nextstate = (t))
 
-unsigned short abcScannerSetState(abcScanner *scn, unsigned short state);
+#define abcScannerLineNumber(s) ((s)->ln_logical)
 
 int abcInclude(abcScanner *scn);
 
@@ -189,14 +189,13 @@ extern char abcSemitones[7];
 int abcNoteCourtesyAccidentals(abcScanner *scn);
 int abcNoteNatural(abcScanner *scn);
 
-float abcNoteBending(abcScanner *scn);
-
 #define abcNote2Num(c) ((tolower(c)-'c'+7) % 7)
 
 float abcNoteDuration(abcScanner *scn);
 unsigned short abcNoteOctave(abcScanner *scn);
 unsigned char *abcNotePitch(abcScanner *scn);
 float abcNoteCents(abcScanner *scn);
+float abcNoteBending(abcScanner *scn);
 
 unsigned short abcNoteMidi(abcScanner *scn);
 unsigned short abcNoteMidiPitchBend(abcScanner *scn);

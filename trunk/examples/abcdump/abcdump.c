@@ -37,10 +37,10 @@ int main(int argc, char *argv[])
   if (f!=stdin) fclose(f);
   if (abctext && *abctext) {
     scn = abcScannerNew(str,abctext);
-    abcScannerSetState(scn,k);
+    abcStateSet(scn,k);
     /*printf("<<\n%s\n>>\n",scn->abc);*/
     while ((tok = abcNextToken(scn)) != T_EOF) {
-      printf("%04d %04X %04X ",abcScannerLineNumber(scn), abcScannerCurState(scn), abcToken(scn));
+      printf("%04d %04X %04X ",abcScannerLineNumber(scn), abcStateCurrent(scn), abcToken(scn));
       switch (tok) {
         case T_ANNOTATION:
              printf("ANNOTATION: ");

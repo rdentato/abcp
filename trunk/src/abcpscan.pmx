@@ -991,7 +991,7 @@ abcToken abcNextToken(abcScanner *scn)
     getnewline(scn);
 
   if (scn->cur && *scn->cur) {
-    switch (abcScannerCurState(scn)) {
+    switch (abcStateCurrent(scn)) {
       case S_LIMBO    : return abc_limbo(scn);
       case S_HEADER   : return abc_header(scn);
       case S_TUNE     : return abc_tune(scn);
@@ -1046,13 +1046,6 @@ int abcTokenLen(abcScanner *scn, int strnum)
   }
   return len;
 }
-
-unsigned short abcScannerSetState(abcScanner *scn, unsigned short state)
-{
-  scn->nextstate = state;
-  return scn->state;
-}
-
 
 char *abcScannerGetIncludePath(abcScanner *scn)
 {
