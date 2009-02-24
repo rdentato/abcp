@@ -8,8 +8,8 @@
 /* .% Overview
 ==============
 
-  This is an example of use for ABCp. It extracts lyrics and guitar
-chords and prints them aligned them.
+  This is an example of use for ABCp. It extracts guitar
+chords and prints them embedded into lyrics.
 */
 
 
