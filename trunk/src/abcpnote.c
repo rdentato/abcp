@@ -9,6 +9,13 @@
 #include <ctype.h>
 #include "abcp_priv.h"
 
+#define getfraction(s,n) abc_getfracion(abcTokenStart(s,n),   \
+                                        abcTokenLen(s,n),     \
+                                        abcTokenStart(s,n+1), \
+                                        abcTokenLen(s,n+1),   \
+                                        abcTokenStart(s,n+2), \
+                                        abcTokenLen(s,n+2)) 
+
 unsigned short abcNoteAccidentals(abcScanner *scn)
 {
   unsigned short acc = 0;
@@ -33,49 +40,26 @@ unsigned short abcNoteAccidentals(abcScanner *scn)
 float abcNoteDuration(abcScanner *scn)
 {
   if (abcToken(scn) != T_NOTE) return 1.0;
-  return abc_getfraction(scn,7);
+  return getfraction(scn,7);
 }
 
 float abcNoteCents(abcScanner *scn)
 {
   float cents;
-  if (abcToken(scn) != T_NOTE) return 0.0;
-  if (abcTokenLen(scn,2) == 0) return 0.0;
-   
-  cents = abc_getfraction(scn,2);
-  if (abcTokenLen(scn,3) > 0)
-    cents = cents * 100.0; 
+  cents = abcNoteBending(scn);
+  if (cents == abcNatural)
+      cents = 0.0; 
   return cents ; 
 }
 
-float abc_notebending(abcScanner *scn, unsigned short tok)
+float abcNoteBending(abcScanner *scn)
 {
-  float cents = 0.0;
-  char *p;
+  if (abcToken(scn) != T_NOTE) return 0.0;
   
-  if (abcToken(scn) != tok) return 0.0;
-  
-  p = abcTokenEnd(scn,1);
-  
-  if (abcTokenLen(scn,2) > 0 || abcTokenLen(scn,3) > 0 ) {
-    /* Got microtones last accidental gives direction*/
-    cents = abc_getfraction(scn,2);
-    if (abcTokenLen(scn,3) > 0)
-      cents = cents * 100.0;
-    if (p > abcTokenStart(scn,1)) {
-      if (*--p == '_') cents = cents *-1.0;
-    } 
-  } 
-  
-  while (p > abcTokenStart(scn,1)) {
-    switch (*--p) {
-      case '^' : cents += 100.0; break ;
-      case '_' : cents -= 100.0; break ;
-    }
-  } 
-  printf("==%s==\n",abcTokenStart(scn,1));
-   
-  return cents ; 
+  return abc_notebending(abcTokenStart(scn,1), abcTokenLen(scn,1),
+                         abcTokenStart(scn,2), abcTokenLen(scn,2),
+                         abcTokenStart(scn,3), abcTokenLen(scn,3),
+                         abcTokenStart(scn,4), abcTokenLen(scn,4) );
 }
 
 unsigned short abcNoteOctave(abcScanner *scn)
@@ -101,22 +85,12 @@ unsigned short abcNoteOctave(abcScanner *scn)
   return oct;
 }
 
-int abcNoteNatural(abcScanner *scn)
-{
-  if (abcToken(scn) != T_NOTE) return 0;
-  if (abcNoteBending(scn) > 0.0) return 0;
-  if (abcTokenLen(scn,1) != 1) return 0;
-  if (*abcTokenStart(scn,1) != '=') return 0;
-  return 1;
-}
-
 int abcNoteCourtesyAccidentals(abcScanner *scn) 
 {
   if (abcToken(scn) != T_NOTE) return 0;
   if (*abcTokenStart(scn,0) != '(') return 0;
   return 1;
 }
-
 
 unsigned char *abcNotePitch(abcScanner *scn)
 {
@@ -127,6 +101,8 @@ unsigned char *abcNotePitch(abcScanner *scn)
   if (abcToken(scn) == T_NOTE) {  
     pitch[k++] = toupper(*abcTokenStart(scn,5));
     bend = abcNoteBending(scn);
+    if (bend == abcNatural)
+      bend = 0.0;
     if (bend > 0.0) {
       while (bend >= 100.0) {
         pitch[k++] = '#';
@@ -146,11 +122,11 @@ unsigned char *abcNotePitch(abcScanner *scn)
 
 unsigned short abcNoteMidi(abcScanner *scn)
 {
-  int n; 
+  int n;
   if (abcToken(scn) != T_NOTE) return 0;
   
   n = abcSemitones[abcNote2Num(*abcTokenStart(scn,5))];
-  n += (int)(abcNoteBending(scn)/100.0);   
+  n += (int)(abcNoteCents(scn)/100.0);   
   n += 12 * (abcNoteOctave(scn)+1);
   if (n<0) n = 0;
   return n & 0x7F;
@@ -161,7 +137,7 @@ unsigned short abcNoteMidiPitchBend(abcScanner *scn)
   float bend;
   if (abcToken(scn) != T_NOTE) return 0;
   
-  bend =  abcNoteBending(scn)/100;
+  bend =  abcNoteCents(scn)/100;
   return (8192 + (int)(8192.0 * (bend - trunc(bend))));
 }
 
@@ -181,7 +157,7 @@ unsigned short abcRestMultimeasure(abcScanner *scn)
 float abcRestDuration(abcScanner *scn)
 {
   if (abcToken(scn) != T_REST) return 1;
-  return abc_getfraction(scn,2);
+  return getfraction(scn,2);
 }
 
 /*************/
@@ -267,7 +243,7 @@ int abcBroken(abcScanner *scn)
 float abcChordDuration(abcScanner *scn)
 {
   if (abcToken(scn) != T_CHORDEND) return 1;
-  return abc_getfraction(scn,1);
+  return getfraction(scn,1);
 }
 
 /*** Overlay */

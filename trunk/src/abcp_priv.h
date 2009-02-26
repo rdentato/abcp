@@ -13,4 +13,23 @@
 #include "abcp.h"
 #include <ctype.h>
 
+
+#define ABC_F_CLEFSCANNED   0x0001
+#define ABC_F_CHORDSCANNED  0x0001
+#define ABC_F_FIELDSCANNED  0x0001
+#define ABC_F_ONETIMERS     0x00FF
+
+#define abcSetFlag(s,f)  ((s)->flags |= (f))
+#define abcClrFlag(s,f)  ((s)->flags &= ~(f))
+#define abcTestFlag(s,f) ((s)->flags & (f))
+
+
+
+float abc_getfracion(char *a, int al,
+                     char *b, int bl,
+                     char *c, int cl);
+                     
+float abc_notebending(char *e, int el, char *a, int al,
+                      char *b, int bl, char *c, int cl);
+
 #endif

@@ -374,7 +374,7 @@ static abcToken abc_symbols(abcScanner *scn)
     case "()(&k)"  :    settoken(scn,T_WHITESPACE);
                     break;
 
-    case "\f&N" :   settoken(scn,T_CONTINUE);
+    case "\f&K&N" : settoken(scn,T_CONTINUE);
                     break;
 
     case "&n" :     settoken(scn,T_ENDLINE);

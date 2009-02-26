@@ -20,48 +20,83 @@ hold accidentals that happen in the same measure.
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>
+#include <ctype.h>
 #include "abcp.h"
 
-#define GLOBAL_HEADER 0
-#define LOCAL_HEADER 1
-#define USYM_MAXLEN 100
-#define USYM_NUM 35
-
-char usyms[2][USYM_NUM][USYM_MAXLEN];
-
-abcFraction keyacc[7];
-abcFraction measureacc[7];
-
-
-
-void resetsyms()
-{
-  int k;
-  for (k = 0; k<USYM_NUM; k++ ) {
-    strcpy(usyms[LOCAL_HEADER][k],usyms[GLOBAL_HEADER][k]);
-  }
-}
+float keysig[7];
+float expsig[7];
+float barsig[7];
 
 void printtok(abcScanner *scn)
 {
   printf("%.*s",abcTokenLen(scn,0),abcTokenStart(scn,0));
 }
 
-void initkey(abcScanner *scn)
+void printnotetok(abcScanner *scn, float bend)
+{
+  if (bend != 0.0) {
+    barsig[abcNote2Num(*abcTokenStart(scn,5))] = bend; 
+    printtok(scn);
+    return;
+  }
+
+  bend = barsig[abcNote2Num(*abcTokenStart(scn,5))];
+  if (bend != abcNatural) {
+    while (bend <= -100.0) {
+      printf("_");
+      bend += 100.0;
+    }
+    if (bend < 0.0) {
+      printf("_%.2f",bend);
+    } 
+    while (bend >= 100.0) {
+      printf("^");
+      bend -= 100.0;
+    }
+    if (bend > 0.0) {
+      printf("^%.2f",bend);
+    }
+  } 
+  printf("%.*s",abcTokenLen(scn,5),abcTokenStart(scn,5));
+  printf("%.*s",abcTokenLen(scn,6),abcTokenStart(scn,6));
+  printf("%.*s",abcTokenLen(scn,7),abcTokenStart(scn,7));
+  printf("%.*s",abcTokenLen(scn,8),abcTokenStart(scn,8));
+  printf("%.*s",abcTokenLen(scn,9),abcTokenStart(scn,9));
+}
+
+void zerosig()
 {
   int k;
+  for (k=0; k<7; k++) {
+    keysig[k] = 0.0;
+    expsig[k] = 0.0;
+    barsig[k] = 0.0;
+  }  
+}
 
-  
-  
+void copysig(float *dest, float *src)
+{
+  int k;
+  for (k=0; k<7; k++) {
+    dest[k] = src[k];
+  }  
+}
+
+void resetbarsig()
+{
+  int k;
+  for (k=0; k<7; k++) {
+    if (expsig[k] != 0.0)
+      barsig[k] = expsig[k];
+    else
+      barsig[k] = keysig[k];
+  }  
 }
 
 int main(int argc, char *argv[])
 {
   abcScanner *scn;
   abcToken tok;
-  int cur_header = GLOBAL_HEADER;
-  char sym;
-  int k;
   
   if (argc < 2) {
     fprintf(stderr,"Usage: explicit filename\n");
@@ -74,23 +109,22 @@ int main(int argc, char *argv[])
     exit (1);    
   }
   
-  initkey(scn);
-  
+  zerosig();
+  resetbarsig();
+   
   while ((tok = abcNextToken(scn)) != T_EOF) {
     switch(tok) {
-      case T_EMPTYLINE : resetsyms();
-                         cur_header = GLOBAL_HEADER;
-                         printtok(scn);
-                         break;
-      
+      case T_BAR:
+        resetbarsig();
+        printtok(scn);
+        break;
+        
       case T_FIELD : 
         switch (abcField(scn)) {
-          case 'U' :
-            setsym(cur_header,scn);
-            break;
-            
-          case 'X' :
-            cur_header = LOCAL_HEADER;
+          case 'K' :
+            copysig(keysig, abcKeySignature(scn));
+            copysig(expsig, abcKeyExpSignature(scn));
+            resetbarsig();
             printtok(scn);
             break;
             
@@ -98,8 +132,8 @@ int main(int argc, char *argv[])
         }
         break;
         
-      case T_USERSYMBOL : 
-        printf("%s", symval(cur_header,abcUserSymbol(scn)));
+      case T_NOTE :
+        printnotetok(scn,abcNoteBending(scn));
         break;
       
       default: printtok(scn);

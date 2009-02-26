@@ -204,7 +204,7 @@ int main(int argc, char *argv[])
              
         case T_NOTE:
              printf("NOTE: ");
-             printf("%s%s ", abcNotePitch(scn),abcNoteNatural(scn)?" (natural)":"");
+             printf("%s%s ", abcNotePitch(scn),abcNoteBending(scn) == abcNatural?" (natural)":"");
              printf("bend: %.2f ",abcNoteBending(scn));
              printf("courtesy: %d\n",abcNoteCourtesyAccidentals(scn));
              printf("               duration: %.2f ",abcNoteDuration(scn));
@@ -234,7 +234,7 @@ int main(int argc, char *argv[])
              break;
         
         case T_FIELD:
-             switch (abcField(scn)) {
+             switch (abcField(scn)) { 
                case 'V' : 
                case 'K' : 
                  printf("VOICE: %.*s ", abcVoiceIdLen(scn), abcVoiceIdStart(scn));
@@ -245,7 +245,7 @@ int main(int argc, char *argv[])
                  for (k=1; k<7; k++) {
                    printf(", %6.2f", abcKeySignature(scn)[k]);
                  }
-                 printf("\n");
+                 printf("\n"); 
                  printf("               exp: ");
                  printf("%6.2f", abcKeyExpSignature(scn)[0]);
                  for (k=1; k<7; k++) {
