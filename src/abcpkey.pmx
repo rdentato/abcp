@@ -51,8 +51,15 @@ static void setkeysig(char note, char acc, int mode)
   char tmp[7];
   int k;
   
-  if (note < 'A' || note > 'g' ||
-      (note > 'G' && note < 'a')) return;
+  if (tolower(note) == 'h' && tolower(acc) == 'p') {
+    /* Highland Pipes */
+    expsig[0] = 100;  /* ^C */
+    expsig[3] = 100;  /* ^F */
+    expsig[4] = abcNatural;  /* =G */
+    return;
+  }
+
+  if (tolower(note) < 'a' || tolower(note) > 'g') return;
   
   note = abcNote2Num(note);
   _dbgmsg("NT: %d ",note);
@@ -65,14 +72,6 @@ static void setkeysig(char note, char acc, int mode)
     sig[k+1] = ((sig[k] + modes[mode][k] - 1) % 12)+1;
   }
 
-  #if 0 
-  fprintf(stderr, "\n");
-  for (k=0; k<7; k++) { 
-    fprintf(stderr, "%d, ", sig[k]);
-  }
-  fprintf(stderr, "\n");
-  #endif
-  
   for (k=0; k<7; k++) { /* shift */
     tmp[(k+note) % 7] = sig[k];
   }
@@ -85,13 +84,6 @@ static void setkeysig(char note, char acc, int mode)
     keysig[k] = (tmp[k] - abcSemitones[k]) * 100.0;
   }
   
-  #if 0 
-  fprintf(stderr, "\n");
-  for (k=0; k<7; k++) { 
-    fprintf(stderr, "%.2f, ", keysig[k]);
-  }
-  fprintf(stderr, "\n");
-  #endif
 }
 
 static void abc_clef(abcScanner *scn, char *start, char *end)
@@ -269,6 +261,7 @@ static void abc_KV(abcScanner *scn, char kv)
   parms[ABC_Mode] = ABC_Mode_Ion; 
 
   for (k = 0; k<8; k++) keysig[k] = 0.0;
+  for (k = 0; k<8; k++) expsig[k] = 0.0;
 
   if (kv == 'V') {
     switch pmx(p) {
@@ -297,7 +290,7 @@ static void abc_KV(abcScanner *scn, char kv)
   if (kv == 'K') {
     switch pmx(p) {
       case "(<=A-Ga-g><?=&#b>)&K" :
-      case "(<$none$hp$Hp>)&K" :
+      case "(&i<$none$hp$perc&drum>)&K" :
         setstring(scn,ABC_Tonic,pmx(Start,1),pmx(End,1));
         break;
     }
@@ -320,26 +313,29 @@ static void abc_KV(abcScanner *scn, char kv)
       case "&iexp&K<?==>&K" :  break;
     }
         
-    /* Get explicit accidentals */ 
+    /* Get explicit accidentals  */
     k = 1;
     while (k) {
-    printf("[%s]\n",p);
       switch pmx(p) {
         case "&k" : break;
         case "(<+=^_=>)(&F)(<*=/>)(&F)(<=A-Ga-g>)&K" :
-          k = abcNote2Num(*abcTokenStart(scn,5));
-          expsig[k] = abc_notebending(scn,abcToken(scn));
-          if (expsig[k] == 0.0 && abcTokenLen(scn,1) == 1 &&
-              *abcTokenStart(scn,1) == '=')
-            expsig[k] = ABC_Natural;           
+          k = abcNote2Num(*pmx(Start,5));
+          
+          expsig[k] = abc_notebending(pmx(Start,1), pmx(Len,1),
+                                      pmx(Start,2), pmx(Len,2),
+                                      pmx(Start,3), pmx(Len,3),
+                                      pmx(Start,4), pmx(Len,4) );
+                                   
+          if (expsig[k] == 0.0 && pmx(Len,1) == 1 && *pmx(Start,1) == '=')
+            expsig[k] = abcNatural;           
           k = 1;
           break;
           
         default: k = 0;
       }
     }
+    /**/
   }
-  
   if (abcTokenLen(scn,ABC_Tonic) == 0) {
     scn->tok_str[ABC_Tonic][0]="C";
     scn->tok_str[ABC_Tonic][1]=scn->tok_str[ABC_Tonic][0] + 1;
@@ -357,7 +353,7 @@ static void abc_KV(abcScanner *scn, char kv)
 
 int abcKeyExpNatural(abcScanner *scn,char pitch)
 {
-  if (expsig[abcNote2Num(pitch)] == ABC_Natural) return 1;
+  if (expsig[abcNote2Num(pitch)] == abcNatural) return 1;
   return 0;
 }
 
@@ -365,7 +361,7 @@ float abcKeyExpBending(abcScanner *scn,char pitch)
 {  
   float bend;
   bend = expsig[abcNote2Num(pitch)];
-  if (bend == ABC_Natural) return 0.0;
+  if (bend == abcNatural) return 0.0;
   return bend;
 }
 

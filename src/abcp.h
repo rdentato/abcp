@@ -98,15 +98,6 @@
 
 /* -- END TOKENS  */
 
-#define ABC_F_CLEFSCANNED   0x0001
-#define ABC_F_CHORDSCANNED  0x0001
-#define ABC_F_FIELDSCANNED  0x0001
-#define ABC_F_ONETIMERS     0x00FF
-
-#define abcSetFlag(s,f)  ((s)->flags |= (f))
-#define abcClrFlag(s,f)  ((s)->flags &= ~(f))
-#define abcTestFlag(s,f) ((s)->flags & (f))
-
 typedef  unsigned short abcToken; 
 
 /* must be abc_MAXTOKSTR >= abcPMXCAPT */
@@ -139,45 +130,42 @@ abcScanner *abc_newscanner(char *text,char how);
 #define abcNew_str(s)  abc_newscanner(s,'S')
 #define abcNew_chs(s)  abc_newscanner(s,'C')
 
-#define abcScannerNew(x,y) abcNew_##x(y)
-
+#define     abcScannerNew(x,y) abcNew_##x(y)
 abcScanner *abcScannerFree(abcScanner *scn);
 
-char *abcScannerAddToIncludePath(abcScanner *scn,char *path);
-char *abcScannerSetIncludePath(abcScanner *scn,char *path);
+#define     abcScannerLineNumber(s) ((s)->ln_logical)
+
 char *abcScannerGetIncludePath(abcScanner *scn);
+char *abcScannerSetIncludePath(abcScanner *scn,char *path);
+char *abcScannerAddToIncludePath(abcScanner *scn,char *path);
+
+int   abcInclude(abcScanner *scn);
+char *abcIncludePathStart(abcScanner *scn);
+int   abcIncludePathLen(abcScanner *scn);
+char *abcIncludePathSet(abcScanner *scn);
+int   abcIncludePathAdding(abcScanner *scn);
 
 abcToken abcNextToken(abcScanner *scn);
 
 #define abcToken(s) ((s)->tok)
-char *abcTokenStart(abcScanner *scn, int strnum);
-char *abcTokenEnd(abcScanner *scn, int strnum);
-int abcTokenLen(abcScanner *scn, int strnum);
+char   *abcTokenStart(abcScanner *scn, int strnum);
+char   *abcTokenEnd(abcScanner *scn, int strnum);
+int     abcTokenLen(abcScanner *scn, int strnum);
 
 #define abcStateCurrent(s) ((s)->state)
 #define abcStateNext(s) ((s)->nextstate)
 #define abcStateSet(s,t) ((s)->nextstate = (t))
 
-#define abcScannerLineNumber(s) ((s)->ln_logical)
-
-int abcInclude(abcScanner *scn);
-
-char *abcScannerGetIncludePath(abcScanner *scn);
-char *abcScannerSetIncludePath(abcScanner *scn,char *path);
-char *abcScannerAddToIncludePath(abcScanner *scn,char *path);
-char *abcIncludePathStart(abcScanner *scn);
-int abcIncludePathLen(abcScanner *scn);
-char *abcIncludePathSet(abcScanner *scn);
-int abcIncludePathAdding(abcScanner *scn);
 
 
 /********/
+float abc_getfracion(char *a, int al, char *b, int bl, char *c, int cl);
 
-float abc_getfraction(abcScanner *scn,int ndx);
 
 /* abcpfield.pmx */
-char abcField(abcScanner *scn); 
-int abcFieldLen(abcScanner *scn);
+
+char  abcField(abcScanner *scn); 
+int   abcFieldLen(abcScanner *scn);
 char *abcFieldStart(abcScanner *scn);
 
 /****** */
@@ -186,48 +174,48 @@ char *abcFieldStart(abcScanner *scn);
 
 extern char abcSemitones[7];
 
-int abcNoteCourtesyAccidentals(abcScanner *scn);
-int abcNoteNatural(abcScanner *scn);
-
 #define abcNote2Num(c) ((tolower(c)-'c'+7) % 7)
 
-float abcNoteDuration(abcScanner *scn);
+int            abcNoteCourtesyAccidentals(abcScanner *scn);
+
+float          abcNoteDuration(abcScanner *scn);
 unsigned short abcNoteOctave(abcScanner *scn);
 unsigned char *abcNotePitch(abcScanner *scn);
 
-float abcNoteCents(abcScanner *scn);
-
-#define abcNoteBending(s) abc_notebending(s,T_NOTE)
-float abc_notebending(abcScanner *scn, unsigned short tok);
+float          abcNoteCents(abcScanner *scn);
+float          abcNoteBending(abcScanner *scn);
 
 unsigned short abcNoteMidi(abcScanner *scn);
 unsigned short abcNoteMidiPitchBend(abcScanner *scn);
 
 unsigned short abcRestInvisible(abcScanner *scn);
 unsigned short abcRestMultimeasure(abcScanner *scn);
-float abcRestDuration(abcScanner *scn);
+float          abcRestDuration(abcScanner *scn);
+
 
 char *abcBarStart(abcScanner *scn);
-int abcBarLen(abcScanner *scn);
-int abcBarDotted(abcScanner *scn);
-int abcBarInvisible(abcScanner *scn);
-int abcBarRepeatBefore(abcScanner *scn);
-int abcBarRepeatAfter(abcScanner *scn);
+int   abcBarLen(abcScanner *scn);
+int   abcBarDotted(abcScanner *scn);
+int   abcBarInvisible(abcScanner *scn);
+int   abcBarRepeatBefore(abcScanner *scn);
+int   abcBarRepeatAfter(abcScanner *scn);
 char *abcBarEndingStart(abcScanner *scn);
-int abcBarEndingLen(abcScanner *scn);
+int   abcBarEndingLen(abcScanner *scn);
 
-int abcBroken(abcScanner *scn);
+int   abcBroken(abcScanner *scn);
 float abcChordDuration(abcScanner *scn);
 
-int abcOverlay(abcScanner *scn);
+int  abcOverlay(abcScanner *scn);
+
 char abcSlurDirection(abcScanner *scn);
 char abcTieDirection(abcScanner *scn);
-int abcSlurDotted(abcScanner *scn);
-int abcTieDotted(abcScanner *scn);
 
-int abcTupletNext(abcScanner *scn);
-int abcTupletTime(abcScanner *scn);
-int abcTuplet(abcScanner *scn);
+int  abcSlurDotted(abcScanner *scn);
+int  abcTieDotted(abcScanner *scn);
+
+int  abcTupletNext(abcScanner *scn);
+int  abcTupletTime(abcScanner *scn);
+int  abcTuplet(abcScanner *scn);
             
 /* abcptext.c */
 
@@ -331,7 +319,7 @@ short abcVoiceTranspose(abcScanner *scn);
 float *abcKeySignature(abcScanner *scn);
 float *abcKeyExpSignature(abcScanner *scn);
                             
-#define ABC_Natural 9999.0
+#define abcNatural 999.0
 int abcKeyExpNatural(abcScanner *scn,char pitch);
 float abcKeyExpBending(abcScanner *scn,char pitch);
                                    

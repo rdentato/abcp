@@ -1,0 +1,9 @@
+K:C
+A ^C d C | C _d =d d |
+
+K:Hp
+a b c d e f g | a b =c c
+
+K:E# 
+a b c d e f g | a b =c c
+ 

@@ -1,0 +1,4 @@
+K: C exp ^F^C=G
+K:Hp
+K:None
+F =C (_)F
