@@ -142,12 +142,19 @@ int main(int argc, char *argv[])
                
       case T_ENDING:
         if (abcBarEnding(scn) == 1) {
-          endingnote = lastnote;
-          endingbend = lastbend;
+          if (tie == 0)
+            endingnote = -1;
+          else {
+            endingnote = lastnote;
+            endingbend = lastbend;
+          }
         }
         else {
-          lastnote = endingnote;
-          lastbend = endingbend;
+          if (endingnote != -1) {
+            lastnote = endingnote;
+            lastbend = endingbend;
+            tie = 1;
+          }
         }
         printtok(scn);
         break;
