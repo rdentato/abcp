@@ -24,8 +24,13 @@ hold accidentals that happen in the same measure.
 #include "abcp.h"
 
 float keysig[7];
-float expsig[7];
 float barsig[7];
+
+float lastbend;
+int   lastnote;
+float endingbend;
+int   endingnote;
+int tie; 
 
 void printtok(abcScanner *scn)
 {
@@ -34,14 +39,30 @@ void printtok(abcScanner *scn)
 
 void printnotetok(abcScanner *scn, float bend)
 {
+  int note;
+  
+  note = abcNote2Num(*abcTokenStart(scn,5));
+  
   if (bend != 0.0) {
-    barsig[abcNote2Num(*abcTokenStart(scn,5))] = bend; 
+    barsig[note] = bend;
     printtok(scn);
+    lastnote = note;
+    lastbend = bend;
     return;
   }
 
-  bend = barsig[abcNote2Num(*abcTokenStart(scn,5))];
-  if (bend != abcNatural) {
+  if (tie && lastnote == note && lastbend != 0.0) 
+    bend = lastbend;
+  else
+    bend = barsig[note];
+  
+  lastnote = note;
+  lastbend = bend;
+  
+  if (bend == abcNatural) {
+    printf("=");
+  }
+  else {
     while (bend <= -100.0) {
       printf("_");
       bend += 100.0;
@@ -69,27 +90,24 @@ void zerosig()
   int k;
   for (k=0; k<7; k++) {
     keysig[k] = 0.0;
-    expsig[k] = 0.0;
     barsig[k] = 0.0;
   }  
 }
 
-void copysig(float *dest, float *src)
+void copysig(float *dest, float *ks, float *es)
 {
   int k;
   for (k=0; k<7; k++) {
-    dest[k] = src[k];
-  }  
+    if (es[k] != 0.0)  dest[k] = es[k];
+    else dest[k] = ks[k];
+  }
 }
 
 void resetbarsig()
 {
   int k;
   for (k=0; k<7; k++) {
-    if (expsig[k] != 0.0)
-      barsig[k] = expsig[k];
-    else
-      barsig[k] = keysig[k];
+    barsig[k] = keysig[k];
   }  
 }
 
@@ -111,9 +129,29 @@ int main(int argc, char *argv[])
   
   zerosig();
   resetbarsig();
-   
+  lastnote = 0;
+  lastbend = 0.0;
+  tie = 0;
+  
   while ((tok = abcNextToken(scn)) != T_EOF) {
     switch(tok) {
+      case T_TIE:
+        tie = 1;
+        printtok(scn);
+        break;
+               
+      case T_ENDING:
+        if (abcBarEnding(scn) == 1) {
+          endingnote = lastnote;
+          endingbend = lastbend;
+        }
+        else {
+          lastnote = endingnote;
+          lastbend = endingbend;
+        }
+        printtok(scn);
+        break;
+        
       case T_BAR:
         resetbarsig();
         printtok(scn);
@@ -122,8 +160,7 @@ int main(int argc, char *argv[])
       case T_FIELD : 
         switch (abcField(scn)) {
           case 'K' :
-            copysig(keysig, abcKeySignature(scn));
-            copysig(expsig, abcKeyExpSignature(scn));
+            copysig(keysig, abcKeySignature(scn), abcKeyExpSignature(scn));
             resetbarsig();
             printtok(scn);
             break;
@@ -134,9 +171,11 @@ int main(int argc, char *argv[])
         
       case T_NOTE :
         printnotetok(scn,abcNoteBending(scn));
+        tie = 0;
         break;
       
-      default: printtok(scn);
+      default:
+        printtok(scn);
     }
   }
 

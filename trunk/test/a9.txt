@@ -6,3 +6,9 @@ a b c d e f g | a b c =c c d e  | c
  
 K:Bm exp =g
 a b c d e f g | a b c =c c d e  | c
+
+K:Bb
+c d e f g a b z | a =b-|b
+
+K:Cm
+^F- |: FGEC | A2G=B- |1 Bcde | cz ^F2- :|2 Bcde | c3 z |]
