@@ -1,9 +1,8 @@
 K:C
-A ^C d C | C _d =d d |
+a _b ^c a b c | a b c =c c d e  | c
 
 K:Hp
-a b c d e f g | a b =c c
-
-K:E# 
-a b c d e f g | a b =c c
+a b c d e f g | a b c =c c d e  | c
  
+K:Bm exp =g
+a b c d e f g | a b c =c c d e  | c
