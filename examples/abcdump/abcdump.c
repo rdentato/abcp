@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
              break;
              
         case T_ENDING :
-             printf("ENDING: %.*s\n",abcBarEndingLen(scn),abcBarEndingStart(scn));
+             printf("ENDING: %d %.*s\n", abcBarEnding(scn), abcBarEndingLen(scn), abcBarEndingStart(scn));
              break;
              
         case T_OVLRESET:

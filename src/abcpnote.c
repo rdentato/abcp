@@ -217,6 +217,12 @@ int abcBarRepeatAfter(abcScanner *scn)
     return abcTokenLen(scn,1) / 2;
 }
 
+int abcBarEnding(abcScanner *scn)
+{
+  if (abcToken(scn) != T_ENDING) return 0;
+  return atoi(abcTokenStart(scn,2));
+}
+
 char *abcBarEndingStart(abcScanner *scn)
 {
   if (abcToken(scn) != T_ENDING) return utlEmptyString;

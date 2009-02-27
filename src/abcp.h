@@ -201,6 +201,7 @@ int   abcBarRepeatBefore(abcScanner *scn);
 int   abcBarRepeatAfter(abcScanner *scn);
 char *abcBarEndingStart(abcScanner *scn);
 int   abcBarEndingLen(abcScanner *scn);
+int   abcBarEnding(abcScanner *scn);
 
 int   abcBroken(abcScanner *scn);
 float abcChordDuration(abcScanner *scn);
