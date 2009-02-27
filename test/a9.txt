@@ -12,3 +12,5 @@ c d e f g a b z | a =b-|b
 
 K:Cm
 ^F- |: FGEC | A2G=B- |1 Bcde | cz ^F2- :|2 Bcde | c3 z |]
+^F- |: FGEC | A2G=B- |1 Bcde | cz ^F2 :|2 Bcde | c3 z :|3 F |]
+^F- |: FGEC | A2G=B |1 Bcde | cz ^F2 :|2 Bcde | c3 z :|3 F |]
