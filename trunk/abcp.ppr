@@ -86,12 +86,12 @@ abcp
 10=examples\crdnotes\makefile
 [Selected Project Files]
 Main=
-Selected=src\abcpscan.pmx
+Selected=src\abcpchords.pmx
 [examples\abcdump\abcdump.c]
 TopLine=182
 Caret=14,192
 [src\abcpscan.pmx]
-TopLine=459
+TopLine=213
 Caret=14,213
 [src\abcpnote.c]
 TopLine=109
@@ -106,11 +106,11 @@ Caret=10,158
 TopLine=15
 Caret=27,52
 [src\abcpchords.pmx]
-TopLine=38
-Caret=1,111
+TopLine=81
+Caret=36,50
 [test\a10.txt]
 TopLine=1
-Caret=33,7
+Caret=38,7
 [test\a4.txt]
 TopLine=1
 Caret=47,12
