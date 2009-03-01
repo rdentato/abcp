@@ -198,7 +198,8 @@ int main(int argc, char *argv[])
              printf("[%.*s]",abcChordAltRootLen(scn),abcChordAltRootStart(scn));
              printf("[%.*s]",abcChordAltTypeLen(scn),abcChordAltTypeStart(scn));
              printf("[%.*s]",abcChordAltBassLen(scn),abcChordAltBassStart(scn));
-             /*printf(" %.*s",abcTokenLen(scn,0),abcTokenStart(scn,0));*/
+             printf(" (%d)",abcChordOctave(scn));
+             printf(" %d",*abcChordFormula(scn));
              printf("\n");
              break; 
              
