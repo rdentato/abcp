@@ -1,7 +1,7 @@
 X:2
 "A" "Amin" "Amin7"
 "Amaj/9/4/Bb(Cmaj/9/4/A)" "Bbmin(6)(B)"
-"C" "D-7(5b)" "Am6/4", "FMaj7" "A#mMaj7"
+"C" "D-7(5b)" "Am6/4", "FMaj7" "F7" "Fmin7" "A#mMaj7"
 
 X:3
-"C" "D-" "E-" "F" "A-" "G" "Bdim"
+"C" "D-" "E-" "F" "A-" "G" "Bdim" "G7"

@@ -21,7 +21,6 @@ chords and prints the corresponding MIDI notes.
 #include "abcp.h"
 
 char *notes[12]={"C", "^C", "D", "^D","E","F","^F","G","^G","A","^A","B"};
-/*char *notes[12]={"Cb","C", "Db", "D", "Eb","E","F","Gb","G","Ab","A","Bb","B"}*/
 
 int main(int argc, char *argv[])
 {
@@ -55,9 +54,9 @@ int main(int argc, char *argv[])
         formula = abcChordFormula(scn);
         
         printf("\"");
-             printf("%.*s",abcChordRootLen(scn),abcChordRootStart(scn));
-             printf("%.*s",abcChordTypeLen(scn),abcChordTypeStart(scn));
-             printf("%.*s",abcChordBassLen(scn),abcChordBassStart(scn));
+        printf("%.*s",abcChordRootLen(scn),abcChordRootStart(scn));
+        printf("%.*s",abcChordTypeLen(scn),abcChordTypeStart(scn));
+        printf("%.*s",abcChordBassLen(scn),abcChordBassStart(scn));
         printf("\"  ->  ");
 
         printf("[%s",notes[n]);
