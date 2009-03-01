@@ -175,11 +175,12 @@ char *abcFieldStart(abcScanner *scn);
 extern char abcSemitones[7];
 
 #define abcNote2Num(c) ((tolower(c)-'c'+7) % 7)
+unsigned short abcNote2Midi(char pitch, int octave, int acc);
 
 int            abcNoteCourtesyAccidentals(abcScanner *scn);
 
 float          abcNoteDuration(abcScanner *scn);
-unsigned short abcNoteOctave(abcScanner *scn);
+int            abcNoteOctave(abcScanner *scn);
 unsigned char *abcNotePitch(abcScanner *scn);
 
 float          abcNoteCents(abcScanner *scn);
@@ -205,6 +206,8 @@ int   abcBarEnding(abcScanner *scn);
 
 int   abcBroken(abcScanner *scn);
 float abcChordDuration(abcScanner *scn);
+int   abcChordOctave(abcScanner *scn);
+char *abcChordFormula(abcScanner *scn);
 
 int  abcOverlay(abcScanner *scn);
 

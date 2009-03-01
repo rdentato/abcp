@@ -406,9 +406,9 @@ static abcToken abc_symbols(abcScanner *scn)
     case "()()(|)" :settoken(scn,T_SYMBAR);
                     break;
 
-    case "\"(<+=iv><?=#b>)(<*!\">)\"" :
-    case "\"(<+=IV><?=#b>)(<*!\">)\"" :
-    case "\"(<=A-Ga-g><?=#b>)(<*!\">)\"" :
+    case "\"(<+=iv><*=#b>)(<*!\">)\"(<*=',>)" :
+    case "\"(<+=IV><*=#b>)(<*!\">)\"(<*=',>)" :
+    case "\"(<=A-Ga-g><*=#b>)(<*!\">)\"(<*=',>)" :
                     settoken(scn,T_GCHORD);
                     break;
 
@@ -607,9 +607,9 @@ static abcToken abc_tune(abcScanner *scn)
                     settoken(scn,T_CONTINUE);
                     break;
 
-    case "\"(<+=iv><?=#b>)(<*!\">)\"" :
-    case "\"(<+=IV><?=#b>)(<*!\">)\"" :
-    case "\"(<=A-Ga-g><?=#b>)(<*!\">)\"" :
+    case "\"(<+=iv><*=#b>)(<*!\">)\"(<*=',>)" :
+    case "\"(<+=IV><*=#b>)(<*!\">)\"(<*=',>)" :
+    case "\"(<=A-Ga-g><*=#b>)(<*!\">)\"(<*=',>)" :
                     settoken(scn,T_GCHORD);
                     break;
 
@@ -621,8 +621,7 @@ static abcToken abc_tune(abcScanner *scn)
     case "()(<.>)" :    settoken(scn,T_UNKNOWN);
                     break;
   }
-
-
+  
   return scn->tok;
 }
 
@@ -1121,11 +1120,11 @@ int abcInclude(abcScanner *scn)
     ret = 1;
     while (save == NULL && ret == 1) {
       switch pmx(pname) {
-        case "<+!;>" :   c = *pmx(End,0);
-                         *pmx(End,0) = '\0';
-                         _dbgmsg("trying: %s\n",pmx(Start,0));
-                         save = abcScannerNew(file,pmx(Start,0));           
-                         *pmx(End,0) = c;
+        case "<+!;>" :  c = *pmx(End,0);
+                        *pmx(End,0) = '\0';
+                        _dbgmsg("trying: %s\n",pmx(Start,0));
+                        save = abcScannerNew(file,pmx(Start,0));           
+                        *pmx(End,0) = c;
                         break;
                         
         case ";"     :  break;

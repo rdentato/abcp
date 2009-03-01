@@ -9,9 +9,119 @@
 
 #include "abcp_priv.h"
 
+#define NCHORDS 87
+
+typedef struct {
+  char *chordName;
+  char *chordFormula;
+} abcChordFormula_t;
+
+/* Chords have been adapted from the paper "CHORD FORMULAS" by Bill Wrobel
+   (http://www.filmscorerundowns.net/herrmann/chord_formulas.pdf)
+*/
+
+abcChordFormula_t abcChordFormula_v[NCHORDS] = {
+      {"11" ,        "\004\007\012\016\021"} ,    
+      {"11b5" ,      "\004\006\012\016\021"} ,    
+      {"13" ,        "\004\007\012\016\025"} ,    
+      {"7" ,         "\004\007\012"} ,            
+      {"7#5" ,       "\004\010\012"} ,            
+      {"7#9" ,       "\004\007\012\017"} ,        
+      {"7/11" ,      "\004\007\012\021"} ,        
+      {"7/4" ,       "\004\005\007\013"} ,        
+      {"7/6" ,       "\004\007\011\012"} ,        
+      {"7b5" ,       "\004\006\012"} ,            
+      {"7b9" ,       "\004\007\012\015"} ,        
+      {"7sus" ,      "\005\007\012"} ,            
+      {"9" ,         "\004\007\012\016"} ,        
+      {"9#5" ,       "\004\010\012\016"} ,        
+      {"9b5" ,       "\004\006\012\016"} ,        
+      {"aug" ,       "\004\010"} ,                
+      {"aug/4" ,     "\004\005\010"} ,            
+      {"augsus" ,    "\005\010"} ,                
+      {"dim" ,       "\003\006"} ,                
+      {"dim6" ,      "\003\006\011"} ,            
+      {"dim6sus" ,   "\005\006\011"} ,            
+      {"dim7" ,      "\003\006\011"} ,            
+      {"dim7sus" ,   "\005\006\011"} ,            
+      {"dimsus" ,    "\005\006"} ,                
+      {"maj" ,       "\004\007"} ,                
+      {"maj/4" ,     "\004\005\007"} ,            
+      {"maj/9" ,     "\004\007\016"} ,            
+      {"maj/9/4" ,   "\004\005\007\016"} ,        
+      {"maj11" ,     "\004\007\013\016\021"} ,    
+      {"maj11#5" ,   "\004\010\013\016\021"} ,    
+      {"maj11#9" ,   "\004\007\013\017\021"} ,    
+      {"maj11/13" ,  "\004\007\013\016\021"} ,    
+      {"maj11b5" ,   "\004\006\013\016\021"} ,    
+      {"maj11b9" ,   "\004\007\013\015\021"} ,    
+      {"maj13" ,     "\004\007\013\016\025"} ,    
+      {"maj13#5" ,   "\004\010\013\016\025"} ,    
+      {"maj13b5" ,   "\004\006\013\016\025"} ,    
+      {"maj6" ,      "\004\007\011"} ,            
+      {"maj6/4" ,    "\004\005\007\011"} ,        
+      {"maj6/9" ,    "\004\007\011\016"} ,        
+      {"maj7" ,      "\004\007\013"} ,            
+      {"maj7#5" ,    "\004\010\013"} ,            
+      {"maj7#9" ,    "\004\007\013\017"} ,        
+      {"maj7/11" ,   "\004\007\013\021"} ,        
+      {"maj7/4" ,    "\004\005\007\013"} ,        
+      {"maj7/6" ,    "\004\007\011\013"} ,        
+      {"maj7b5" ,    "\004\006\013"} ,            
+      {"maj7b5#9" ,  "\004\006\013\017"} ,        
+      {"maj7b9" ,    "\004\007\013\015"} ,        
+      {"maj9" ,      "\004\007\013\016"} ,        
+      {"maj9#11" ,   "\004\007\013\016\022"} ,    
+      {"maj9#5" ,    "\004\010\013\016"} ,        
+      {"maj9b5" ,    "\004\006\013\016"} ,        
+      {"majb5" ,     "\004\006"} ,                
+      {"min" ,       "\003\007"} ,                
+      {"min/4" ,     "\003\005\007"} ,            
+      {"min/9" ,     "\003\007\016"} ,            
+      {"min11" ,     "\003\007\012\016\021"} ,    
+      {"min11#5" ,   "\003\010\012\016\021"} ,    
+      {"min11b5" ,   "\003\006\012\016\021"} ,    
+      {"min13" ,     "\003\007\012\016\025"} ,    
+      {"min13b5" ,   "\003\006\012\016\025"} ,    
+      {"min6" ,      "\003\007\011"} ,            
+      {"min6/4" ,    "\003\005\007\011"} ,        
+      {"min6/9" ,    "\003\007\011\016"} ,        
+      {"min7" ,      "\003\007\012"} ,            
+      {"min7#5" ,    "\003\010\012"} ,            
+      {"min7#9" ,    "\003\007\012\017"} ,        
+      {"min7/11" ,   "\003\007\012\021"} ,        
+      {"min7/4" ,    "\003\005\007\012"} ,        
+      {"min7/6" ,    "\003\007\011\012"} ,        
+      {"min7b5" ,    "\003\006\012"} ,            
+      {"min7b9" ,    "\003\007\012\015"} ,        
+      {"min9" ,      "\003\007\012\016"} ,        
+      {"min9#5" ,    "\003\010\012\016"} ,        
+      {"min9b5" ,    "\003\006\012\016"} ,        
+      {"minmaj11" ,  "\003\007\013\016\021"} ,    
+      {"minmaj7" ,   "\003\007\013"} ,            
+      {"minmaj9" ,   "\003\007\013\016"} ,        
+      {"sus/9" ,     "\005\007\016"} ,            
+      {"sus4" ,      "\005\007"} ,                
+      {"sus6" ,      "\005\007\011"} ,            
+      {"sus6/9" ,    "\005\007\011\016"} ,        
+      {"sus7" ,      "\005\007\013"} ,            
+      {"sus7#5" ,    "\005\010\013"} ,            
+      {"sus7b5" ,    "\005\006\013"} ,            
+      {"sus9" ,      "\005\007\013\016"} ,        
+};
+
+
 #define setstr(s,k,t,e) \
       (s)->tok_str[k][0] = t;\
       (s)->tok_str[k][1] = e;\
+
+#define ABC_ChordRoot    1
+#define ABC_ChordType    2
+#define ABC_ChordOctave  3
+#define ABC_ChordBass    4
+#define ABC_ChordAltRoot 5
+#define ABC_ChordAltType 6
+#define ABC_ChordAltBass 7
 
 static void abc_chord(abcScanner *scn)
 {
@@ -23,9 +133,9 @@ static void abc_chord(abcScanner *scn)
   start = abcTokenStart(scn,2);
   end = abcTokenEnd(scn,2);
   
-  setstr(scn,2,NULL,NULL);
-  setstr(scn,3,NULL,NULL); setstr(scn,4,NULL,NULL);
-  setstr(scn,5,NULL,NULL); setstr(scn,6,NULL,NULL);
+  setstr(scn,ABC_ChordType,NULL,NULL);
+  setstr(scn,ABC_ChordAltBass,NULL,NULL); setstr(scn,ABC_ChordBass,NULL,NULL);
+  setstr(scn,ABC_ChordAltRoot,NULL,NULL); setstr(scn,ABC_ChordAltType,NULL,NULL);
   
   abcSetFlag(scn,ABC_F_CHORDSCANNED); 
   
@@ -42,12 +152,12 @@ static void abc_chord(abcScanner *scn)
       default: j = 1; break;
     }
   }
-  setstr(scn,2,p,q);
+  setstr(scn,ABC_ChordType,p,q);
   if (start >= end) return;
     
   switch pmx(start) {  /* Bass */
     case "&K/(<+=IiVvA-Ga-g><?=#b>)&K": 
-      setstr(scn,3,pmx(Start,1),pmx(End,1));
+      setstr(scn,ABC_ChordBass,pmx(Start,1),pmx(End,1));
       break;
   }
   if (start >= end) return;
@@ -58,7 +168,7 @@ static void abc_chord(abcScanner *scn)
   
   switch pmx(start) {  /* Root note */
     case "&K&((<+=A-Ga-gIiVv><?=#b>)&K": 
-      setstr(scn,4,pmx(Start,1),pmx(End,1));
+      setstr(scn,ABC_ChordAltRoot,pmx(Start,1),pmx(End,1));
       break;
     default : return;
   }
@@ -76,16 +186,17 @@ static void abc_chord(abcScanner *scn)
       default: j = 1; break;
     }
   }
-  setstr(scn,5,p,q);
+  setstr(scn,ABC_ChordAltType,p,q);
   if (start >= end) return;
     
   switch pmx(start) {  /* Bass */
     case "&K/(<+=IiVvA-Ga-g><?=#b>)&K": 
-      setstr(scn,6,pmx(Start,1),pmx(End,1));
+      setstr(scn,ABC_ChordAltBass,pmx(Start,1),pmx(End,1));
       break;
-  }  
-  return;
+  }
   
+    
+  return;
 }
 
 #define returnifnot(s,r)  do {\
@@ -98,74 +209,163 @@ static void abc_chord(abcScanner *scn)
 char *abcChordRootStart(abcScanner *scn)
 {
   returnifnot(scn,utlEmptyString);
-  return abcTokenStart(scn,1);
+  return abcTokenStart(scn,ABC_ChordRoot);
 }
 
 char *abcChordTypeStart(abcScanner *scn)
 {
   returnifnot(scn,utlEmptyString);
-  return abcTokenStart(scn,2);
+  return abcTokenStart(scn,ABC_ChordType);
 }
 
 char *abcChordBassStart(abcScanner *scn)
 {
   returnifnot(scn,utlEmptyString);
-  return abcTokenStart(scn,3);
+  return abcTokenStart(scn,ABC_ChordBass);
 }
 
 char *abcChordAltRootStart(abcScanner *scn)
 {
   returnifnot(scn,utlEmptyString);
-  return abcTokenStart(scn,4);
+  return abcTokenStart(scn,ABC_ChordAltRoot);
 }
 
 char *abcChordAltTypeStart(abcScanner *scn)
 {
   returnifnot(scn,utlEmptyString);
-  return abcTokenStart(scn,5);
+  return abcTokenStart(scn,ABC_ChordAltType);
 }
 
 char *abcChordAltBassStart(abcScanner *scn)
 {
   returnifnot(scn,utlEmptyString);
-  return abcTokenStart(scn,6);
+  return abcTokenStart(scn,ABC_ChordAltBass);
 }
-
 
 int abcChordRootLen(abcScanner *scn)
 {
   returnifnot(scn,0);
-  return abcTokenLen(scn,1);
+  return abcTokenLen(scn,ABC_ChordRoot);
 }
 
 int abcChordTypeLen(abcScanner *scn)
 {
   returnifnot(scn,0);
-  return abcTokenLen(scn,2);
+  return abcTokenLen(scn,ABC_ChordType);
 }
 
 int abcChordBassLen(abcScanner *scn)
 {
   returnifnot(scn,0);
-  return abcTokenLen(scn,3);
+  return abcTokenLen(scn,ABC_ChordBass);
 }
 
 int abcChordAltRootLen(abcScanner *scn)
 {
   returnifnot(scn,0);
-  return abcTokenLen(scn,4);
+  return abcTokenLen(scn,ABC_ChordAltRoot);
 }
 
 int abcChordAltTypeLen(abcScanner *scn)
 {
   returnifnot(scn,0);
-  return abcTokenLen(scn,5);
+  return abcTokenLen(scn,ABC_ChordAltType);
 }
 
 int abcChordAltBassLen(abcScanner *scn)
 {
   returnifnot(scn,0);
-  return abcTokenLen(scn,6);
+  return abcTokenLen(scn,ABC_ChordAltBass);
 }
 
+int abcChordOctave(abcScanner *scn)
+{
+  int oct = 3;
+  int k; char *p;
   
+  if (abcToken(scn) != T_GCHORD) return oct;
+  
+  _dbgmsg("{%.*s}",abcTokenLen(scn,ABC_ChordOctave),abcTokenStart(scn,ABC_ChordOctave));
+  p = abcTokenStart(scn,ABC_ChordOctave);
+  for (k=0; k<abcTokenLen(scn,ABC_ChordOctave);k++) {
+    if (*p == '\'') oct++;
+    else if  (*p == ',') oct--;
+    p++;
+  }
+  if (oct < 0) oct = 0;
+  else if(oct >10) oct = 10;  
+  return oct;
+}
+
+
+static int frml_cmp(const void *a, const void *b)
+{
+  return strcmp(((abcChordFormula_t *)a)->chordName,
+                ((abcChordFormula_t *)b)->chordName);
+}
+
+char *abcChordFormula(abcScanner *scn)
+{
+  #define chordname scn->tmpbuf
+  
+  char *formula = utlEmptyString;
+  
+  abcChordFormula_t  frml_tmp;
+  abcChordFormula_t *frml_res;
+  
+  int k;
+  char *p;
+  
+  returnifnot(scn,utlEmptyString);
+  
+  chordname = chsCpy(chordname,"");
+  p = abcTokenStart(scn,ABC_ChordType);
+  k = abcTokenLen(scn,ABC_ChordType);
+  
+  if (k==0) 
+    chordname = chsCpy(chordname,"maj");
+  else {
+    switch pmx(p) {
+      case "&K&imaj"        : chordname = chsAddStr(chordname,"maj");
+                            k -= pmx(Len,0);
+                            break;
+      case "&K&i<$min$-$m>" : chordname = chsAddStr(chordname,"min");
+                            k -= pmx(Len,0);
+                            break;
+    }
+                                
+    while (k>0) {
+      switch pmx(p) {
+        case "&k"           : 
+        case "<=()>"        : k -= pmx(Len,0);
+                              break;
+      
+        case "-(<+d>)"      :
+        case "(<+d>)b"      : chordname = chsAddChr(chordname,'b');
+                              chordname = chsAddStrL(chordname,pmx(Start,1),pmx(Len,1));
+                              k -= pmx(Len,0);
+                              break;
+                              
+        case "+(<+d>)"      :
+        case "(<+d>)+"      : chordname = chsAddChr(chordname,'#');
+                              chordname = chsAddStrL(chordname,pmx(Start,1),pmx(Len,1));
+                              k -= pmx(Len,0);
+                              break;
+  
+        case "<.>"          : chordname = chsAddChr(chordname,tolower(*pmx(Start,1)));
+                              k -= pmx(Len,0);
+                              break;
+      }
+    }
+  }
+  _dbgmsg("CN: [%s]",chordname);
+  
+  frml_tmp.chordName = chordname;
+  frml_tmp.chordFormula = NULL;
+  
+  frml_res= bsearch(&frml_tmp, abcChordFormula_v, NCHORDS,
+                                        sizeof(abcChordFormula_t), frml_cmp);
+  if (frml_res) 
+    formula = frml_res->chordFormula;
+  return formula;
+}  

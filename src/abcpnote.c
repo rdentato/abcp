@@ -62,7 +62,7 @@ float abcNoteBending(abcScanner *scn)
                          abcTokenStart(scn,4), abcTokenLen(scn,4) );
 }
 
-unsigned short abcNoteOctave(abcScanner *scn)
+int abcNoteOctave(abcScanner *scn)
 {
   int oct = 4;
   int k;
@@ -80,8 +80,8 @@ unsigned short abcNoteOctave(abcScanner *scn)
       case ','  : oct--; break;
     }
   } 
-  if (oct <  0) oct = 0;
-  else if (oct > 10) oct = 10;
+  if (oct <  -1) oct = -1;
+  else if (oct > 9) oct = 9;
   return oct;
 }
 
@@ -120,17 +120,24 @@ unsigned char *abcNotePitch(abcScanner *scn)
   return pitch; 
 }
 
+unsigned short abcNote2Midi(char pitch, int octave, int acc)
+{
+  int n;
+  n = abcSemitones[abcNote2Num(pitch)] - 1 + acc;
+  n += 12 * octave;
+  while (n>127) n -= 12;
+  while (n<0) n += 12;
+  return n;
+}
+
 unsigned short abcNoteMidi(abcScanner *scn)
 {
   int n;
   if (abcToken(scn) != T_NOTE) return 0;
-  
-  n = abcSemitones[abcNote2Num(*abcTokenStart(scn,5))];
-  n += (int)(abcNoteCents(scn)/100.0);   
-  n += 12 * (abcNoteOctave(scn)+1);
-  if (n<0) n = 0;
-  return n & 0x7F;
-}
+  return abcNote2Midi(*abcTokenStart(scn,5),
+                       abcNoteOctave(scn)+1,
+                 (int)(abcNoteCents(scn)/100.0));
+ }
 
 unsigned short abcNoteMidiPitchBend(abcScanner *scn)
 {
