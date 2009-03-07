@@ -186,6 +186,9 @@ unsigned char *abcNotePitch(abcScanner *scn);
 float          abcNoteCents(abcScanner *scn);
 float          abcNoteBending(abcScanner *scn);
 
+float abcNoteMicrotoneDen(abcScanner *scn);
+float abcNoteMicrotoneNum(abcScanner *scn);
+
 unsigned short abcNoteMidi(abcScanner *scn);
 unsigned short abcNoteMidiPitchBend(abcScanner *scn);
 
