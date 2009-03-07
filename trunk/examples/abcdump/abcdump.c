@@ -206,8 +206,8 @@ int main(int argc, char *argv[])
         case T_NOTE:
              printf("NOTE: ");
              printf("%s%s ", abcNotePitch(scn),abcNoteBending(scn) == abcNatural?" (natural)":"");
-             printf("bend: %.2f ",abcNoteBending(scn));
-             printf("courtesy: %d\n",abcNoteCourtesyAccidentals(scn));
+             printf("bend: %.2f (%.2f/%.2f) ",abcNoteBending(scn),abcNoteMicrotoneNum(scn),abcNoteMicrotoneDen(scn));
+             printf("court: %d\n",abcNoteCourtesyAccidentals(scn));
              printf("               duration: %.2f ",abcNoteDuration(scn));
              printf("octave: %d ",abcNoteOctave(scn));
              printf("midi: (%d,%d)\n",abcNoteMidi(scn),abcNoteMidiPitchBend(scn));

@@ -62,6 +62,44 @@ float abcNoteBending(abcScanner *scn)
                          abcTokenStart(scn,4), abcTokenLen(scn,4) );
 }
 
+float abcNoteMicrotoneNum(abcScanner *scn)
+{
+  int k;
+  float num = 1.0;
+  
+  if (abcToken(scn) != T_NOTE) return 0.0;
+  if (abcTokenLen(scn,2) > 0) 
+    num = atof(abcTokenStart(scn,2));
+  k = abcTokenLen(scn,1);
+  if (k>0 && abcTokenStart(scn,1)[k-1] == '_')
+    num = -num;
+  return num;
+}
+
+float abcNoteMicrotoneDen(abcScanner *scn)
+{
+  int k;
+  float den = -1.0;
+  
+  if (abcToken(scn) != T_NOTE) return 1.0;
+  
+  if (abcTokenLen(scn,4) > 0) 
+    den = atof(abcTokenStart(scn,4));
+    
+  k = abcTokenLen(scn,3);
+  if (k > 0) {
+    if (den <= 0.0) den = 2.0;
+    den = den * ((float)(1 << (k-1)));
+  }
+    
+  if (den <= 0.0) {
+    if (abcTokenLen(scn,2) > 0) den = 100.0;
+    else den = 1.0;
+  }
+  return den;
+}
+
+
 int abcNoteOctave(abcScanner *scn)
 {
   int oct = 4;
@@ -132,7 +170,6 @@ unsigned short abcNote2Midi(char pitch, int octave, int acc)
 
 unsigned short abcNoteMidi(abcScanner *scn)
 {
-  int n;
   if (abcToken(scn) != T_NOTE) return 0;
   return abcNote2Midi(*abcTokenStart(scn,5),
                        abcNoteOctave(scn)+1,
