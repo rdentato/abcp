@@ -365,6 +365,11 @@ float abcKeyExpBending(abcScanner *scn,char pitch);
             
 
 /********* */
- 
+/* in abcpfield.pmx */
+
+int abcMeterBeatsNth(abcScanner *scn,int k);
+int abcMeterUnits(abcScanner *scn);
+
+#define abcMeterBeats(s) abcMeterBeatsNth(s,0)
 
 #endif
