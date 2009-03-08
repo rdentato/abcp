@@ -14,6 +14,7 @@ int main(int argc, char *argv[])
   abcToken tok;
   chs_t abctext = NULL;
   int k = S_NONE; 
+  int j;
   FILE *f;
   int argn;
   
@@ -280,6 +281,17 @@ int main(int argc, char *argv[])
                  printf("USRSYMDEF: [%c][%.*s]\n", abcUserSymbol(scn),
                           abcUserSymbolDefineLen(scn),
                           abcUserSymbolDefineStart(scn));
+                 break;
+                 
+               case 'M' :
+                 printf("METER: %d/%d ", abcMeterBeats(scn), abcMeterUnits(scn));
+                 printf("(%d",abcMeterBeatsNth(scn,1));
+                 k=2;
+
+                 while ((j = abcMeterBeatsNth(scn,k++)) != 0) 
+                   printf("+%d",j);
+                   
+                 printf(")\n");
                  break;
                  
                default:

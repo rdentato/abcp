@@ -1,7 +1,7 @@
 /*
 **  (C) by Remo Dentato (rdentato@gmail.com)
 **
-** This sofwtare is distributed under the terms of the BSD license:
+** This software is distributed under the terms of the BSD license:
 **   http://creativecommons.org/licenses/BSD/
 **   http://opensource.org/licenses/bsd-license.php
 */
@@ -46,7 +46,6 @@ int abcFieldNameLen(abcScanner *scn)
   return 1;
 }
 
-
 /*
    M: none
    M: free 
@@ -57,9 +56,70 @@ int abcFieldNameLen(abcScanner *scn)
    <?=(>(<+= 0-9+>)<?=)>&K<?=/>&K(<*d>)   
    
 */
+#define MAXBEATS 32
+static char beats[MAXBEATS];
+static char units;
 
+static void abc_meter(abcScanner *scn)
+{
+  char *p;
+  int k;
+  int i;
+   
+  for (i=0; i < MAXBEATS; i++) 
+    beats[i] = 0;
+    
+  units = 0;
 
+  i = 1;
+  p = abcFieldStart(scn);
+  k = abcFieldLen(scn);
+  while (k>0) {
+     switch pmx(p) {
+        case "&k" :
+          k -= pmx(Len,0);
+          break;
+          
+        case "C|" :
+          beats[0] = 2; beats[1] = 2; beats[3] = 0;
+          units = 2;
+          k = 0;
+          break;
+          
+        case "C" :
+          beats[0] = 4; beats[1] = 4; beats[3] = 0;
+          units = 2;
+          k = 0;
+          break;
+          
+        case "none&|free" :
+          beats[0] = 1; beats[1] = 1; beats[3] = 0;
+          units = 1;
+          k = 0;
+          break;
+          
+        case "&d&K" :
+          beats[i] = atoi(pmx(Start,0));
+          beats[0] += beats[i];
+          if (i<MAXBEATS) i++;
+          beats[i] = 0;   
+          k -= pmx(Len,0);
+          break;
+          
+        case "/&K(&d)" :
+          units = atoi(pmx(Start,1));
+          k = 0;
+          break;
+             
+        case "<.>&K" :
+          k -= pmx(Len,0);
+          break;
+     } 
+  }
 
+}
+
+#if 0
 char *abcMeterStart(abcScanner *scn)
 {
   
@@ -69,16 +129,26 @@ int abcMeterLen(abcScanner *scn)
 {
   
 }
+#endif
 
-
-int abcMeterBeats(abcScanner *scn)
+int abcMeterUnits(abcScanner *scn)
 {
+  if (abcToken(scn) != T_FIELD || abcField(scn) != 'M') return 0;
   
+  if (!abcTestFlag(scn,ABC_F_FIELDSCANNED)) 
+    abc_meter(scn);
+
+  return units;
 }
 
-int abcMeterUnit(abcScanner *scn)
+int abcMeterBeatsNth(abcScanner *scn, int k)
 {
-
+  if (abcToken(scn) != T_FIELD || abcField(scn) != 'M') return 0;
+  
+  if (k >= MAXBEATS) return 0;
+  
+  if (!abcTestFlag(scn, ABC_F_FIELDSCANNED))  
+    abc_meter(scn);
+  
+  return beats[k];
 }
-
-
