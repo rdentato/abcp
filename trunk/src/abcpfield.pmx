@@ -56,9 +56,11 @@ int abcFieldNameLen(abcScanner *scn)
    <?=(>(<+= 0-9+>)<?=)>&K<?=/>&K(<*d>)   
    
 */
-#define MAXBEATS 32
-static char beats[MAXBEATS];
-static char units;
+#define MAXBEATS 30
+#define beatsum beats[MAXBEATS+1]
+#define units beats[MAXBEATS+2]
+
+static char beats[MAXBEATS+3];
 
 static void abc_meter(abcScanner *scn)
 {
@@ -69,9 +71,10 @@ static void abc_meter(abcScanner *scn)
   for (i=0; i < MAXBEATS; i++) 
     beats[i] = 0;
     
+  beatsum = 0;  
   units = 0;
 
-  i = 1;
+  i = 0;
   p = abcFieldStart(scn);
   k = abcFieldLen(scn);
   while (k>0) {
@@ -81,26 +84,26 @@ static void abc_meter(abcScanner *scn)
           break;
           
         case "C|" :
-          beats[0] = 2; beats[1] = 2; beats[3] = 0;
+          beatsum = 2; beats[0] = 2; beats[1] = 0;
           units = 2;
           k = 0;
           break;
           
         case "C" :
-          beats[0] = 4; beats[1] = 4; beats[3] = 0;
+          beatsum = 4; beats[0] = 4; beats[1] = 0;
           units = 2;
           k = 0;
           break;
           
         case "none&|free" :
-          beats[0] = 1; beats[1] = 1; beats[3] = 0;
+          beatsum = 1; beats[0] = 1; beats[1] = 0;
           units = 1;
           k = 0;
           break;
           
         case "&d&K" :
           beats[i] = atoi(pmx(Start,0));
-          beats[0] += beats[i];
+          beatsum += beats[i];
           if (i<MAXBEATS) i++;
           beats[i] = 0;   
           k -= pmx(Len,0);
