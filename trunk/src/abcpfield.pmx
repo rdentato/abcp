@@ -144,6 +144,16 @@ int abcMeterUnits(abcScanner *scn)
   return units;
 }
 
+int abcMeterBeats(abcScanner *scn)
+{
+  if (abcToken(scn) != T_FIELD || abcField(scn) != 'M') return 0;
+  
+  if (!abcTestFlag(scn,ABC_F_FIELDSCANNED)) 
+    abc_meter(scn);
+
+  return beatsum;
+}
+
 int abcMeterBeatsNth(abcScanner *scn, int k)
 {
   if (abcToken(scn) != T_FIELD || abcField(scn) != 'M') return 0;
