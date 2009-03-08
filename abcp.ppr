@@ -90,12 +90,13 @@ abcp
 14=test\a3.txt
 15=test\a2.txt
 16=src\abcpfield.pmx
+17=test\a11.txt
 [Selected Project Files]
 Main=
-Selected=src\abcpfield.pmx
+Selected=test\a11.txt
 [examples\abcdump\abcdump.c]
-TopLine=184
-Caret=20,194
+TopLine=267
+Caret=48,290
 [src\abcpscan.pmx]
 TopLine=249
 Caret=41,257
@@ -103,13 +104,13 @@ Caret=41,257
 TopLine=61
 Caret=35,87
 [src\abcp.h]
-TopLine=168
-Caret=44,190
+TopLine=328
+Caret=1,373
 [examples\explicit\explicit.c]
 TopLine=133
 Caret=10,158
 [src\abcpcommon.c]
-TopLine=9
+TopLine=4
 Caret=1,38
 [test\a10.txt]
 TopLine=1
@@ -118,8 +119,8 @@ Caret=38,7
 TopLine=1
 Caret=47,12
 [src\abcpkey.pmx]
-TopLine=16
-Caret=18,33
+TopLine=230
+Caret=1,244
 [examples\crdnotes\makefile]
 TopLine=1
 Caret=1,23
@@ -142,5 +143,8 @@ Caret=1,1
 TopLine=1
 Caret=1,1
 [src\abcpfield.pmx]
-TopLine=38
-Caret=2,61
+TopLine=121
+Caret=17,154
+[test\a11.txt]
+TopLine=1
+Caret=7,9
