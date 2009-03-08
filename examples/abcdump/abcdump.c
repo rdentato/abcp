@@ -285,12 +285,13 @@ int main(int argc, char *argv[])
                  
                case 'M' :
                  printf("METER: %d/%d ", abcMeterBeats(scn), abcMeterUnits(scn));
-                 printf("(%d",abcMeterBeatsNth(scn,1));
-                 k=2;
-
-                 while ((j = abcMeterBeatsNth(scn,k++)) != 0) 
+                 k=0;
+                 printf("(%d",abcMeterBeatsNth(scn,k++));
+                 j = abcMeterBeatsNth(scn,k++);
+                 while (j != 0) { 
                    printf("+%d",j);
-                   
+                   j = abcMeterBeatsNth(scn,k++);
+                 }                 
                  printf(")\n");
                  break;
                  
