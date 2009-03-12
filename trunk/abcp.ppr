@@ -89,10 +89,9 @@ abcp
 13=test\a5.txt
 14=src\abcpfield.pmx
 15=test\a11.txt
-16=New1.txt
-17=C:\Documents and Settings\Remo\Impostazioni locali\Temp\_AZTMP1_\DragTemp\17wt\secor.txt
-18=doc\sag.txt
-19=New3.c
+16=doc\sag.txt
+17=doc\s2.txt
+18=New1.txt
 [Selected Project Files]
 Main=
 Selected=New1.txt
@@ -103,16 +102,16 @@ Caret=23,276
 TopLine=509
 Caret=47,517
 [src\abcpnote.c]
-TopLine=658
-Caret=1,675
+TopLine=778
+Caret=3,806
 [src\abcp.h]
 TopLine=313
-Caret=28,329
+Caret=27,329
 [examples\explicit\explicit.c]
 TopLine=133
 Caret=10,158
 [src\abcpcommon.c]
-TopLine=25
+TopLine=23
 Caret=29,25
 [test\a10.txt]
 TopLine=1
@@ -144,15 +143,12 @@ Caret=22,106
 [test\a11.txt]
 TopLine=1
 Caret=7,9
-[New1.txt]
-TopLine=1
-Caret=42,8
-[C:\Documents and Settings\Remo\Impostazioni locali\Temp\_AZTMP1_\DragTemp\17wt\secor.txt]
-TopLine=1
-Caret=1,1
 [doc\sag.txt]
-TopLine=171
-Caret=41,215
-[New3.c]
-TopLine=581
-Caret=1,612
+TopLine=75
+Caret=40,87
+[doc\s2.txt]
+TopLine=1
+Caret=29,230
+[New1.txt]
+TopLine=181
+Caret=7,229
