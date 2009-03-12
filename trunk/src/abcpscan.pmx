@@ -517,7 +517,7 @@ static abcToken abc_tune(abcScanner *scn)
     case "<?=&(>(<+=^_>)(&F)(<*=/>)(&F)<?=&)>(<=A-Ga-g>)(<*=,'>)(<*d>)(<*=/>)(<*d>)" :
 /*    case "(<*=^_=>)(&F)(<*=/>)(&F)(<=A-Ga-g>)(<*=,'>)(<*d>)(<*=/>)(<*d>)" */
                     settoken(scn,T_NOTE);
-                    if (pmx(Start,0) == '(' && pmx(End,1) == ')')
+                    if (*pmx(Start,0) == '(' && pmx(End,1)[-1] == ')')
                       scn->tok_str[1][1]--;
                     break;
 
