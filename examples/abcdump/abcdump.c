@@ -17,6 +17,7 @@ int main(int argc, char *argv[])
   int j;
   FILE *f;
   int argn;
+  float bend;
   
   argn = 1;
 
@@ -205,9 +206,10 @@ int main(int argc, char *argv[])
              break; 
              
         case T_NOTE:
+             bend = abcNoteBending(scn);
              printf("NOTE: ");
-             printf("%s%s ", abcNotePitch(scn),abcNoteBending(scn) == abcNatural?" (natural)":"");
-             printf("bend: %.2f (%.2f/%.2f) ",abcNoteBending(scn),abcNoteMicrotoneNum(scn),abcNoteMicrotoneDen(scn));
+             printf("%s%s ", abcNotePitch(scn), bend == abcNatural?" (natural)":"");
+             printf("bend: %.2f (%.2f/%.2f) ",bend== abcNatural?0.0:bend,abcNoteMicrotoneNum(scn),abcNoteMicrotoneDen(scn));
              printf("court: %d\n",abcNoteCourtesyAccidentals(scn));
              printf("               duration: %.2f ",abcNoteDuration(scn));
              printf("octave: %d ",abcNoteOctave(scn));

@@ -17,6 +17,7 @@
 #define ABC_F_CLEFSCANNED   0x0001
 #define ABC_F_CHORDSCANNED  0x0001
 #define ABC_F_FIELDSCANNED  0x0001
+#define ABC_F_BENDCOMPUTED  0x0001
 #define ABC_F_ONETIMERS     0x00FF
 
 #define abcSetFlag(s,f)  ((s)->flags |= (f))
