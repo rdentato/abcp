@@ -85,20 +85,22 @@ static void abc_meter(abcScanner *scn)
           
         case "C|" :
           beatsum = 2; beats[0] = 2; beats[1] = 0;
-          units = 2;
-          k = 0;
+          units = 1; k = 0;
           break;
           
         case "C" :
           beatsum = 4; beats[0] = 4; beats[1] = 0;
-          units = 2;
-          k = 0;
+          units = 1; k = 0;
           break;
           
-        case "none&|free" :
-          beatsum = 1; beats[0] = 1; beats[1] = 0;
-          units = 1;
-          k = 0;
+        case "none" :
+          beatsum = -1; beats[0] = -1; beats[1] = 0;
+          units = 0; k = 0;
+          break;
+          
+        case "free" :
+          beatsum = -1; beats[0] = -1; beats[1] = 0;
+          units = 0; k = 0;
           break;
           
         case "&d&K" :

@@ -326,7 +326,7 @@ short abcVoiceTranspose(abcScanner *scn);
 float *abcKeySignature(abcScanner *scn);
 float *abcKeyExpSignature(abcScanner *scn);
                             
-#define abcNatural 999.0
+#define abcNatural 99999.99
 int abcKeyExpNatural(abcScanner *scn,char pitch);
 float abcKeyExpBending(abcScanner *scn,char pitch);
                                    
