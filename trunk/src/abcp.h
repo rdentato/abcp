@@ -178,6 +178,8 @@ extern char abcSemitones[7];
 unsigned short abcNote2Midi(char pitch, int octave, int acc);
 
 int            abcNoteCourtesyAccidentals(abcScanner *scn);
+int            abcNoteAccidentalLen(abcScanner *scn);
+char          *abcNoteAccidentalStart(abcScanner *scn);
 
 float          abcNoteDuration(abcScanner *scn);
 int            abcNoteOctave(abcScanner *scn);

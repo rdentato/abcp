@@ -211,6 +211,7 @@ int main(int argc, char *argv[])
              printf("%s%s ", abcNotePitch(scn), bend == abcNatural?" (natural)":"");
              printf("bend: %.2f (%.2f/%.2f) ",bend== abcNatural?0.0:bend,abcNoteMicrotoneNum(scn),abcNoteMicrotoneDen(scn));
              printf("court: %d\n",abcNoteCourtesyAccidentals(scn));
+             printf("               accidental: %.*s\n",abcNoteAccidentalLen(scn),abcNoteAccidentalStart(scn));
              printf("               duration: %.2f ",abcNoteDuration(scn));
              printf("octave: %d ",abcNoteOctave(scn));
              printf("midi: (%d,%d)\n",abcNoteMidi(scn),abcNoteMidiPitchBend(scn));
