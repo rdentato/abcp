@@ -372,7 +372,17 @@ float abcKeyExpBending(abcScanner *scn,char pitch);
 /* in abcpfield.pmx */
 
 int abcMeterBeatsNth(abcScanner *scn,int k);
+int abcMeterBeats(abcScanner *scn);
 int abcMeterUnits(abcScanner *scn);
+
+char *abcMeterBeatsStart(abcScanner *scn);
+int   abcMeterBeatsLen(abcScanner *scn);
+char *abcMeterUnitsStart(abcScanner *scn);
+int   abcMeterUnitsLen(abcScanner *scn);
+char *abcMeterExplicitBeatsStart(abcScanner *scn);
+int   abcMeterExplicitBeatsLen(abcScanner *scn);
+char *abcMeterExplicitUnitsStart(abcScanner *scn);
+int   abcMeterExplicitUnitsLen(abcScanner *scn);
 
 
 #endif
