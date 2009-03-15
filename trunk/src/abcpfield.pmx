@@ -52,9 +52,8 @@ int abcFieldNameLen(abcScanner *scn)
    M: (2+2+3)/8
    M: C
    M: C|
-
-   <?=(>(<+= 0-9+>)<?=)>&K<?=/>&K(<*d>)   
-   
+   M: altro = 3+2/16
+  
 */
 #define MAXBEATS 30
 #define beatsum beats[MAXBEATS+1]
@@ -67,40 +66,53 @@ static void abc_meter(abcScanner *scn)
   char *p;
   int k;
   int i;
+  int explmeter = 0;
    
+  if (abcTestFlag(scn,ABC_F_FIELDSCANNED)) return;
+  
+  abcSetFlag(scn,ABC_F_FIELDSCANNED); 
+
   for (i=0; i < MAXBEATS; i++) 
     beats[i] = 0;
     
+  scn->tok_str[6][0] = scn->tok_str[6][1] = utlEmptyString;
+  scn->tok_str[7][0] = scn->tok_str[7][1] = utlEmptyString;
+  scn->tok_str[8][0] = scn->tok_str[8][1] = utlEmptyString;
+  
   beatsum = 0;  
   units = 0;
 
   i = 0;
-  p = abcFieldStart(scn);
+  p = abcFieldStart(scn);  
   k = abcFieldLen(scn);
+  while (k>0 && isspace(*p)) {
+    p++; k--;
+  }
+  
+  scn->tok_str[5][0] = scn->tok_str[5][1] = p;
+  
   while (k>0) {
-     switch pmx(p) {
-        case "&k" :
+    if (explmeter == 0) {
+      switch pmx(p) {
+          
+        case "(C|)&K" : beatsum -= 2;
+        case "(C)&K"  : beatsum += 4;
+          beats[0] = beatsum; beats[1] = 0;
+          units = 1;
+          scn->tok_str[5][0] = pmx(Start,1);
+          scn->tok_str[5][1] = pmx(End,1);
           k -= pmx(Len,0);
+          explmeter = 1;
           break;
           
-        case "C|" :
-          beatsum = 2; beats[0] = 2; beats[1] = 0;
-          units = 1; k = 0;
-          break;
-          
-        case "C" :
-          beatsum = 4; beats[0] = 4; beats[1] = 0;
-          units = 1; k = 0;
-          break;
-          
-        case "none" :
-          beatsum = -1; beats[0] = -1; beats[1] = 0;
-          units = 0; k = 0;
-          break;
-          
-        case "free" :
-          beatsum = -1; beats[0] = -1; beats[1] = 0;
-          units = 0; k = 0;
+        case "(none)&K" : beatsum -= 1;
+        case "(free)&K" : beatsum -= 1;
+          beats[0] = beatsum; beats[1] = 0;
+          scn->tok_str[5][0] = pmx(Start,1);
+          scn->tok_str[5][1] = pmx(End,1);
+          units = 0;
+          k -= pmx(Len,0);
+          explmeter = 1;
           break;
           
         case "&d&K" :
@@ -111,17 +123,84 @@ static void abc_meter(abcScanner *scn)
           k -= pmx(Len,0);
           break;
           
-        case "/&K(&d)" :
+        case "/&K(&d)&K" :
           units = atoi(pmx(Start,1));
-          k = 0;
+          scn->tok_str[5][1] = pmx(Start,0);
+          scn->tok_str[6][0] = pmx(Start,1);
+          scn->tok_str[6][1] = pmx(End,1);
+          k -= pmx(Len,0);
+          explmeter = 1;
+          break;
+          
+        case "=&K" :
+          for (i=0; i < MAXBEATS; i++)  beats[i] = 0;
+          beatsum = 0; units = 0;
+          i = 0;
+          k -= pmx(Len,0);
+          explmeter = 2;
+          scn->tok_str[5][1] = pmx(Start,0);
+          scn->tok_str[7][0] = scn->tok_str[7][1] = pmx(End,0);
           break;
              
+        case "&k" :
+          k -= pmx(Len,0);
+          break;
+          
         case "<.>&K" :
           k -= pmx(Len,0);
           break;
-     } 
+      }
+    }
+    else if (explmeter == 1) {
+      switch pmx(p) {
+        case "=&K" :
+          for (i=0; i < MAXBEATS; i++)  beats[i] = 0;
+          beatsum = 0; units = 0;
+          i = 0;
+          k -= pmx(Len,0);
+          explmeter = 2;
+          scn->tok_str[7][0] = scn->tok_str[7][1] = pmx(End,0);
+          break;
+             
+        case "&k" :
+          k -= pmx(Len,0);
+          break;
+          
+        case "<.>&K" :
+          k -= pmx(Len,0);
+          break;
+      }
+    }
+    else if (explmeter == 2) {
+      switch pmx(p) {
+        case "&d&K" :
+          beats[i] = atoi(pmx(Start,0));
+          beatsum += beats[i];
+          if (i<MAXBEATS) i++;
+          beats[i] = 0;   
+          k -= pmx(Len,0);
+          break;
+          
+        case "/&K(&d)&K" :
+          units = atoi(pmx(Start,1));
+          scn->tok_str[7][1] = pmx(Start,0);
+          scn->tok_str[8][0] = pmx(Start,1);
+          scn->tok_str[8][1] = pmx(End,1);
+          k = 0;
+          break;
+       
+        case "&k" :
+          k -= pmx(Len,0);
+          break;
+          
+        case "<.>&K" :
+          k -= pmx(Len,0);
+          break;
+      }
+    }
   }
-
+  while (scn->tok_str[5][1]>scn->tok_str[5][0] && isspace(scn->tok_str[5][1][-1]))
+     scn->tok_str[5][1]--;
 }
 
 #if 0
@@ -136,13 +215,94 @@ int abcMeterLen(abcScanner *scn)
 }
 #endif
 
-int abcMeterUnits(abcScanner *scn)
+char *abcMeterBeatsStart(abcScanner *scn)
+{
+  if (abcToken(scn) != T_FIELD || abcField(scn) != 'M') return utlEmptyString;
+  
+  if (!abcTestFlag(scn,ABC_F_FIELDSCANNED)) 
+    abc_meter(scn);
+
+  return abcTokenStart(scn,5);  
+}
+
+int abcMeterBeatsLen(abcScanner *scn)
 {
   if (abcToken(scn) != T_FIELD || abcField(scn) != 'M') return 0;
   
   if (!abcTestFlag(scn,ABC_F_FIELDSCANNED)) 
     abc_meter(scn);
 
+  return abcTokenLen(scn,5);
+}
+
+char *abcMeterUnitsStart(abcScanner *scn)
+{
+  if (abcToken(scn) != T_FIELD || abcField(scn) != 'M') return utlEmptyString;
+  
+  if (!abcTestFlag(scn,ABC_F_FIELDSCANNED)) 
+    abc_meter(scn);
+
+  return abcTokenStart(scn,6);  
+}
+
+int abcMeterUnitsLen(abcScanner *scn)
+{
+  if (abcToken(scn) != T_FIELD || abcField(scn) != 'M') return 0;
+  
+  if (!abcTestFlag(scn,ABC_F_FIELDSCANNED)) 
+    abc_meter(scn);
+
+  return abcTokenLen(scn,6);
+}
+
+char *abcMeterExplicitBeatsStart(abcScanner *scn)
+{
+  if (abcToken(scn) != T_FIELD || abcField(scn) != 'M') return utlEmptyString;
+  
+  if (!abcTestFlag(scn,ABC_F_FIELDSCANNED)) 
+    abc_meter(scn);
+
+  return abcTokenStart(scn,7);  
+}
+
+int abcMeterExplicitBeatsLen(abcScanner *scn)
+{
+  if (abcToken(scn) != T_FIELD || abcField(scn) != 'M') return 0;
+  
+  if (!abcTestFlag(scn,ABC_F_FIELDSCANNED)) 
+    abc_meter(scn);
+
+  return abcTokenLen(scn,7);
+}
+
+char *abcMeterExplicitUnitsStart(abcScanner *scn)
+{
+  if (abcToken(scn) != T_FIELD || abcField(scn) != 'M') return utlEmptyString;
+  
+  if (!abcTestFlag(scn,ABC_F_FIELDSCANNED)) 
+    abc_meter(scn);
+
+  return abcTokenStart(scn,8);  
+}
+
+int abcMeterExplicitUnitsLen(abcScanner *scn)
+{
+  if (abcToken(scn) != T_FIELD || abcField(scn) != 'M') return 0;
+  
+  if (!abcTestFlag(scn,ABC_F_FIELDSCANNED)) 
+    abc_meter(scn);
+
+  return abcTokenLen(scn,8);
+}
+
+
+
+int abcMeterUnits(abcScanner *scn)
+{
+  if (abcToken(scn) != T_FIELD || abcField(scn) != 'M') return 0;
+  
+  if (!abcTestFlag(scn,ABC_F_FIELDSCANNED)) 
+    abc_meter(scn);
   return units;
 }
 
@@ -152,18 +312,15 @@ int abcMeterBeats(abcScanner *scn)
   
   if (!abcTestFlag(scn,ABC_F_FIELDSCANNED)) 
     abc_meter(scn);
-
   return beatsum;
 }
 
 int abcMeterBeatsNth(abcScanner *scn, int k)
 {
   if (abcToken(scn) != T_FIELD || abcField(scn) != 'M') return 0;
-  
   if (k >= MAXBEATS) return 0;
   
   if (!abcTestFlag(scn, ABC_F_FIELDSCANNED))  
     abc_meter(scn);
-  
   return beats[k];
 }

@@ -303,8 +303,13 @@ int main(int argc, char *argv[])
                  while (j != 0) { 
                    printf("+%d",j);
                    j = abcMeterBeatsNth(scn,k++);
-                 }                 
-                 printf(")\n");
+                 }
+                 printf(") ");
+                 printf("'%.*s' / ",abcMeterBeatsLen(scn),abcMeterBeatsStart(scn));
+                 printf("'%.*s' = ",abcMeterUnitsLen(scn),abcMeterUnitsStart(scn));
+                 printf("'%.*s' / ",abcMeterExplicitBeatsLen(scn),abcMeterExplicitBeatsStart(scn));
+                 printf("'%.*s'",abcMeterExplicitUnitsLen(scn),abcMeterExplicitUnitsStart(scn));
+                 printf("\n");
                  break;
                  
                default:
