@@ -208,13 +208,14 @@ int main(int argc, char *argv[])
         case T_NOTE:
              bend = abcNoteBending(scn);
              printf("NOTE: ");
-             printf("%s%s ", abcNotePitch(scn), bend == abcNatural?" (natural)":"");
+             printf("%c%s ", abcNote(scn), bend == abcNatural?" (natural)":"");
+             printf("octave: %d ",abcNoteOctave(scn));
              printf("bend: %.2f (%.2f/%.2f) ",bend== abcNatural?0.0:bend,abcNoteMicrotoneNum(scn),abcNoteMicrotoneDen(scn));
-             printf("court: %d\n",abcNoteCourtesyAccidentals(scn));
+             printf("court: %d\n",abcNoteAccidentalCourtesy(scn));
              printf("               accidental: %.*s\n",abcNoteAccidentalLen(scn),abcNoteAccidentalStart(scn));
              printf("               duration: %.2f ",abcNoteDuration(scn));
-             printf("octave: %d ",abcNoteOctave(scn));
-             printf("midi: (%d,%d)\n",abcNoteMidi(scn),abcNoteMidiPitchBend(scn));
+             printf("midi: (%d,%d)",abcNoteMidi(scn),abcNoteMidiPitchBend(scn));
+             printf("\n");
              break;
               
         case T_REST:
@@ -226,6 +227,14 @@ int main(int argc, char *argv[])
              printf("INCLUDE: %.*s%.*s", abcTokenLen(scn,1),abcTokenStart(scn,1),
                                          abcTokenLen(scn,2),abcTokenStart(scn,2));                                             
              printf(" %s\n", abcInclude(scn)? "OK":"FAILED");
+             break;
+        
+        case T_GRACEEND:
+             printf("GRACEEND\n");
+             break;
+        
+        case T_GRACE:
+             printf("GRACE\n");
              break;
         
         case T_INCLUDEEND:

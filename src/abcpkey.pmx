@@ -318,16 +318,9 @@ static void abc_KV(abcScanner *scn, char kv)
     while (k) {
       switch pmx(p) {
         case "&k" : break;
-        case "(<+=^_=>)(&F)(<*=/>)(&F)(<=A-Ga-g>)&K" :
-          k = abcNote2Num(*pmx(Start,5));
-          
-          expsig[k] = abc_notebending(pmx(Start,1), pmx(Len,1),
-                                      pmx(Start,2), pmx(Len,2),
-                                      pmx(Start,3), pmx(Len,3),
-                                      pmx(Start,4), pmx(Len,4) );
-                                   
-          if (expsig[k] == 0.0 && pmx(Len,1) == 1 && *pmx(Start,1) == '=')
-            expsig[k] = abcNatural;           
+        case "(<+=^_=><*!A-Ga-g\t\n\r\f >)(<=A-Ga-g>)&K" :
+          k = abcNote2Num(*pmx(Start,2));          
+          expsig[k] = abc_notebending(pmx(Start,1), pmx(Len,1));
           k = 1;
           break;
           

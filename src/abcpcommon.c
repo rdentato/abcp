@@ -17,7 +17,7 @@ int abc_tmpi;
      a___b______c___
       al    b    cl
 */
-float abc_getfracion(char *a, int al,
+float abc_getfraction(char *a, int al,
                      char *b, int bl,
                      char *c, int cl)
 {
@@ -41,31 +41,3 @@ float abc_getfracion(char *a, int al,
 } 
 
 
-float abc_notebending(char *e, int el, char *a, int al,
-                      char *b, int bl, char *c, int cl)
-{
-  float cents = 0.0;
-  char *p;
-
-  p = e+el;
-  
-  if (al > 0 || bl > 0 ) {
-    /* Got microtones last accidental gives direction*/
-    cents = abc_getfracion(a,al,b,bl,c,cl);
-    if (bl > 0)
-      cents = cents * 100.0;
-    if (p > e && *--p == '_')
-      cents = cents *-1.0;
-  }
-  else if (el == 1 && *e == '=')
-    return abcNatural;
-
-  while (p > e) {
-    switch (*--p) {
-      case '^' : cents += 100.0; break ;
-      case '_' : cents -= 100.0; break ;
-    }
-  } 
-  
-  return cents ; 
-}
