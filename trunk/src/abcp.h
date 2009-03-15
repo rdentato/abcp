@@ -177,7 +177,9 @@ extern char abcSemitones[7];
 #define abcNote2Num(c) ((tolower(c)-'c'+7) % 7)
 unsigned short abcNote2Midi(char pitch, int octave, int acc);
 
-int            abcNoteCourtesyAccidentals(abcScanner *scn);
+char abcNote(abcScanner *scn);
+
+int            abcNoteAccidentalCourtesy(abcScanner *scn);
 int            abcNoteAccidentalLen(abcScanner *scn);
 char          *abcNoteAccidentalStart(abcScanner *scn);
 

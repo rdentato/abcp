@@ -203,16 +203,6 @@ static void getnewline(abcScanner *scn)
       (s)->tok_str[0][0]++;   \
   } while(utlZero)
 
-#define settoken_NOTE(s) do { \
-                    settoken(s,T_NOTE); \
-                    if (*(s)->tok_str[0][0] == '(' && (s)->tok_str[1][1][-1] == ')') \
-                      (s)->tok_str[1][1]--;\
-                    if (pmx(Len,2)> 0 && pmx(Len,1) > 1 && (s)->tok_str[1][1][-1] == '-' ) {\
-                      (s)->tok_str[1][1]--; \
-                      (s)->tok_str[2][0]--; \
-                    } \
-                  } while(utlZero) 
-
 #define stategoto(scn,st)  (((scn)->prevstate = S_NONE), \
                             ((scn)->nextstate = st))
 
@@ -522,9 +512,11 @@ static abcToken abc_tune(abcScanner *scn)
                     settoken(scn,T_TEXT);
                     break;
 
-    case "<?=&(>(=<*!A-Ga-g0-9>)(&F)(<*=/>)(&F)<?=&)>(<=A-Ga-g>)(<*=,'>)(<*d>)(<*=/>)(<*d>)" :
-    case "<?=&(>(<*=^_>)(&F)(<*=/>)(&F)<?=&)>(<=A-Ga-g>)(<*=,'>)(<*d>)(<*=/>)(<*d>)" :
-                    settoken_NOTE(scn);
+    case "<?=&(>(<=^_=><*!A-Ga-g\t\n\r\f >)<?=&)>(<=A-Ga-g>)(<*=,'>)(<*d>)(<*=/>)(<*d>)" :
+    case "()(<=A-Ga-g>)(<*=,'>)(<*d>)(<*=/>)(<*d>)" :
+                    settoken(scn,T_NOTE);
+                    if (*scn->tok_str[0][0] == '(' && scn->tok_str[1][1][-1] == ')') 
+                      scn->tok_str[1][1]--;
                     break;
 
     case "(<=Zzx>)(<*d>)(<*=/>)(<*d>)" :
@@ -805,9 +797,11 @@ static abcToken abc_grace(abcScanner *scn)
                     stategoto(scn,S_TUNE);
                     break;
 
-    case "&((<+=^_=>)(<*d>)(<*=/>)(<*d>)&)(<=A-Ga-g>)(<*=,'>)(<*d>)(<*=/>)(<*d>)" :
-    case "(<*=^_=>)(<*d>)(<*=/>)(<*d>)(<=A-Ga-g>)(<*=,'>)(<*d>)(<*=/>)(<*d>)" :
+    case "<?=&(>(<=^_=><*!A-Ga-g\t\n\r\f >)<?=&)>(<=A-Ga-g>)(<*=,'>)(<*d>)(<*=/>)(<*d>)" :
+    case "()(<=A-Ga-g>)(<*=,'>)(<*d>)(<*=/>)(<*d>)" :
                     settoken(scn,T_NOTE);
+                    if (*scn->tok_str[0][0] == '(' && scn->tok_str[1][1][-1] == ')') 
+                      scn->tok_str[1][1]--;
                     break;
 
     case "(<?=.>)&)" :      settoken(scn,T_SLUREND);
@@ -860,9 +854,11 @@ static abcToken abc_chord(abcScanner *scn)
                     _dbgmsg("state: %04X next: %04X\n",scn->state,scn->nextstate);
                     break;
 
-    case "&((<+=^_=>)&)(<*d>)(<*=/>)(<*d>)(<=A-Ga-g>)()(<*d>)(<*=/>)(<*d>)" :
-    case "(<*=^_=>)(<*d>)(<*=/>)(<*d>)(<=A-Ga-g>)()(<*d>)(<*=/>)(<*d>)" :
+    case "<?=&(>(<=^_=><*!A-Ga-g\t\n\r\f >)<?=&)>(<=A-Ga-g>)(<*=,'>)(<*d>)(<*=/>)(<*d>)" :
+    case "()(<=A-Ga-g>)(<*=,'>)(<*d>)(<*=/>)(<*d>)" :
                     settoken(scn,T_NOTE);
+                    if (*scn->tok_str[0][0] == '(' && scn->tok_str[1][1][-1] == ')') 
+                      scn->tok_str[1][1]--;
                     break;
 
     case "(((<=.H-Wh-w~>)))" :

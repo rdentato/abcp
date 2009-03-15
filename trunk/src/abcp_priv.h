@@ -26,11 +26,10 @@
 
 
 
-float abc_getfracion(char *a, int al,
+float abc_getfraction(char *a, int al,
                      char *b, int bl,
                      char *c, int cl);
                      
-float abc_notebending(char *e, int el, char *a, int al,
-                      char *b, int bl, char *c, int cl);
+float abc_notebending(char *e, int el);
 
 #endif
