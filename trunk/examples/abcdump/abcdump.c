@@ -295,6 +295,12 @@ int main(int argc, char *argv[])
                           abcUserSymbolDefineStart(scn));
                  break;
                  
+               case 'Q' :
+                 printf("TEMPO: \"%.*s\" %d/%d = %d\n", abcTempoLen(scn),
+                          abcTempoStart(scn),abcTempoNum(scn),abcTempoDen(scn),
+                          abcTempoBeats(scn));
+                 break;
+                 
                case 'M' :
                  printf("METER: %d/%d ", abcMeterBeats(scn), abcMeterUnits(scn));
                  k=0;

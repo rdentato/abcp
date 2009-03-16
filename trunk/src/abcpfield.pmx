@@ -46,281 +46,132 @@ int abcFieldNameLen(abcScanner *scn)
   return 1;
 }
 
-/*
-   M: none
-   M: free 
-   M: (2+2+3)/8
-   M: C
-   M: C|
-   M: altro = 3+2/16
-  
-*/
-#define MAXBEATS 30
-#define beatsum beats[MAXBEATS+1]
-#define units beats[MAXBEATS+2]
+/****/
+static long abc_beats;
+static long abc_num;
+static long abc_den;
+static long abc_numnth[4];
+static long abc_dennth[4];
 
-static char beats[MAXBEATS+3];
-
-static void abc_meter(abcScanner *scn)
+static void abc_tempo(abcScanner *scn)
 {
   char *p;
   int k;
   int i;
-  int explmeter = 0;
+  unsigned long nm,dn,tmp;
    
   if (abcTestFlag(scn,ABC_F_FIELDSCANNED)) return;
   
-  abcSetFlag(scn,ABC_F_FIELDSCANNED); 
-
-  for (i=0; i < MAXBEATS; i++) 
-    beats[i] = 0;
-    
-  scn->tok_str[6][0] = scn->tok_str[6][1] = utlEmptyString;
-  scn->tok_str[7][0] = scn->tok_str[7][1] = utlEmptyString;
-  scn->tok_str[8][0] = scn->tok_str[8][1] = utlEmptyString;
+  abcSetFlag(scn,ABC_F_FIELDSCANNED);
   
-  beatsum = 0;  
-  units = 0;
+  abc_numnth[0] = 0; abc_dennth[0] = 1; 
+  abc_numnth[1] = 0; abc_dennth[1] = 1; 
+  abc_numnth[2] = 0; abc_dennth[2] = 1; 
+  abc_numnth[3] = 0; abc_dennth[3] = 1;
+   
+  scn->tok_str[5][0] = scn->tok_str[5][1] = utlEmptyString;
 
   i = 0;
   p = abcFieldStart(scn);  
   k = abcFieldLen(scn);
-  while (k>0 && isspace(*p)) {
-    p++; k--;
-  }
   
-  scn->tok_str[5][0] = scn->tok_str[5][1] = p;
+  abc_num = 0;
+  abc_den = 1;
+  abc_beats = 0;
   
   while (k>0) {
-    if (explmeter == 0) {
-      switch pmx(p) {
+    switch pmx(p) {
+      case "&k" : 
+        k -= pmx(Len,0);
+        break;
+      
+      case "(&q)&K":
+        scn->tok_str[5][0] = pmx(Start,1)+1; 
+        scn->tok_str[5][1] = pmx(End,1)-1;
+        k -= pmx(Len,0);
+        break;
+      
+      case "(&d)&K/&K(&d)&K" :
+        if (i <4) {
+          nm = atoi(pmx(Start,1));
+          dn = atoi(pmx(Start,2));
+          tmp = abc_den * nm + abc_num *dn;
+          abc_den = abc_den * dn;
+          abc_num = tmp;
+          abc_numnth[i] = nm;
+          abc_dennth[i] = dn;
+          i++;
+        }
+        k -= pmx(Len,0);
+        break;        
           
-        case "(C|)&K" : beatsum -= 2;
-        case "(C)&K"  : beatsum += 4;
-          beats[0] = beatsum; beats[1] = 0;
-          units = 1;
-          scn->tok_str[5][0] = pmx(Start,1);
-          scn->tok_str[5][1] = pmx(End,1);
-          k -= pmx(Len,0);
-          explmeter = 1;
-          break;
+      case "(&d)&K" :
+        abc_beats = atoi(pmx(Start,1));
+        k -= pmx(Len,0);
+        break;        
           
-        case "(none)&K" : beatsum -= 1;
-        case "(free)&K" : beatsum -= 1;
-          beats[0] = beatsum; beats[1] = 0;
-          scn->tok_str[5][0] = pmx(Start,1);
-          scn->tok_str[5][1] = pmx(End,1);
-          units = 0;
-          k -= pmx(Len,0);
-          explmeter = 1;
-          break;
-          
-        case "&d&K" :
-          beats[i] = atoi(pmx(Start,0));
-          beatsum += beats[i];
-          if (i<MAXBEATS) i++;
-          beats[i] = 0;   
-          k -= pmx(Len,0);
-          break;
-          
-        case "/&K(&d)&K" :
-          units = atoi(pmx(Start,1));
-          scn->tok_str[5][1] = pmx(Start,0);
-          scn->tok_str[6][0] = pmx(Start,1);
-          scn->tok_str[6][1] = pmx(End,1);
-          k -= pmx(Len,0);
-          explmeter = 1;
-          break;
-          
-        case "=&K" :
-          for (i=0; i < MAXBEATS; i++)  beats[i] = 0;
-          beatsum = 0; units = 0;
-          i = 0;
-          k -= pmx(Len,0);
-          explmeter = 2;
-          scn->tok_str[5][1] = pmx(Start,0);
-          scn->tok_str[7][0] = scn->tok_str[7][1] = pmx(End,0);
-          break;
-             
-        case "&k" :
-          k -= pmx(Len,0);
-          break;
-          
-        case "<.>&K" :
-          k -= pmx(Len,0);
-          break;
-      }
-    }
-    else if (explmeter == 1) {
-      switch pmx(p) {
-        case "=&K" :
-          for (i=0; i < MAXBEATS; i++)  beats[i] = 0;
-          beatsum = 0; units = 0;
-          i = 0;
-          k -= pmx(Len,0);
-          explmeter = 2;
-          scn->tok_str[7][0] = scn->tok_str[7][1] = pmx(End,0);
-          break;
-             
-        case "&k" :
-          k -= pmx(Len,0);
-          break;
-          
-        case "<.>&K" :
-          k -= pmx(Len,0);
-          break;
-      }
-    }
-    else if (explmeter == 2) {
-      switch pmx(p) {
-        case "&d&K" :
-          beats[i] = atoi(pmx(Start,0));
-          beatsum += beats[i];
-          if (i<MAXBEATS) i++;
-          beats[i] = 0;   
-          k -= pmx(Len,0);
-          break;
-          
-        case "/&K(&d)&K" :
-          units = atoi(pmx(Start,1));
-          scn->tok_str[7][1] = pmx(Start,0);
-          scn->tok_str[8][0] = pmx(Start,1);
-          scn->tok_str[8][1] = pmx(End,1);
-          k = 0;
-          break;
-       
-        case "&k" :
-          k -= pmx(Len,0);
-          break;
-          
-        case "<.>&K" :
-          k -= pmx(Len,0);
-          break;
-      }
+      case "<.>&K" : 
+        k -= pmx(Len,0);
+        break;
     }
   }
-  while (scn->tok_str[5][1]>scn->tok_str[5][0] && isspace(scn->tok_str[5][1][-1]))
-     scn->tok_str[5][1]--;
 }
 
-#if 0
-char *abcMeterStart(abcScanner *scn)
+char *abcTempoStart(abcScanner *scn)
 {
-  
-}
-
-int abcMeterLen(abcScanner *scn)
-{
-  
-}
-#endif
-
-char *abcMeterBeatsStart(abcScanner *scn)
-{
-  if (abcToken(scn) != T_FIELD || abcField(scn) != 'M') return utlEmptyString;
+  if (abcToken(scn) != T_FIELD || abcField(scn) != 'Q') return utlEmptyString;
   
   if (!abcTestFlag(scn,ABC_F_FIELDSCANNED)) 
-    abc_meter(scn);
+    abc_tempo(scn);
 
   return abcTokenStart(scn,5);  
 }
 
-int abcMeterBeatsLen(abcScanner *scn)
+int abcTempoLen(abcScanner *scn)
 {
-  if (abcToken(scn) != T_FIELD || abcField(scn) != 'M') return 0;
+  if (abcToken(scn) != T_FIELD || abcField(scn) != 'Q') return 0;
   
   if (!abcTestFlag(scn,ABC_F_FIELDSCANNED)) 
-    abc_meter(scn);
+    abc_tempo(scn);
 
   return abcTokenLen(scn,5);
 }
 
-char *abcMeterUnitsStart(abcScanner *scn)
+int abcTempoBeats(abcScanner *scn)
 {
-  if (abcToken(scn) != T_FIELD || abcField(scn) != 'M') return utlEmptyString;
+  if (abcToken(scn) != T_FIELD || abcField(scn) != 'Q') return 0;
   
   if (!abcTestFlag(scn,ABC_F_FIELDSCANNED)) 
-    abc_meter(scn);
-
-  return abcTokenStart(scn,6);  
+    abc_tempo(scn);
+    
+  return abc_beats;
 }
 
-int abcMeterUnitsLen(abcScanner *scn)
+int abcTempoNum(abcScanner *scn)
 {
-  if (abcToken(scn) != T_FIELD || abcField(scn) != 'M') return 0;
+  if (abcToken(scn) != T_FIELD || abcField(scn) != 'Q') return 0;
   
   if (!abcTestFlag(scn,ABC_F_FIELDSCANNED)) 
-    abc_meter(scn);
-
-  return abcTokenLen(scn,6);
+    abc_tempo(scn);
+    
+  return abc_num;
 }
 
-char *abcMeterExplicitBeatsStart(abcScanner *scn)
+int abcTempoDen(abcScanner *scn)
 {
-  if (abcToken(scn) != T_FIELD || abcField(scn) != 'M') return utlEmptyString;
+  if (abcToken(scn) != T_FIELD || abcField(scn) != 'Q') return 0;
   
   if (!abcTestFlag(scn,ABC_F_FIELDSCANNED)) 
-    abc_meter(scn);
-
-  return abcTokenStart(scn,7);  
-}
-
-int abcMeterExplicitBeatsLen(abcScanner *scn)
-{
-  if (abcToken(scn) != T_FIELD || abcField(scn) != 'M') return 0;
-  
-  if (!abcTestFlag(scn,ABC_F_FIELDSCANNED)) 
-    abc_meter(scn);
-
-  return abcTokenLen(scn,7);
-}
-
-char *abcMeterExplicitUnitsStart(abcScanner *scn)
-{
-  if (abcToken(scn) != T_FIELD || abcField(scn) != 'M') return utlEmptyString;
-  
-  if (!abcTestFlag(scn,ABC_F_FIELDSCANNED)) 
-    abc_meter(scn);
-
-  return abcTokenStart(scn,8);  
-}
-
-int abcMeterExplicitUnitsLen(abcScanner *scn)
-{
-  if (abcToken(scn) != T_FIELD || abcField(scn) != 'M') return 0;
-  
-  if (!abcTestFlag(scn,ABC_F_FIELDSCANNED)) 
-    abc_meter(scn);
-
-  return abcTokenLen(scn,8);
+    abc_tempo(scn);
+    
+  return abc_den;
 }
 
 
-
-int abcMeterUnits(abcScanner *scn)
+int abcTempoNumNth(abcScanner *scn,int n)
 {
-  if (abcToken(scn) != T_FIELD || abcField(scn) != 'M') return 0;
-  
-  if (!abcTestFlag(scn,ABC_F_FIELDSCANNED)) 
-    abc_meter(scn);
-  return units;
 }
 
-int abcMeterBeats(abcScanner *scn)
+int abcTempoDenNth(abcScanner *scn,int n)
 {
-  if (abcToken(scn) != T_FIELD || abcField(scn) != 'M') return 0;
-  
-  if (!abcTestFlag(scn,ABC_F_FIELDSCANNED)) 
-    abc_meter(scn);
-  return beatsum;
-}
-
-int abcMeterBeatsNth(abcScanner *scn, int k)
-{
-  if (abcToken(scn) != T_FIELD || abcField(scn) != 'M') return 0;
-  if (k >= MAXBEATS) return 0;
-  
-  if (!abcTestFlag(scn, ABC_F_FIELDSCANNED))  
-    abc_meter(scn);
-  return beats[k];
 }
