@@ -115,6 +115,18 @@ static void abc_tempo(abcScanner *scn)
         break;
     }
   }
+  
+  if (abc_num > abc_den)
+    {nm = abc_num;  dn = abc_den;}
+  else
+    {dn = abc_num;  nm = abc_den;}
+  for (;;) {
+    tmp = nm % dn;
+    if (tmp == 0) break;
+    nm = dn; dn = tmp;
+  }
+  abc_num /= dn;
+  abc_den /= dn;
 }
 
 char *abcTempoStart(abcScanner *scn)
