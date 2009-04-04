@@ -8,8 +8,7 @@
 /* .% Overview
 ==============
 
-  This is an example of use for ABCp. It extracts guitar
-chords and prints the corresponding MIDI notes.
+  This is an example of use for ABCp. It creates and index of the ABC file
 
 */
 
