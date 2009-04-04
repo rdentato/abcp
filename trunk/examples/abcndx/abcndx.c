@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
             k = abcFieldLen(scn);
             if (k == 0) strcpy(title,"Untitled");
             else {
-              if (k>=MAXTITLELEN) k=MAXTITLELEN;
+              if (k>=MAXTITLELEN) k=MAXTITLELEN-1;
               strncpy(title,abcFieldStart(scn),k);
               title[k] = '\0';
             }
