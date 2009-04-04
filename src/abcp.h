@@ -369,7 +369,6 @@ float abcKeyExpBending(abcScanner *scn,char pitch);
             
 
 /********* */
-/* in abcpfield.pmx */
 
 int abcMeterBeatsNth(abcScanner *scn,int k);
 int abcMeterBeats(abcScanner *scn);
@@ -383,6 +382,16 @@ char *abcMeterExplicitBeatsStart(abcScanner *scn);
 int   abcMeterExplicitBeatsLen(abcScanner *scn);
 char *abcMeterExplicitUnitsStart(abcScanner *scn);
 int   abcMeterExplicitUnitsLen(abcScanner *scn);
+
+/* in abcpfield.pmx */
+
+long abcTempoDenNth(abcScanner *scn,int n);
+long abcTempoNumNth(abcScanner *scn,int n);
+int abcTempoDen(abcScanner *scn);
+int abcTempoNum(abcScanner *scn);
+int abcTempoBeats(abcScanner *scn);
+int abcTempoLen(abcScanner *scn);
+char *abcTempoStart(abcScanner *scn);
 
 
 #endif
