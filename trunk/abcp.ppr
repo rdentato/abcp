@@ -17,19 +17,19 @@ ProjectFilesOnly=0
 [Project tree]
 abcp
 	+abcp
-		+examples
-			+crdnotes
+		-examples
+			-crdnotes
 				examples\crdnotes\makefile
 				examples\crdnotes\crdnotes.c
-			+crdlyr
+			-crdlyr
 				examples\crdlyr\crdlyr.c
 				examples\crdlyr\marcha.txt
-			+explicit
+			-explicit
 				examples\explicit\explicit.c
-			+nousym
+			-nousym
 				examples\explicit\makefile
 				examples\nousym\nousym.c
-			+abcdump
+			-abcdump
 				examples\nousym\makefile.mk
 				examples\abcdump\abcdump.c
 			examples\makefile
@@ -48,7 +48,7 @@ abcp
 		makefile
 		mk.bat
 		README.txt
-	+test
+	-test
 		+bytoken
 			test\bytoken\annotation.txt
 			test\bytoken\bars.txt
@@ -88,18 +88,19 @@ abcp
 11=..\abcm2ps-5.9.3\features.txt
 12=test\a7.txt
 13=test\b7.txt
+14=doc\tech\readln.gv
 [Selected Project Files]
 Main=
-Selected=examples\abcdump\abcdump.c
+Selected=src\abcpscan.pmx
 [src\abcpscan.pmx]
-TopLine=1
-Caret=23,10
+TopLine=1032
+Caret=1,124
 [examples\abcdump\abcdump.c]
-TopLine=276
-Caret=21,319
+TopLine=262
+Caret=55,283
 [src\abcp.h]
-TopLine=344
-Caret=23,385
+TopLine=353
+Caret=38,394
 [src\abcpcommon.c]
 TopLine=1
 Caret=2,23
@@ -107,8 +108,8 @@ Caret=2,23
 TopLine=319
 Caret=17,333
 [src\abcpfield.pmx]
-TopLine=87
-Caret=17,129
+TopLine=124
+Caret=1,132
 [test\a11.txt]
 TopLine=1
 Caret=13,13
@@ -133,3 +134,6 @@ Caret=1,1
 [test\b7.txt]
 TopLine=1
 Caret=1,25
+[doc\tech\readln.gv]
+TopLine=1
+Caret=1,31

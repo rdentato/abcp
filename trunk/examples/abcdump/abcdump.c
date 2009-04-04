@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
     k = atoi(argv[1]+1);
     argn++;
   }
-   
+    
   f = stdin;
   if (argn < argc) {
     f = fopen(argv[argn],"rb");
@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
       exit(1);
     }
   }
-  
+   
   abctext = chsRead(abctext,f,'w');
   if (f!=stdin) fclose(f);
   if (abctext && *abctext) {

@@ -59,124 +59,6 @@ abcScanner *abcScannerFree(abcScanner *scn)
   return NULL;
 }
 
-
-static int nextline(abcScanner *scn)
-{
-  char *t;
-  int l = 0;;
-
-  if (scn->file != NULL) {
-    l = chsLen(scn->line);
-    scn->line = chsReadln(scn->line,scn->file,'a');
-    l = chsLen(scn->line) - l;
-  }
-  else {
-    t = scn->pos;
-    l = 1;
-    while (l && *t) {
-      switch pmx(t) {
-        case "&n" : l = 0;
-        case "&l" : break;
-        default : assert(0);
-      }
-    }
-    l = t - scn->pos;
-    if (l > 0) {
-      _dbgmsg("LEN: %d\n",l);
-      scn->line = chsAddStrL(scn->line,scn->pos,l);
-      scn->pos = t;
-    }
-  }
-  if (l > 0) scn->lnumber++;
-  return l;
-}
-
-static int chk_tocontinue(char *s)
-{
-  if (*s == '\b') s++;
-  while (*s && isspace(*s)) s++;
-  if (*s == '%' || *s == '#') return 1;
-  if (!isalpha(*s) || *s=='w' || *s=='s') return 0;
-  return (s[1] == ':');
-}
-
-/* Handling line continuation is rather messy in ABC. Here are the rules
-** that have been implemented.
-**
-**   - Backslash and % in quoted strings are preserved
-**   - Escaped backslash and % are preserved
-**   - If a line ends with "\ %..." it's transformed in "[r:...]\"
-**   - If line starts with a field (X: or %%) or a comment is to be continued
-**   - In state LIMBO any lines is to be continued
-**   - In any other state the \ at the end is reported as T_CONTINUE token
-**
-*/
-
-static void _getnewline(abcScanner *scn)
-{
-  char *t,*q;
-  int   len;
-  int   k;
-  chs_t tmp = NULL;
-  int   tocontinue = -1;
-
-  scn->line = chsCpy(scn->line,"\b");
-  scn->ln_logical = scn->lnumber+1;
-
-  for (;;) {
-    len = chsLen(scn->line);
-    nextline(scn);
-    k = chsLen(scn->line);
-    if (len == k) break;
-
-    if (tocontinue < 0)
-      tocontinue = chk_tocontinue(scn->line);
-
-    if (chsChrAt(scn->line,-1) != '\n')
-      scn->line = chsAddChr(scn->line,'\n');
-
-    q = scn->line + len;
-    t = NULL;
-    while (*q && !t) {
-      switch pmx(q) {
-         case "&e\\&q"        : break;  /* skip quoted strings */
-         case "&K%"           : tocontinue = 1; /* comments are always continued */
-                                break;
-         case "\\&K&n"        :
-         case "\\&K%&K(&L)&n" :       /* got a ending remark */
-                                len = pmx(Len,1);
-                                if (len>0) {
-                                  tmp = chsCpy(tmp,"[r:");
-                                  tmp = chsAddStrL(tmp, pmx(Start,1),len);
-                                  tmp = chsAddStr(tmp, "]");
-                                }
-                                else {
-                                  tmp = chsCpy(tmp,"");
-                                }
-                                scn->line = chsDel(scn->line,-pmx(Len,0),-1);
-                                scn->line = chsAddStr(scn->line, tmp);
-                                scn->line = chsAddStr(scn->line, "\f");
-                                t = scn->line;
-                                break;
-         case "\\<.>"         :
-         case "<!\\\">"       : break;
-      }
-    }
-    if (t == NULL)              break; /* didn't continue at all */
-    if (scn->state == S_LIMBO)  continue;
-    if (!tocontinue)            break;
-  }
-
-  if (chsLen(scn->line) < 2)
-    scn->line = chsCpy(scn->line,"");
-  else if (chsChrAt(scn->line,-1) != '\n')
-    scn->line = chsAddChr(scn->line,'\n');
-
-  scn->cur = scn->line;
-  dbgmsg("line: <<%s>>\n",scn->line);
-  if (tmp) chsFree(tmp);
-}
-
 static int oldchar = '\0';
 static int nextchar(abcScanner *scn)
 {
@@ -197,7 +79,7 @@ static int nextchar(abcScanner *scn)
   if (c != EOF) {
     scn->line = chsAddChr(scn->line,c);
   }
-  _dbgmsg("%c",c);
+  _dbgmsg("'%c'",c);
   return c;
 }
 
@@ -236,7 +118,7 @@ static int nextchar(abcScanner *scn)
 static void getnewline(abcScanner *scn)
 {
   int   c;
-  int kk;
+  
   scn->line = chsCpy(scn->line,"\b");
   scn->ln_logical = scn->lnumber+1;
 
@@ -244,6 +126,7 @@ static void getnewline(abcScanner *scn)
     STATE(BOL) :     switch((c=nextchar(scn))) {
                        case EOF : GOTO(EOL);
                        case '\t': GOTO(BOL);
+                       case '"' : GOTO(STR);           
                        case ' ' : GOTO(BOL);
                        case '%' : GOTO(isREM);
                        case '\n': GOTO(EOL);
@@ -287,6 +170,7 @@ static void getnewline(abcScanner *scn)
   }
 
   scn->cur = scn->line;
+  
   _dbgmsg("line: <<%s>>\n",scn->line);
 }
 
@@ -812,7 +696,7 @@ static abcToken abc_limbo(abcScanner *scn)
     case "(&K)&N\f" : settoken(scn,T_WHITESPACE);
                     break;
 
-    case "()&K(<+!\n\r\f>)(&N)\f" :
+    case "()&K(<*!\n\r\f>)(&N)\f" :
                     settoken(scn,T_TEXT);
                     break;
   }
@@ -1106,9 +990,9 @@ abcToken abcNextToken(abcScanner *scn)
 
   if (scn->state == S_EOF) return T_EOF;
 
-  if (!scn->cur || !*scn->cur)
+  if (!scn->cur || *scn->cur == '\0' || *scn->cur =='\f')
     getnewline(scn);
-
+  _dbgmsg("[[%s]]\n",scn->cur);
   if (scn->cur && *scn->cur) {
     switch (abcStateCurrent(scn)) {
       case S_LIMBO    : return abc_limbo(scn);

@@ -180,10 +180,26 @@ int abcTempoDen(abcScanner *scn)
 }
 
 
-int abcTempoNumNth(abcScanner *scn,int n)
+long abcTempoNumNth(abcScanner *scn,int n)
 {
+  if (abcToken(scn) != T_FIELD || abcField(scn) != 'Q') return 0;
+  
+  if (!abcTestFlag(scn,ABC_F_FIELDSCANNED)) 
+    abc_tempo(scn);
+  
+  if (n < 0 || 4 <= n) return 0;
+    
+  return abc_numnth[n];
 }
 
-int abcTempoDenNth(abcScanner *scn,int n)
+long abcTempoDenNth(abcScanner *scn,int n)
 {
+  if (abcToken(scn) != T_FIELD || abcField(scn) != 'Q') return 0;
+  
+  if (!abcTestFlag(scn,ABC_F_FIELDSCANNED)) 
+    abc_tempo(scn);
+  
+  if (n < 0 || 4 <= n) return 0;
+    
+  return abc_dennth[n];
 }
