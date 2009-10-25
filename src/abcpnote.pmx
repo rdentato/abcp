@@ -216,7 +216,7 @@ unsigned short abcNote2Midi(char pitch, int octave, int acc)
 unsigned short abcNoteMidi(abcScanner *scn)
 {
   if (abcToken(scn) != T_NOTE) return 0;
-  return abcNote2Midi(*abcTokenStart(scn,5),
+  return abcNote2Midi(*abcTokenStart(scn,2),
                        abcNoteOctave(scn)+1,
                  (int)(abcNoteCents(scn)/100.0));
  }

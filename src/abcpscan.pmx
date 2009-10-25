@@ -118,6 +118,7 @@ static int nextchar(abcScanner *scn)
 static void getnewline(abcScanner *scn)
 {
   int   c;
+  int   escaped=0;
   
   scn->line = chsCpy(scn->line,"\b");
   scn->ln_logical = scn->lnumber+1;
@@ -157,6 +158,7 @@ static void getnewline(abcScanner *scn)
                      
      STATE(STR) :    switch((c=nextchar(scn))) {
                        case EOF : GOTO(EOL);
+                       case '\n': GOTO(EOL);
                        case '"' : GOTO(LINE);           
                        default  : GOTO(STR);
                      } ;
@@ -171,7 +173,7 @@ static void getnewline(abcScanner *scn)
 
   scn->cur = scn->line;
   
-  _dbgmsg("line: <<%s>>\n",scn->line);
+  dbgmsg("line: <<%s>>\n",scn->line);
 }
 
 /* **************** */
