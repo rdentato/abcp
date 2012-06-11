@@ -318,18 +318,18 @@ char *abcChordFormula(abcScanner *scn)
   
   returnifnot(scn,utlEmptyString);
   
-  chordname = chsCpy(chordname,"");
+  chsCpy(chordname,"");
   p = abcTokenStart(scn,ABC_ChordType);
   k = abcTokenLen(scn,ABC_ChordType);
   
   if (k==0) 
-    chordname = chsCpy(chordname,"maj");
+    chsCpy(chordname,"maj");
   else {
     switch pmx(p) {
-      case "&K&imaj"        : chordname = chsAddStr(chordname,"maj");
+      case "&K&imaj"        : chsAddStr(chordname,"maj");
                             k -= pmx(Len,0);
                             break;
-      case "&K&i<$min$-$m>" : chordname = chsAddStr(chordname,"min");
+      case "&K&i<$min$-$m>" : chsAddStr(chordname,"min");
                             k -= pmx(Len,0);
                             break;
     }
@@ -341,18 +341,18 @@ char *abcChordFormula(abcScanner *scn)
                               break;
       
         case "-(<+d>)"      :
-        case "(<+d>)b"      : chordname = chsAddChr(chordname,'b');
-                              chordname = chsAddStrL(chordname,pmx(Start,1),pmx(Len,1));
+        case "(<+d>)b"      : chsAddChr(chordname,'b');
+                              chsAddStrL(chordname,pmx(Start,1),pmx(Len,1));
                               k -= pmx(Len,0);
                               break;
                               
         case "+(<+d>)"      :
-        case "(<+d>)+"      : chordname = chsAddChr(chordname,'#');
-                              chordname = chsAddStrL(chordname,pmx(Start,1),pmx(Len,1));
+        case "(<+d>)+"      : chsAddChr(chordname,'#');
+                              chsAddStrL(chordname,pmx(Start,1),pmx(Len,1));
                               k -= pmx(Len,0);
                               break;
   
-        case "<.>"          : chordname = chsAddChr(chordname,tolower(*pmx(Start,1)));
+        case "<.>"          : chsAddChr(chordname,tolower(*pmx(Start,1)));
                               k -= pmx(Len,0);
                               break;
       }
