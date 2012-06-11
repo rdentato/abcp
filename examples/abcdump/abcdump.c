@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     }
   }
    
-  abctext = chsRead(abctext,f,'w');
+  chsRead(abctext,f,'w');
   if (f!=stdin) fclose(f);
   if (abctext && *abctext) {
     scn = abcScannerNew(str,abctext);
@@ -330,6 +330,6 @@ int main(int argc, char *argv[])
     }
     scn = abcScannerFree(scn);
   }
-  abctext = chsFree(abctext);
+  chsFree(abctext);
   return(0);
 }
