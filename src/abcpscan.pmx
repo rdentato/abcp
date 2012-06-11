@@ -6,7 +6,7 @@
 **   http://opensource.org/licenses/bsd-license.php
 */
 
-
+#include "libutl.h"
 #include "abcp_priv.h"
 #include <assert.h>
 
@@ -77,7 +77,7 @@ static int nextchar(abcScanner *scn)
     else c = EOF;
   }
   if (c != EOF) {
-    scn->line = chsAddChr(scn->line,c);
+    chsAddChr(scn->line,c);
   }
   _dbgmsg("'%c'",c);
   return c;
@@ -120,57 +120,65 @@ static void getnewline(abcScanner *scn)
   int   c;
   int   escaped=0;
   
-  scn->line = chsCpy(scn->line,"\b");
+  chsCpy(scn->line,"\b");
   scn->ln_logical = scn->lnumber+1;
 
-  FSM {
-    STATE(BOL) :     switch((c=nextchar(scn))) {
-                       case EOF : GOTO(EOL);
-                       case '\t': GOTO(BOL);
-                       case '"' : GOTO(STR);           
-                       case ' ' : GOTO(BOL);
-                       case '%' : GOTO(isREM);
-                       case '\n': GOTO(EOL);
-                       default  : GOTO(LINE);
-                     } ;
-      
-     STATE(isREM) :  switch((c=nextchar(scn))) {
-                       case EOF : GOTO(EOL);
-                       case '%' : GOTO(LINE);
-                       case '\n': GOTO(EOL);
-                       default  : GOTO(REM);
-                     } ;
-        
-     STATE(REM) :    switch((c=nextchar(scn))) {
-                       case EOF : GOTO(EOL);
-                       case '\n': GOTO(EOL);
-                       default  : GOTO(REM);
-                     } ;
-  
-     STATE(LINE) :   switch((c=nextchar(scn))) {
-                       case EOF : GOTO(EOL);
-                       case '%' : scn->line = chsDel(scn->line,-1,-1);
-                                  oldchar = '%';
-                       case '\n': GOTO(EOL);
-                       case '"' : GOTO(STR);           
-                       default  : GOTO(LINE);
-                     } ;
-                     
-     STATE(STR) :    switch((c=nextchar(scn))) {
-                       case EOF : GOTO(EOL);
-                       case '\n': GOTO(EOL);
-                       case '"' : GOTO(LINE);           
-                       default  : GOTO(STR);
-                     } ;
-                     
-     STATE(EOL) :    if (c=='\n') scn->lnumber++;
-                     if (chsLen(scn->line) < 2)
-                       scn->line = chsCpy(scn->line,"");
-                     else
-                       scn->line = chsAddChr(scn->line,'\f');
-                     break;                
+  fsmStart(SCANNER) {
+    fsmState(BOL) {
+      switch((c=nextchar(scn))) {
+         case EOF : fsmGoto(EOL);
+         case '\t': fsmGoto(BOL);
+         case '"' : fsmGoto(STR);           
+         case ' ' : fsmGoto(BOL);
+         case '%' : fsmGoto(isREM);
+         case '\n': fsmGoto(EOL);
+         default  : fsmGoto(LINE);
+       } ;
+     }
+     fsmState(isREM) {
+       switch((c=nextchar(scn))) {
+         case EOF : fsmGoto(EOL);
+         case '%' : fsmGoto(LINE);
+         case '\n': fsmGoto(EOL);
+         default  : fsmGoto(REM);
+       } ;
+     }        
+     fsmState(REM) {
+       switch((c=nextchar(scn))) {
+         case EOF : fsmGoto(EOL);
+         case '\n': fsmGoto(EOL);
+         default  : fsmGoto(REM);
+       } ;
+     }  
+     fsmState(LINE) {
+       switch((c=nextchar(scn))) {
+         case EOF : fsmGoto(EOL);
+         case '%' : chsDel(scn->line,-1,-1);
+                    oldchar = '%';
+         case '\n': fsmGoto(EOL);
+         case '"' : fsmGoto(STR);           
+         default  : fsmGoto(LINE);
+       } ;
+     }                
+     fsmState(STR) {
+       switch((c=nextchar(scn))) {
+         case EOF : fsmGoto(EOL);
+         case '\n': fsmGoto(EOL);
+         case '"' : fsmGoto(LINE);           
+         default  : fsmGoto(STR);
+       } ;
+     }                     
+     fsmState(EOL) {
+       if (c=='\n') scn->lnumber++;
+       if (chsLen(scn->line) < 2)
+         chsCpy(scn->line,"");
+       else
+         chsAddChr(scn->line,'\f');
+       fsmExit(SCANNER);
+     }
   }
-
+  fsmEnd(SCANNER);
+  
   scn->cur = scn->line;
   
   dbgmsg("line: <<%s>>\n",scn->line);
@@ -1059,13 +1067,13 @@ char *abcScannerGetIncludePath(abcScanner *scn)
 
 char *abcScannerSetIncludePath(abcScanner *scn,char *path)
 {
-  scn->incpath = chsCpy(scn->incpath,path);
+  chsCpy(scn->incpath,path);
   return scn->incpath ;
 }
 
 char *abcScannerAddToIncludePath(abcScanner *scn,char *path)
 {
-  scn->incpath = chsAddStr(scn->incpath,path);
+  chsAddStr(scn->incpath,path);
   return scn->incpath ;
 }
 
@@ -1090,11 +1098,11 @@ int abcIncludePathAdding(abcScanner *scn)
 char *abcIncludePathSet(abcScanner *scn)
 {
   if (abcToken(scn) == T_INCLUDEPATH && abcTokenLen(scn,2) > 2) {
-    scn->incpath = chsAddChr(scn->incpath,';');
+    chsAddChr(scn->incpath,';');
     if (abcTokenLen(scn,1) > 0)
-      scn->incpath = chsAddStrL(scn->incpath, abcTokenStart(scn,2)+1,abcTokenLen(scn,2)-2);
+      chsAddStrL(scn->incpath, abcTokenStart(scn,2)+1,abcTokenLen(scn,2)-2);
     else
-      scn->incpath = chsCpyL(scn->incpath, abcTokenStart(scn,2)+1,abcTokenLen(scn,2)-2);
+      chsCpyL(scn->incpath, abcTokenStart(scn,2)+1,abcTokenLen(scn,2)-2);
   }  
   return scn->incpath;
 }
@@ -1111,16 +1119,16 @@ int abcInclude(abcScanner *scn)
   
   if (abcToken(scn) == T_INCLUDE) {
     if ((len = abcTokenLen(scn,1)) > 0)
-      fname = chsCpyL(fname,abcTokenStart(scn,1)+1,len-2);
+      chsCpyL(fname,abcTokenStart(scn,1)+1,len-2);
     else if ( (len = abcTokenLen(scn,2)) > 0)
-      fname = chsCpyL(fname,abcTokenStart(scn,2),len);
+      chsCpyL(fname,abcTokenStart(scn,2),len);
     else return 0;
     
     
     /* {{ handle the include path */
 
-    pname = chsCpy(pname,abcScannerGetIncludePath(scn));
-    pname = chsSubStr(pname,0,">?",fname);
+    chsCpy(pname,abcScannerGetIncludePath(scn));
+    chsSubStr(pname,0,">?",fname);
     
     _dbgmsg("including: %s\n",pname);
     ret = 1;
@@ -1151,8 +1159,8 @@ int abcInclude(abcScanner *scn)
       scn->saved = save;
       ret = 1;               
     }      
-    fname = chsFree(fname);
-    pname = chsFree(pname);
+    chsFree(fname);
+    chsFree(pname);
   }
   return ret;
 }
