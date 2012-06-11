@@ -114,6 +114,9 @@ static int nextchar(abcScanner *scn)
       }
 ..
 */
+#define FSM for(;;)
+#define STATE(x) x##_s 
+#define GOTO(x)  goto x##_s
 
 static void getnewline(abcScanner *scn)
 {
@@ -123,62 +126,54 @@ static void getnewline(abcScanner *scn)
   chsCpy(scn->line,"\b");
   scn->ln_logical = scn->lnumber+1;
 
-  fsmStart(SCANNER) {
-    fsmState(BOL) {
-      switch((c=nextchar(scn))) {
-         case EOF : fsmGoto(EOL);
-         case '\t': fsmGoto(BOL);
-         case '"' : fsmGoto(STR);           
-         case ' ' : fsmGoto(BOL);
-         case '%' : fsmGoto(isREM);
-         case '\n': fsmGoto(EOL);
-         default  : fsmGoto(LINE);
-       } ;
-     }
-     fsmState(isREM) {
-       switch((c=nextchar(scn))) {
-         case EOF : fsmGoto(EOL);
-         case '%' : fsmGoto(LINE);
-         case '\n': fsmGoto(EOL);
-         default  : fsmGoto(REM);
-       } ;
-     }        
-     fsmState(REM) {
-       switch((c=nextchar(scn))) {
-         case EOF : fsmGoto(EOL);
-         case '\n': fsmGoto(EOL);
-         default  : fsmGoto(REM);
-       } ;
-     }  
-     fsmState(LINE) {
-       switch((c=nextchar(scn))) {
-         case EOF : fsmGoto(EOL);
-         case '%' : chsDel(scn->line,-1,-1);
-                    oldchar = '%';
-         case '\n': fsmGoto(EOL);
-         case '"' : fsmGoto(STR);           
-         default  : fsmGoto(LINE);
-       } ;
-     }                
-     fsmState(STR) {
-       switch((c=nextchar(scn))) {
-         case EOF : fsmGoto(EOL);
-         case '\n': fsmGoto(EOL);
-         case '"' : fsmGoto(LINE);           
-         default  : fsmGoto(STR);
-       } ;
-     }                     
-     fsmState(EOL) {
-       if (c=='\n') scn->lnumber++;
-       if (chsLen(scn->line) < 2)
-         chsCpy(scn->line,"");
-       else
-         chsAddChr(scn->line,'\f');
-       fsmExit(SCANNER);
-     }
-  }
-  fsmEnd(SCANNER);
+  FSM {
+    STATE(BOL) :     switch((c=nextchar(scn))) {
+                       case EOF : GOTO(EOL);
+                       case '\t': GOTO(BOL);
+                       case '"' : GOTO(STR);           
+                       case ' ' : GOTO(BOL);
+                       case '%' : GOTO(isREM);
+                       case '\n': GOTO(EOL);
+                       default  : GOTO(LINE);
+                     } ;
+      
+     STATE(isREM) :  switch((c=nextchar(scn))) {
+                       case EOF : GOTO(EOL);
+                       case '%' : GOTO(LINE);
+                       case '\n': GOTO(EOL);
+                       default  : GOTO(REM);
+                     } ;
+        
+     STATE(REM) :    switch((c=nextchar(scn))) {
+                       case EOF : GOTO(EOL);
+                       case '\n': GOTO(EOL);
+                       default  : GOTO(REM);
+                     } ;
   
+     STATE(LINE) :   switch((c=nextchar(scn))) {
+                       case EOF : GOTO(EOL);
+                       case '%' : chsDel(scn->line,-1,-1);
+                                  oldchar = '%';
+                       case '\n': GOTO(EOL);
+                       case '"' : GOTO(STR);           
+                       default  : GOTO(LINE);
+                     } ;
+                     
+     STATE(STR) :    switch((c=nextchar(scn))) {
+                       case EOF : GOTO(EOL);
+                       case '\n': GOTO(EOL);
+                       case '"' : GOTO(LINE);           
+                       default  : GOTO(STR);
+                     } ;
+                     
+     STATE(EOL) :    if (c=='\n') scn->lnumber++;
+                     if (chsLen(scn->line) < 2)
+                       chsCpy(scn->line,"");
+                     else
+                       chsAddChr(scn->line,'\f');
+                     break;                
+  }
+    
   scn->cur = scn->line;
   
   dbgmsg("line: <<%s>>\n",scn->line);
