@@ -211,8 +211,8 @@ static void getnewline(abcScanner *scn)
 #define stategosub(scn,st) (((scn)->prevstate = (scn)->state),\
                             ((scn)->nextstate = st))
 
-#define statereturn(scn)      (((scn)->nextstate = (scn)->prevstate), \
-                               ((scn)->prevstate = S_NONE))
+#define statereturn(scn)   (((scn)->nextstate = (scn)->prevstate), \
+                            ((scn)->prevstate = S_NONE))
 
 static abcToken abc_lyrics(abcScanner *scn)
 {
@@ -588,7 +588,7 @@ static abcToken abc_tune(abcScanner *scn)
 
     case "(<*=:>)(<?=.>)(<+=|[><+=|]>)(<*=:>)" :
     case "(<*=:>)(<?=.>)(<*=|><*=[><+=|]>)(<*=:>)" :
-    case "(<*=:>)(<?=.>)(<*=|>)(<*=:>)" :
+    case "(<*=:>)(<?=.>)(<+=|>)(<*=:>)" :
                     settoken(scn,T_BAR);
                     break;
 
