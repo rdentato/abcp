@@ -251,11 +251,11 @@ static abcToken abc_lyrics(abcScanner *scn)
                     stategosub(scn,S_HISTORY);
                     break;
 
+    case "\b&K()(+):&K(<*!\n\r\f>)&N\f" :
     case "\b&K()(I):&K((<*S>)&K(<*!\n\r\f>))&N\f" :
     case "\b&K()(U):&K((<.>)&K=&K&e\\(&q)<*!\n\r\f>)&N\f" :
     case "\b&K()(U):&K((<.>)&K=&K(<+! \t\n\r\f>)<*!\n\r\f>)&N\f" :
     case "\b&K()(<a>):&K(<*!\n\r\f>)&N\f" :
-    case "\b&K()(+):&K(<*!\n\r\f>)&N\f" :
                     settoken(scn,T_FIELD);
                     break;
 
@@ -357,6 +357,7 @@ static abcToken abc_symbols(abcScanner *scn)
                     stategosub(scn,S_HISTORY);
                     break;
 
+    case "\b&K()(+):&K(<*!\n\r\f>)&N\f" :
     case "\b&K()(I):&K((<*S>)&K(<*!\n\r\f>))&N\f" :
     case "\b&K()(U):&K((<.>)&K=&K&e\\(&q)<*!\n\r\f>)&N\f" :
     case "\b&K()(U):&K((<.>)&K=&K(<+! \t\n\r\f>)<*!\n\r\f>)&N\f" :
@@ -483,6 +484,7 @@ static abcToken abc_tune(abcScanner *scn)
                     stategosub(scn,S_HISTORY);
                     break;
 
+    case "\b&K()(+):&K(<*!\n\r\f>)&N\f" :
     case "\b&K()(I):&K((<*S>)&K(<*!\n\r\f>))&N\f" :
     case "\b&K()(U):&K((<.>)&K=&K&e\\(&q)<*!\n\r\f>)&N\f" :
     case "\b&K()(U):&K((<.>)&K=&K(<+! \t\n\r\f>)<*!\n\r\f>)&N\f" :
@@ -645,6 +647,7 @@ static abcToken abc_limbo(abcScanner *scn)
                     stategosub(scn,S_HISTORY);
                     break;
 
+    case "\b&K()(+):&K(<*!\n\r\f>)&N\f" :
     case "\b&K()(I):&K((<*S>)&K(<*!\n\r\f>))&N\f" :
     case "\b&K()(U):&K((<.>)&K=&K&e\\(&q)<*!\n\r\f>)&N\f" :
     case "\b&K()(U):&K((<.>)&K=&K(<+! \t\n\r\f>)<*!\n\r\f>)&N\f" :
@@ -728,6 +731,7 @@ static abcToken abc_header(abcScanner *scn)
                     stategosub(scn,S_HISTORY);
                     break;
 
+    case "\b&K()(+):&K(<*!\n\r\f>)&N\f" :
     case "\b&K()(I):&K((<*S>)&K(<*!\n\r\f>))&N\f" :
     case "\b&K()(U):&K((<.>)&K=&K&e\\(&q)<*!\n\r\f>)&N\f" :
     case "\b&K()(U):&K((<.>)&K=&K(<+! \t\n\r\f>)<*!\n\r\f>)&N\f" :
@@ -912,6 +916,7 @@ static abcToken abc_history(abcScanner *scn)
                       settoken(scn,T_TEXT);
                     break;
 
+    case "\b&K()(+):&K(<*!\n\r\f>)&N\f" :
     case "\b&K()(I):&K((<*S>)&K(<*!\n\r\f>))&N\f" :
     case "\b&K()(U):&K((<.>)&K=&K&e\\(&q)<*!\n\r\f>)&N\f" :
     case "\b&K()(U):&K((<.>)&K=&K(<+! \t\n\r>)<*!\n\r\f>)&N\f" :
