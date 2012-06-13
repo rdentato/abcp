@@ -255,6 +255,7 @@ static abcToken abc_lyrics(abcScanner *scn)
     case "\b&K()(U):&K((<.>)&K=&K&e\\(&q)<*!\n\r\f>)&N\f" :
     case "\b&K()(U):&K((<.>)&K=&K(<+! \t\n\r\f>)<*!\n\r\f>)&N\f" :
     case "\b&K()(<a>):&K(<*!\n\r\f>)&N\f" :
+    case "\b&K()(+):&K(<*!\n\r\f>)&N\f" :
                     settoken(scn,T_FIELD);
                     break;
 
@@ -589,6 +590,8 @@ static abcToken abc_tune(abcScanner *scn)
     case "(<*=:>)(<?=.>)(<+=|[><+=|]>)(<*=:>)" :
     case "(<*=:>)(<?=.>)(<*=|><*=[><+=|]>)(<*=:>)" :
     case "(<*=:>)(<?=.>)(<+=|>)(<*=:>)" :
+    case "()(.)()(<+=:>)" :
+    case "(<+=:>)()()()" :
                     settoken(scn,T_BAR);
                     break;
 
