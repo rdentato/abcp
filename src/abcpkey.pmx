@@ -94,7 +94,7 @@ static void abc_clef(abcScanner *scn, char *start, char *end)
     switch pmx(start) {
 
       case "&k" :
-      case "&e\\&B[]" :
+      case "&e\\&b[]" :
         break;
 
       case "clef&K=&K(<+=A-Za-z&-><*d><?$tab>)":
@@ -203,7 +203,7 @@ static void abc_clef(abcScanner *scn, char *start, char *end)
         parms[ABC_Transpose] = atoi(pmx(Start,0));
         break;
 
-      case "(<$up$down$u%d>)" :
+      case "(<$up$down$u$d>)" :
         parms[ABC_Stems] = tolower(*pmx(Start,1));
         break;
 
