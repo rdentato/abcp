@@ -10,7 +10,7 @@ T:abcm2ps version 3 features
 M:2/4 3/4
 K:C
 a>^B [C_G] |[1 C C | [ "ultima volta" GC ::|: |[|]]
-
+B<C :: D>E
 X:2
 %% begintext Hello there
 %%           Here we are
